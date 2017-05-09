@@ -1,0 +1,587 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+
+<link rel="import" href="../../bower_components/paper-tabs/paper-tab.html">
+<link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
+<link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
+
+<link rel="import" href="../../bower_components/paper-card/paper-card.html">
+
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/paper-checkbox/paper-checkbox.html">
+
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+
+<link rel="import" href="../../bower_components/paper-fab/paper-fab.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+
+
+
+<dom-module id="snd-new">
+    <template>
+        <style>
+            :host {
+                display: block;
+                height: 100%;
+                width: 100%;
+                --paper-tabs-selection-bar-color: var(--secondary-color);
+                --paper-fab-background: var(--secondary-color);
+                --paper-fab-keyboard-focus-background: var(--focus-color)
+            }
+            paper-tabs {
+                background-color: var(--primary-color);
+                color: #FFF;
+            }
+            iron-pages{
+                height: calc(100% - 48px);
+                overflow-y: auto;
+            }
+            paper-card {
+                margin-top: 16px;
+                width: 100%;
+            }
+            paper-checkbox {
+                margin-top: 16px;
+                margin-right: 8px;
+            }
+            paper-button {
+                margin-top: 16px;
+                margin: auto;
+            }
+            paper-fab {
+                position: fixed;
+                bottom: 16px;
+                right: 16px;
+            }
+            .paper-card-row {
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+            }
+            .add-paper-button {
+                background-color: var(--primary-color);
+                color: #FFF;
+            }
+            .delete-paper-button {
+                color: #FF5252
+            }
+            .add-button-container {
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                width: 100%;
+                padding: 16px 0;
+            }
+        </style>
+
+        <paper-tabs 
+            id="sndNewTabs"
+            noink
+            scrollable
+            hide-scroll-buttons
+            fit-container
+            selected="{{ tabSelected }}">
+            <paper-tab>
+                Basic
+            </paper-tab>
+            <paper-tab>
+                Status
+            </paper-tab>
+            <paper-tab>
+                Resources
+            </paper-tab>
+            <paper-tab>
+                Defenses
+            </paper-tab>
+            <paper-tab>
+                Skills
+            </paper-tab>
+        </paper-tabs>
+
+        <iron-pages
+            selected="{{ tabSelected }}">
+            <paper-card
+                elevation="2">
+                <div class="card-content">
+                    <paper-input
+                        always-float-label
+                        label="Name"
+                        value="{{ newSheet.name }}">
+                    </paper-input>
+                    <paper-input
+                        always-float-label
+                        label="Class"
+                        value="{{ newSheet.job }}">
+                    </paper-input>
+                    <paper-input
+                        always-float-label
+                        label="Race"
+                        value="{{ newSheet.race }}">
+                    </paper-input>
+                    <paper-input
+                        always-float-label
+                        label="Level"
+                        value="{{ newSheet.level }}">
+                    </paper-input>
+                    <paper-input
+                        always-float-label
+                        label="System"
+                        value="{{ newSheet.system }}">
+                    </paper-input>
+                    <div class="paper-card-row">
+                        <paper-checkbox
+                            checked="{{ newSheet.hasMinimumStatusModifierValue }}">
+                        </paper-checkbox>
+                        <paper-input
+                            style="flex-grow: 1;"
+                            always-float-label
+                            label="Minimum Status Value Modifier"
+                            value="{{ newSheet.minimumStatusModifierValue }}"
+                            disabled="{{ !newSheet.hasMinimumStatusModifierValue }}">
+                        </paper-input>
+                    </div>
+                </div>
+            </paper-card>
+            <div>
+                <template
+                    is="dom-repeat"
+                    items="[[ newSheet.statusList ]]"
+                    as="status">
+                    <paper-card
+                        elevation="2">
+                        <div class="card-content">
+                            <paper-input
+                                always-float-label
+                                label="Name"
+                                value="{{ status.name }}">
+                            </paper-input>
+                            <paper-input
+                                always-float-label
+                                label="Base Value"
+                                value="{{ status.baseValue }}">
+                            </paper-input>
+                            <paper-input
+                                always-float-label
+                                label="Level Modifier"
+                                value="{{ status.levelModifier }}">
+                            </paper-input>
+                            <template
+                                is="dom-repeat"
+                                items="[[ status.dependencyList ]]"
+                                as="dependency">
+                                <div>
+                                    [[ dependency.location ]]
+                                    [[ dependency.name ]]
+                                    [[ dependency.modifier ]]
+                                </div>
+                            </template>
+                            <paper-button
+                                on-tap="_addStatusDependency"
+                                class="dependency-paper-button">
+                                Add Dependency
+                            </paper-button>
+                        </div>
+                        <div class="card-actions">
+                            <paper-button
+                                index="[[index]]"
+                                on-tap="_deleteStatus"
+                                class="delete-paper-button">
+                                Delete Status
+                            </paper-button>
+                        </div>
+                    </paper-card>
+                </template>
+                <div class="add-button-container">
+                    <paper-button
+                        raised
+                        on-tap="_addStatus"
+                        class="add-paper-button">
+                        Add Status
+                    </paper-button>
+                </div>
+            </div>
+            <div>
+                <template
+                    is="dom-repeat"
+                    items="[[ newSheet.resourcesList ]]"
+                    as="resource">
+                    <paper-card
+                        elevation="2">
+                        <div class="card-content">
+                            <paper-input
+                                always-float-label
+                                label="Name"
+                                value="{{ resource.name }}">
+                            </paper-input>
+                            <paper-input
+                                always-float-label
+                                label="Base Value"
+                                value="{{ resource.baseValue }}">
+                            </paper-input>
+                            <paper-input
+                                always-float-label
+                                label="Level Modifier"
+                                value="{{ resource.levelModifier }}">
+                            </paper-input>
+                        </div>
+                        <div class="card-actions">
+                            <paper-button
+                                index="[[index]]"
+                                on-tap="_deleteResource"
+                                class="delete-paper-button">
+                                Delete Resource
+                            </paper-button>
+                        </div>
+                    </paper-card>
+                </template>
+                <div class="add-button-container">
+                    <paper-button
+                        raised
+                        on-tap="_addResource"
+                        class="add-paper-button">
+                        Add Resource
+                    </paper-button>
+                </div>
+            </div>
+            <div>
+                <template
+                    is="dom-repeat"
+                    items="[[ newSheet.defensesList ]]"
+                    as="defense">
+                    <paper-card
+                        elevation="2">
+                        <div class="card-content">
+                            <paper-input
+                                always-float-label
+                                label="Name"
+                                value="{{ defense.name }}">
+                            </paper-input>
+                            <paper-input
+                                always-float-label
+                                label="Base Value"
+                                value="{{ defense.baseValue }}">
+                            </paper-input>
+                            <paper-input
+                                always-float-label
+                                label="Level Modifier"
+                                value="{{ defense.levelModifier }}">
+                            </paper-input>
+                        </div>
+                        <div class="card-actions">
+                            <paper-button
+                                index="[[index]]"
+                                on-tap="_deleteDefense"
+                                class="delete-paper-button">
+                                Delete Defense
+                            </paper-button>
+                        </div>
+                    </paper-card>
+                </template>
+                <div class="add-button-container">
+                    <paper-button
+                        raised
+                        on-tap="_addDefense"
+                        class="add-paper-button">
+                        Add Defense
+                    </paper-button>
+                </div>
+            </div>
+            <div>
+                <template
+                    is="dom-repeat"
+                    items="[[ newSheet.skillsList ]]"
+                    as="skill">
+                    <paper-card
+                        elevation="2">
+                        <div class="card-content">
+                            <paper-input
+                                always-float-label
+                                label="Name"
+                                value="{{ skill.name }}">
+                            </paper-input>
+                            <paper-input
+                                always-float-label
+                                label="Base Value"
+                                value="{{ skill.baseValue }}">
+                            </paper-input>
+                            <paper-input
+                                always-float-label
+                                label="Level Modifier"
+                                value="{{ skill.levelModifier }}">
+                            </paper-input>
+                        </div>
+                        <div class="card-actions">
+                            <paper-button
+                                index="[[index]]"
+                                on-tap="_deleteSkill"
+                                class="delete-paper-button">
+                                Delete Skill
+                            </paper-button>
+                        </div>
+                    </paper-card>
+                </template>
+                <div class="add-button-container">
+                    <paper-button
+                        raised
+                        on-tap="_addSkill"
+                        class="add-paper-button">
+                        Add Skill
+                    </paper-button>
+                </div>
+            </div>
+        </iron-pages>
+
+        <paper-fab
+            icon="save"
+            on-tap="_newSheet">
+        </paper-fab>
+    </template>
+
+    <script>
+        class SndNew extends Polymer.Element {
+            static get is() { return 'snd-new'; }
+
+            static get properties() {
+                return {
+                    tabSelected: {
+                        type: Number,
+                        value: 0
+                    },
+                    newSheet: {
+                        type: Object,
+                        value: new Sheet(),
+                        notify: true
+                    }
+                };
+            }
+
+            static get observers() {
+                return [
+                    // '_newSheetChanged(newSheet.*)'
+                ];
+            }
+
+            // _newSheetChanged(newSheet) {
+            //     console.log(newSheet);
+            // }
+
+            _addStatus() {
+                this.push('newSheet.statusList', new Status());
+            }
+
+            _deleteStatus(event) {
+                let index = event.detail.sourceEvent.target.index;
+                this.splice('newSheet.statusList', index, 1);
+            }
+
+            _addResource() {
+                this.push('newSheet.resourcesList', new StatusBased());
+            }
+
+            _deleteResource(event) {
+                let index = event.detail.sourceEvent.target.index;
+                this.splice('newSheet.resourcesList', index, 1);
+            }
+
+            _addDefense() {
+                this.push('newSheet.defensesList', new StatusBased());
+            }
+
+            _deleteDefense(event) {
+                let index = event.detail.sourceEvent.target.index;
+                this.splice('newSheet.defensesList', index, 1);
+            }
+
+            _addSkill() {
+                this.push('newSheet.skillsList', new StatusBased());
+            }
+
+            _deleteSkill(event) {
+                let index = event.detail.sourceEvent.target.index;
+                this.splice('newSheet.skillsList', index, 1);
+            }
+
+            _newSheet() {
+                // Each Status, Resource, Defense and Skill and SUM
+                const element = this;
+                let dependencyChain = [];
+                parseInt(element._numberTypeCheck(element.newSheet.level));
+                // SUM Status = baseValue + (levelModifier * level)
+                this.newSheet.statusList.forEach(
+                    function (status) {
+                        if (status.value === 0) {
+                            dependencyChain.push(status);
+                            element._objectCalculation(status);
+                            dependencyChain = [];
+                        }
+                    }
+                );
+                // SUM Resource = baseValue + (statusBase.value * statusBaseModifier) + (levelModifier * level)
+                // or if statusBase == None => SUM Resource = baseValue + (levelModifier * level)
+                this.newSheet.resourcesList.forEach(
+                    function (resource) {
+                        if (resource.value === 0) {
+                            dependencyChain.push(resource);
+                            element._objectCalculation(resource);
+                            dependencyChain = [];
+                        }
+                    }
+                );
+                // SUM Defense = baseValue + (statusBase.value * statusBaseModifier) + (levelModifier * level)
+                // or if statusBase == None => SUM Defense = baseValue + (levelModifier * level)
+                this.newSheet.defensesList.forEach(
+                    function (defense) {
+                        if (defense.value === 0) {
+                            dependencyChain.push(defense);
+                            element._objectCalculation(defense);
+                            dependencyChain = [];
+                        }
+                    }
+                );
+                // SUM Skill = baseValue + (statusBase.value * statusBaseModifier) + (levelModifier * level)
+                // or if statusBase == None => SUM Skill = baseValue + (levelModifier * level)
+                this.newSheet.skillsList.forEach(
+                    function (skill) {
+                        if (skill.value === 0) {
+                            dependencyChain.push(skill);
+                            element._objectCalculation(skill);
+                            dependencyChain = [];
+                        }
+                    }
+                );
+                console.log(this.newSheet);
+            }
+
+            _numberTypeCheck(number) {
+                if (isNaN(parseInt(number))) return "0";
+                else return number;
+            }
+
+            _returnStatusModifier(statusValue, minimumStatusModifierValue) {
+                if (statusValue >= minimumModifier) return parseInt((statusValue - minimumStatusModifierValue) / 2);
+                else return parseInt((statusValue - minimumStatusModifierValue) / 2 - 0.5);
+            }
+
+            _objectCalculation(obj) {
+                // Encapsulation
+                const element = this;
+                let dependencyElements = [];
+                // Verify if the Element have Dependency
+                if (obj.dependencyList.length > 0) {
+                    // Start Value Calculation
+                    // Populate dependencyElements Array
+                    obj.dependencyList.forEach(function (dependencyItem) {
+                        Object.keys(element.newSheet).forEach(function (key) {
+                            if (key == dependencyItem.location) {
+                                element.newSheet[key].forEach(function (obj) {
+                                    if (obj.name == dependencyItem.name) dependencyElements.push(obj);
+                                });
+                            }
+                        });
+                    });
+                    dependencyElements.forEach(function (nullDependencyElement) {
+                        if (nullDependencyElement.value === 0) {
+                            dependencyElements.forEach(function (dependencyElement) {
+                                if (dependencyElement.name == nullDependencyElement.name) {
+                                    element.dependencyChain.push(nullDependencyElement);
+                                    console.log(dependencyChain);
+                                    throw "Deadlock Warlord";
+                                }
+                            });
+                            element.dependencyChain.push(nullDependencyElement);
+                            element._objectCalculation(nullDependencyElement);
+                        }
+                    });
+                    // Reset dependencyElements Array
+                    dependencyElements = [];
+                    obj.dependencyList.forEach(function (dependencyItem) {
+                        Object.keys(element.newSheet).forEach(function (key) {
+                            if (key == dependencyItem.location) {
+                                element.newSheet[key].forEach(function (obj) {
+                                    if (obj.name == dependencyItem.name) dependencyElements.push(obj);
+                                });
+                            }
+                        });
+                    });
+                    // Init the Element Value
+                    obj.value = parseInt( parseInt(element._numberTypeCheck(obj.baseValue)) + parseInt(element._numberTypeCheck(element.newSheet.level)) * parseFloat(element._numberTypeCheck(obj.levelModifier)) );
+                    console.log("Init " + obj.name + " the Element Value: " + obj.value);
+                    // Update the Element Value with the dependencyElements Values
+                    obj.dependencyList.forEach(function (dependencyItem) {
+                        dependencyElements.forEach(function (dependencyElement){
+                            if (dependencyElement.name == dependencyItem.name) {
+                                if (dependencyElement.location == "statusList") {
+                                    if (element.newSheet.hasMinimumStatusModifierValue) obj.value = parseInt( element._numberTypeCheck(obj.value) + _returnStatusModifier(parseInt(element._numberTypeCheck(dependencyElement.value)), element.newSheet.minimumStatusModifierValue));
+                                    else obj.value = parseInt( element._numberTypeCheck(obj.value) + parseInt(element._numberTypeCheck(dependencyElement.value)) * parseFloat(element._numberTypeCheck(dependencyItem.value)) );
+                                } else {
+                                    obj.value = parseInt( element._numberTypeCheck(obj.value) + parseInt(element._numberTypeCheck(dependencyElement.value)) * parseFloat(element._numberTypeCheck(dependencyItem.value)) );
+                                }
+                                console.log("Update " + obj.name + " Value with " + dependencyElement.name +  " Value: " + obj.value);
+                            }
+                        });
+                    });
+                    // End Value Calculation
+                    dependencyElements = [];
+                    console.log("End " + obj.name + " Value Calculation: " + obj.value);
+                } else {
+                    obj.value = obj.baseValue;
+                    console.log("Init " + obj.name + " the Element Value: " + obj.value);
+                    console.log("End " + obj.name + " Value Calculation: " + obj.value);
+                }
+            }
+        }
+
+        class Sheet {
+            constructor() {
+                this.name = "";
+                this.job = "";
+                this.race = "";
+                this.level = 1;
+                this.system = "";
+                this.hasMinimumStatusModifierValue = false;
+                this.minimumStatusModifierValue = 10;
+                this.statusList = [ new Status("Vitality") ];
+                this.resourcesList = [ new StatusBased("HP") ];
+                this.defensesList = [ new StatusBased("Armor") ];
+                this.skillsList = [ new StatusBased("Diplomacy") ];
+                this.persistBonusList = [];
+                this.volatileBonusList = [];
+                this.notesList = [];
+            }
+        };
+        
+        class Status {
+            constructor(name) {
+                this.name = name;
+                this.value = 0;
+                this.baseValue = 0;
+                this.levelModifier = 0;
+                this.persistBonus = 0;
+                this.volatileBonus = 0;
+                this.dependencyList = [ new Dependency() ];
+            }
+        };
+
+        class StatusBased {
+            constructor(name) {
+                this.name = name;
+                this.value = 0;
+                this.baseValue = 0;
+                this.levelModifier = 0.5;
+                this.persistBonus = 0;
+                this.volatileBonus = 0;
+                this.dependencyList = [ new Dependency() ]
+            }
+        };
+
+        class Dependency {
+            constructor() {
+                this.location = "None";
+                this.name = "None";
+                this.modifier = 0;
+            }
+        };
+
+        window.customElements.define(SndNew.is, SndNew);
+    </script>
+</dom-module>
+

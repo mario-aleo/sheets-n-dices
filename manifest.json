@@ -1,0 +1,7 @@
+{
+  "name": "sheets-n-dices",
+  "short_name": "sheets-n-dices",
+  "description": "RPG Sheet Manager",
+  "start_url": "/",
+  "display": "standalone"
+}

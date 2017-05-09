@@ -1,0 +1,196 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/polymer/lib/elements/dom-if.html">
+
+<link rel="import" href="../../bower_components/polymerfire/firebase.html">
+<link rel="import" href="../../bower_components/polymerfire/polymerfire.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-app.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-auth.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-document.html">
+
+<link rel="import" href="../../bower_components/app-storage/app-indexeddb-mirror/app-indexeddb-mirror.html">
+
+<link rel="import" href="../../bower_components/app-route/app-location.html">
+<link rel="import" href="../../bower_components/app-route/app-route.html">
+
+<link rel="import" href="../../bower_components/app-layout/app-header-layout/app-header-layout.html">
+<link rel="import" href="../../bower_components/app-layout/app-header/app-header.html">
+<link rel="import" href="../../bower_components/app-layout/app-toolbar/app-toolbar.html">
+<link rel="import" href="../../bower_components/app-layout/app-scroll-effects/effects/waterfall.html">
+
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+
+<link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
+
+<link rel="import" href="../snd-new/snd-new.html">
+
+<dom-module id="snd-app">
+    <template>
+        <style>
+            :host {
+                display: block;
+                height: 100%;
+                width: 100%;
+                --primary-color: #673AB7;
+                --darker-primary-color: #512DA8;
+                --light-primary-color: #D1C4E9;
+                --secondary-color: #03A9F4;
+                --focus-color: #0288D1;
+                --primary-text: #212121;
+                --secondary-text: #727272;
+                --divider-color: #B6B6B6;
+            }
+            app-header-layout {
+                height: 100%;
+                width: 100%;
+            }
+            app-header {
+                background-color: var(--primary-color);
+                color: #fff;
+            }
+            app-toolbar {
+                background-color: var(--primary-color);
+                color: #fff;
+            }
+            iron-pages {
+                height: calc(100% - 64px);
+            }
+        </style>
+
+        <app-location
+            route="{{route}}"
+            use-hash-as-path>
+        </app-location>
+        <app-route
+            route="{{route}}"
+            pattern="/:page"
+            data="{{routeData}}"
+            tail="{{subroute}}">
+        </app-route>
+
+        <firebase-app
+            database-url="https://sheets-n-dices.firebaseio.com"
+            storage-bucket="sheets-n-dices.appspot.com"
+            api-key="AIzaSyCPxkcvpx73b5wp0HJTY3lZBeQawfBN608"
+            messaging-sender-id="244324825905"
+            auth-domain="sheets-n-dices.firebaseapp.com">
+        </firebase-app>
+
+        <firebase-auth
+            id="auth"
+            user="{{user}}"
+            provider="google">
+        </firebase-auth>
+        
+        <firebase-query
+            id="query"
+            path="/users/[[user.uid]]/sheetList"
+            data="{{liveData}}">
+        </firebase-query>
+        <app-indexeddb-mirror
+            key="sheetList"
+            data="{{liveData}}"
+            persisted-data="{{persistedData}}">
+        </app-indexeddb-mirror>
+
+        <app-header-layout
+            fullbleed>
+            <app-header
+                fixed
+                condenses
+                effects="waterfall">
+                <app-toolbar>
+                    <div main-title>Sheets 'n Dices</div>
+                </app-toolbar>
+            </app-header>
+
+            <template
+                is="dom-if" 
+                if="[[user]]">
+                <iron-pages
+                    role="main"
+                    selected="[[page]]"
+                    attr-for-selected="name"
+                    fallback-selection="error">
+
+                    <snd-new
+                        name="sheetList">
+                    </snd-new>
+
+                    <!--<div
+                        name="sheetList">
+                        <template is="dom-repeat" items="[[ liveData ]]">
+                            [[ item.teste ]]
+                        </template>
+                    </div>-->
+
+                    <div
+                        name="error">
+                        Ops, page not found D:
+                    </div>
+
+                </iron-pages>
+            </template>
+
+            <template
+                is="dom-if" 
+                if="[[!user]]">
+                <paper-button 
+                    on-tap="_logIn">
+                    Log In
+                </paper-button>
+            </template>
+        </app-header-layout>
+
+    </template>
+
+    <script>
+        class SndApp extends Polymer.Element {
+            static get is() { return 'snd-app'; }
+
+            static get properties() {
+                return { 
+                    user: {
+                        type: Object
+                    },
+                    page: {
+                        type: String
+                    }
+                };
+            }
+
+            static get observers() {
+                return [
+                    '_routePageChanged(routeData.page)'
+                ];
+            }
+            
+            _routePageChanged(page) {
+                if (!page) return window.location.hash = window.location.hash || '#/sheetList';
+                this.page = page;
+            }
+
+            _logIn() {
+                this.$.auth.signInWithPopup()
+                .then(function(response) {
+                    console.log(response);
+                })
+                .catch(function(error) {
+                    console.log(error);
+                });
+            }
+
+            _logOut() {
+                this.$.auth.signOut()
+                .then(function(response) {
+                    console.log(response);
+                })
+                .catch(function(error) {
+                    console.log(error);
+                });
+            }
+        }
+
+        window.customElements.define(SndApp.is, SndApp);
+    </script>
+</dom-module>
+
