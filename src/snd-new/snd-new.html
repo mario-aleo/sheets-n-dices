@@ -8,12 +8,16 @@
 
 <link rel="import" href="../../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../../bower_components/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower_components/paper-item/paper-item.html">
 
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
 
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
+
 <link rel="import" href="../../bower_components/paper-fab/paper-fab.html">
 <link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
-
 
 
 <dom-module id="snd-new">
@@ -71,6 +75,23 @@
                 width: 100%;
                 padding: 16px 0;
             }
+
+            #dependencyDialog {
+                position: fixed;
+                z-index: 103;
+            }
+
+            .dependency-overlay::after {
+                content:"&nbsp;";
+                display: block;
+                position: fixed;
+                width: 100%;
+                height: 100%;
+                top: 0;
+                left: 0;
+                z-index: 102;
+                background-color: rgba(0,0,0,0.7)
+            }
         </style>
 
         <paper-tabs 
@@ -98,6 +119,7 @@
         </paper-tabs>
 
         <iron-pages
+            id="teste"
             selected="{{ tabSelected }}">
             <paper-card
                 elevation="2">
@@ -334,6 +356,70 @@
             icon="save"
             on-tap="_newSheet">
         </paper-fab>
+
+
+        <paper-card
+            id="dependencyDialog"
+            elevation="0">
+            <div class="card-content">
+                <paper-dropdown-menu
+                    label="Location">
+                    <paper-listbox
+                        slot="dropdown-content"
+                        class="dropdown-content"
+                        attr-for-selected="location"
+                        selected="{{ dependencyLocation }}">
+                        <paper-item
+                            location="statusList">
+                            Status
+                        </paper-item>
+                        <paper-item
+                            location="resourcesList">
+                            Resources
+                        </paper-item>
+                        <paper-item
+                            location="defensesList">
+                            Defenses
+                        </paper-item>
+                        <paper-item
+                            location="skillsList">
+                            Skills
+                        </paper-item>
+                    </paper-listbox>
+                </paper-dropdown-menu>
+                <paper-dropdown-menu
+                    label="Dependency">
+                    <paper-listbox
+                        slot="dropdown-content"
+                        class="dropdown-content"
+                        selected="{{ dependency }}">
+                        <template
+                            id="dependencyOptions"
+                            is="dom-repeat"
+                            items="[[ newSheet.statusList ]]"
+                            as="attr"
+                            mutable-data>
+                            <paper-item attr="[[ attr.name ]]">
+                                [[ attr.name ]]
+                            </paper-item>
+                        </template>
+                    </paper-listbox>
+                </paper-dropdown-menu>
+            </div>
+            <div class="card-actions">
+                <paper-button
+                    on-tap="_addDependency"
+                    class="delete-paper-button">
+                    Cancel
+                </paper-button>
+                <paper-button
+                    on-tap="_cancelDependency"
+                    auto-focus
+                    class="add-paper-button">
+                    Confirm
+                </paper-button>
+            </div>
+        </paper-card>
     </template>
 
     <script>
@@ -350,19 +436,47 @@
                         type: Object,
                         value: new Sheet(),
                         notify: true
+                    },
+                    dependencyAddDialogOpened: {
+                        type: Boolean,
+                        value: false
+                    },
+                    dependencyLocation: {
+                        type: String,
+                        value: "statusList"
+                    },
+                    dependencyAddDialogReason: {
+                        type: Boolean
                     }
                 };
             }
 
             static get observers() {
                 return [
-                    // '_newSheetChanged(newSheet.*)'
+                    '_dependencyAddDialogOpenedChanged(dependencyAddDialogOpened)',
+                    '_dependencyAddDialogReasonChanged(dependencyAddDialogReason)',
+                    '_dependencyLocationChanged(dependencyLocation)'
                 ];
             }
 
-            // _newSheetChanged(newSheet) {
-            //     console.log(newSheet);
-            // }
+            _dependencyAddDialogOpenedChanged(dependencyAddDialogOpened) {
+                if (dependencyAddDialogOpened) this.$.teste.classList.add("dependency-overlay");
+                else this.$.teste.classList.remove("dependency-overlay");
+                this.$.dependencyOptions.render();
+            }
+
+            _dependencyAddDialogReasonChanged(dependencyAddDialogReason) {
+                console.log(dependencyAddDialogReason);
+            }
+
+            _dependencyLocationChanged(dependencyLocation) {
+                this.$.dependencyOptions.items = this.newSheet[dependencyLocation];
+                this.$.dependencyOptions.render();
+            }
+
+            _addStatusDependency() {
+                this.dependencyAddDialogOpened = true;
+            }
 
             _addStatus() {
                 this.push('newSheet.statusList', new Status());
@@ -557,7 +671,7 @@
                 this.levelModifier = 0;
                 this.persistBonus = 0;
                 this.volatileBonus = 0;
-                this.dependencyList = [ new Dependency() ];
+                this.dependencyList = [ ];
             }
         };
 
@@ -569,15 +683,15 @@
                 this.levelModifier = 0.5;
                 this.persistBonus = 0;
                 this.volatileBonus = 0;
-                this.dependencyList = [ new Dependency() ]
+                this.dependencyList = [ ]
             }
         };
 
         class Dependency {
-            constructor() {
-                this.location = "None";
-                this.name = "None";
-                this.modifier = 0;
+            constructor(location, name, value) {
+                this.location = location;
+                this.name = name;
+                this.modifier = value || 0;
             }
         };
 
