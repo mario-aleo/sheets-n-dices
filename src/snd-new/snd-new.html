@@ -186,52 +186,7 @@
                                 items="[[ status.dependencyList ]]"
                                 as="dependency">
                                 <div>
-                                    <!--<paper-dropdown-menu
-                                        label="Location">
-                                        <paper-listbox
-                                            slot="dropdown-content"
-                                            class="dropdown-content"
-                                            attr-for-selected="location"
-                                            selected="{{ dependency.location }}">
-                                            <paper-item
-                                                location="statusList">
-                                                Status
-                                            </paper-item>
-                                            <paper-item
-                                                location="resourcesList">
-                                                Resources
-                                            </paper-item>
-                                            <paper-item
-                                                location="defensesList">
-                                                Defenses
-                                            </paper-item>
-                                            <paper-item
-                                                location="skillsList">
-                                                Skills
-                                            </paper-item>
-                                        </paper-listbox>
-                                    </paper-dropdown-menu>-->
                                     [[ dependency.location ]]
-                                    <paper-dropdown-menu
-                                        label="Dependency">
-                                        <paper-listbox
-                                            slot="dropdown-content"
-                                            class="dropdown-content"
-                                            attr-for-selected="name"
-                                            selected="{{ dependency.name }}"
-                                            mutable-data>
-                                            <template
-                                                id="dependencyOptions"
-                                                is="dom-repeat"
-                                                items="[[ newSheet.statusList ]]"
-                                                as="attr"
-                                                mutable-data>
-                                                <paper-item name="[[ attr.name ]]">
-                                                    [[ attr.name ]]
-                                                </paper-item>
-                                            </template>
-                                        </paper-listbox>
-                                    </paper-dropdown-menu>
                                     [[ dependency.name ]]
                                     [[ dependency.modifier ]]
                                 </div>
@@ -397,7 +352,7 @@
             on-tap="_newSheet">
         </paper-fab>
 
-        <!--<paper-dialog
+        <paper-dialog
             id="dependencyDialog"
             opened="{{ dependencyDialogOpened }}">
             <div>
@@ -430,15 +385,13 @@
                 <paper-dropdown-menu
                     label="Dependency">
                     <paper-listbox
+                        id="dependencyList"
                         slot="dropdown-content"
                         class="dropdown-content"
                         attr-for-selected="name"
-                        selected="{{ dependecyName }}">
-                        <paper-item name="None">
-                            None
-                        </paper-item>
+                        selected="{{ dependencyName }}">
                         <template
-                            id="dependencyOptions"
+                            id="dependencyListOptions"
                             is="dom-repeat"
                             items="[[ newSheet.statusList ]]"
                             as="attr"
@@ -462,7 +415,7 @@
                     Add
                 </paper-button>
             </div>
-        </paper-dialog>-->
+        </paper-dialog>
     </template>
 
     <script>
@@ -475,49 +428,50 @@
                         type: Number,
                         value: 0
                     },
+
                     newSheet: {
                         type: Object,
                         value: new Sheet(),
                         notify: true
+                    },
+                    
+                    dependencyDialogOpened: {
+                        type: Boolean,
+                        value: false
+                    },
+                    dependencyLocation: {
+                        type: String,
+                        value: "statusList"
+                    },
+                    dependencyName: {
+                        type: String
                     }
-                    // dependencyDialogOpened: {
-                    //     type: Boolean,
-                    //     value: false
-                    // },
-                    // dependencyLocation: {
-                    //     type: String,
-                    //     value: "statusList"
-                    // },
-                    // dependecyName: {
-                    //     type: String,
-                    //     value: "None"
-                    // }
                 };
             }
 
             static get observers() {
                 return [
-                    // '_dependencyDialogOpenedChanged(dependencyDialogOpened)',
-                    // '_dependencyLocationChanged(dependencyLocation)'
+                    '_dependencyDialogOpenedChanged(dependencyDialogOpened)',
+                    '_dependencyLocationChanged(dependencyLocation)'
                 ];
             }
 
             /*
              *  Observers
              */
-            // _dependencyDialogOpenedChanged(dependencyDialogOpened) {
-            //     if (dependencyDialogOpened) this.$.ironPages.classList.add("dependency-overlay");
-            //     else this.$.ironPages.classList.remove("dependency-overlay");
-            //     this.$.dependencyOptions.render();
-            //     return;
-            // }
+            _dependencyDialogOpenedChanged(dependencyDialogOpened) {
+                if (dependencyDialogOpened) this.$.ironPages.classList.add("dependency-overlay");
+                else this.$.ironPages.classList.remove("dependency-overlay");
+                this.$.dependencyListOptions.render();
+                return;
+            }
 
-            // _dependencyLocationChanged(dependencyLocation) {
-            //     this.$.dependencyOptions.items = this.newSheet[dependencyLocation];
-            //     this.$.dependencyOptions.render();
-            //     this.dependencyName = "None";
-            //     return;
-            // }
+            _dependencyLocationChanged(dependencyLocation) {
+                this.$.dependencyListOptions.items = this.newSheet[dependencyLocation];
+                this.$.dependencyListOptions.render();
+                this.set('dependencyName', '');
+                return;
+            }
             /*
              */
 
@@ -536,8 +490,7 @@
             }
 
             _addStatusDependency() {
-                // this.$.dependencyDialog.open();
-                this.push('newSheet.statusList.dependencyList', new Dependency());
+                this.$.dependencyDialog.open();
                 return;
             }
             /*
