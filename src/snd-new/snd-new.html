@@ -76,11 +76,6 @@
                 padding: 16px 0;
             }
 
-            #dependencyDialog {
-                position: fixed;
-                z-index: 103;
-            }
-
             .dependency-overlay::after {
                 content:"&nbsp;";
                 display: block;
@@ -119,7 +114,7 @@
         </paper-tabs>
 
         <iron-pages
-            id="teste"
+            id="ironPages"
             selected="{{ tabSelected }}">
             <paper-card
                 elevation="2">
@@ -191,7 +186,52 @@
                                 items="[[ status.dependencyList ]]"
                                 as="dependency">
                                 <div>
+                                    <!--<paper-dropdown-menu
+                                        label="Location">
+                                        <paper-listbox
+                                            slot="dropdown-content"
+                                            class="dropdown-content"
+                                            attr-for-selected="location"
+                                            selected="{{ dependency.location }}">
+                                            <paper-item
+                                                location="statusList">
+                                                Status
+                                            </paper-item>
+                                            <paper-item
+                                                location="resourcesList">
+                                                Resources
+                                            </paper-item>
+                                            <paper-item
+                                                location="defensesList">
+                                                Defenses
+                                            </paper-item>
+                                            <paper-item
+                                                location="skillsList">
+                                                Skills
+                                            </paper-item>
+                                        </paper-listbox>
+                                    </paper-dropdown-menu>-->
                                     [[ dependency.location ]]
+                                    <paper-dropdown-menu
+                                        label="Dependency">
+                                        <paper-listbox
+                                            slot="dropdown-content"
+                                            class="dropdown-content"
+                                            attr-for-selected="name"
+                                            selected="{{ dependency.name }}"
+                                            mutable-data>
+                                            <template
+                                                id="dependencyOptions"
+                                                is="dom-repeat"
+                                                items="[[ newSheet.statusList ]]"
+                                                as="attr"
+                                                mutable-data>
+                                                <paper-item name="[[ attr.name ]]">
+                                                    [[ attr.name ]]
+                                                </paper-item>
+                                            </template>
+                                        </paper-listbox>
+                                    </paper-dropdown-menu>
                                     [[ dependency.name ]]
                                     [[ dependency.modifier ]]
                                 </div>
@@ -357,11 +397,10 @@
             on-tap="_newSheet">
         </paper-fab>
 
-
-        <paper-card
+        <!--<paper-dialog
             id="dependencyDialog"
-            elevation="0">
-            <div class="card-content">
+            opened="{{ dependencyDialogOpened }}">
+            <div>
                 <paper-dropdown-menu
                     label="Location">
                     <paper-listbox
@@ -387,39 +426,43 @@
                         </paper-item>
                     </paper-listbox>
                 </paper-dropdown-menu>
+                [[ dependencyLocation ]]
                 <paper-dropdown-menu
                     label="Dependency">
                     <paper-listbox
                         slot="dropdown-content"
                         class="dropdown-content"
-                        selected="{{ dependency }}">
+                        attr-for-selected="name"
+                        selected="{{ dependecyName }}">
+                        <paper-item name="None">
+                            None
+                        </paper-item>
                         <template
                             id="dependencyOptions"
                             is="dom-repeat"
                             items="[[ newSheet.statusList ]]"
                             as="attr"
                             mutable-data>
-                            <paper-item attr="[[ attr.name ]]">
+                            <paper-item name="[[ attr.name ]]">
                                 [[ attr.name ]]
                             </paper-item>
                         </template>
                     </paper-listbox>
                 </paper-dropdown-menu>
+                [[ dependecyName ]]
             </div>
-            <div class="card-actions">
+            <div class="buttons">
                 <paper-button
-                    on-tap="_addDependency"
-                    class="delete-paper-button">
+                    id="dependencyDialogCancel">
                     Cancel
                 </paper-button>
                 <paper-button
-                    on-tap="_cancelDependency"
-                    auto-focus
-                    class="add-paper-button">
-                    Confirm
+                    id="dependencyDialogConfirm"
+                    autofocus>
+                    Add
                 </paper-button>
             </div>
-        </paper-card>
+        </paper-dialog>-->
     </template>
 
     <script>
@@ -436,84 +479,121 @@
                         type: Object,
                         value: new Sheet(),
                         notify: true
-                    },
-                    dependencyAddDialogOpened: {
-                        type: Boolean,
-                        value: false
-                    },
-                    dependencyLocation: {
-                        type: String,
-                        value: "statusList"
-                    },
-                    dependencyAddDialogReason: {
-                        type: Boolean
                     }
+                    // dependencyDialogOpened: {
+                    //     type: Boolean,
+                    //     value: false
+                    // },
+                    // dependencyLocation: {
+                    //     type: String,
+                    //     value: "statusList"
+                    // },
+                    // dependecyName: {
+                    //     type: String,
+                    //     value: "None"
+                    // }
                 };
             }
 
             static get observers() {
                 return [
-                    '_dependencyAddDialogOpenedChanged(dependencyAddDialogOpened)',
-                    '_dependencyAddDialogReasonChanged(dependencyAddDialogReason)',
-                    '_dependencyLocationChanged(dependencyLocation)'
+                    // '_dependencyDialogOpenedChanged(dependencyDialogOpened)',
+                    // '_dependencyLocationChanged(dependencyLocation)'
                 ];
             }
 
-            _dependencyAddDialogOpenedChanged(dependencyAddDialogOpened) {
-                if (dependencyAddDialogOpened) this.$.teste.classList.add("dependency-overlay");
-                else this.$.teste.classList.remove("dependency-overlay");
-                this.$.dependencyOptions.render();
-            }
+            /*
+             *  Observers
+             */
+            // _dependencyDialogOpenedChanged(dependencyDialogOpened) {
+            //     if (dependencyDialogOpened) this.$.ironPages.classList.add("dependency-overlay");
+            //     else this.$.ironPages.classList.remove("dependency-overlay");
+            //     this.$.dependencyOptions.render();
+            //     return;
+            // }
 
-            _dependencyAddDialogReasonChanged(dependencyAddDialogReason) {
-                console.log(dependencyAddDialogReason);
-            }
+            // _dependencyLocationChanged(dependencyLocation) {
+            //     this.$.dependencyOptions.items = this.newSheet[dependencyLocation];
+            //     this.$.dependencyOptions.render();
+            //     this.dependencyName = "None";
+            //     return;
+            // }
+            /*
+             */
 
-            _dependencyLocationChanged(dependencyLocation) {
-                this.$.dependencyOptions.items = this.newSheet[dependencyLocation];
-                this.$.dependencyOptions.render();
-            }
-
-            _addStatusDependency() {
-                this.dependencyAddDialogOpened = true;
-            }
-
+            /*
+             *  Status Methods
+             */
             _addStatus() {
                 this.push('newSheet.statusList', new Status());
+                return;
             }
 
             _deleteStatus(event) {
                 let index = event.detail.sourceEvent.target.index;
                 this.splice('newSheet.statusList', index, 1);
+                return;
             }
 
+            _addStatusDependency() {
+                // this.$.dependencyDialog.open();
+                this.push('newSheet.statusList.dependencyList', new Dependency());
+                return;
+            }
+            /*
+             */
+
+            /*
+             *  Resources Methods
+             */
             _addResource() {
                 this.push('newSheet.resourcesList', new StatusBased());
+                return;
             }
 
             _deleteResource(event) {
                 let index = event.detail.sourceEvent.target.index;
                 this.splice('newSheet.resourcesList', index, 1);
+                return;
             }
+            /*
+             */
 
+            /*
+             *  Defenses Methods
+             */
             _addDefense() {
                 this.push('newSheet.defensesList', new StatusBased());
+                return;
             }
 
             _deleteDefense(event) {
                 let index = event.detail.sourceEvent.target.index;
                 this.splice('newSheet.defensesList', index, 1);
+                return;
             }
+            /*
+             */
 
+            /*
+             *  Skills Methods
+             */
             _addSkill() {
                 this.push('newSheet.skillsList', new StatusBased());
+                return;
             }
 
             _deleteSkill(event) {
                 let index = event.detail.sourceEvent.target.index;
                 this.splice('newSheet.skillsList', index, 1);
+                return;
             }
+            /*
+             */
 
+            /*
+             *  Sheet Object Functions
+             */
             _newSheet() {
                 // Each Status, Resource, Defense and Skill and SUM
                 const element = this;
@@ -563,16 +643,7 @@
                     }
                 );
                 console.log(this.newSheet);
-            }
-
-            _numberTypeCheck(number) {
-                if (isNaN(parseInt(number))) return "0";
-                else return number;
-            }
-
-            _returnStatusModifier(statusValue, minimumStatusModifierValue) {
-                if (statusValue >= minimumModifier) return parseInt((statusValue - minimumStatusModifierValue) / 2);
-                else return parseInt((statusValue - minimumStatusModifierValue) / 2 - 0.5);
+                return;
             }
 
             _objectCalculation(obj) {
@@ -641,9 +712,25 @@
                     console.log("Init " + obj.name + " the Element Value: " + obj.value);
                     console.log("End " + obj.name + " Value Calculation: " + obj.value);
                 }
+                return;
             }
+
+            _numberTypeCheck(number) {
+                if (isNaN(parseInt(number))) return "0";
+                else return number;
+            }
+
+            _returnStatusModifier(statusValue, minimumStatusModifierValue) {
+                if (statusValue >= minimumModifier) return parseInt((statusValue - minimumStatusModifierValue) / 2);
+                else return parseInt((statusValue - minimumStatusModifierValue) / 2 - 0.5);
+            }
+            /*
+             */
         }
 
+        /*
+         *  Sheet Object Definitions
+         */
         class Sheet {
             constructor() {
                 this.name = "";
@@ -694,6 +781,8 @@
                 this.modifier = value || 0;
             }
         };
+        /*
+         */
 
         window.customElements.define(SndNew.is, SndNew);
     </script>
