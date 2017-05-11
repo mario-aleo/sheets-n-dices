@@ -192,6 +192,7 @@
                                 </div>
                             </template>
                             <paper-button
+                                index="[[index]]"
                                 on-tap="_addStatusDependency"
                                 class="dependency-paper-button">
                                 Add Dependency
@@ -402,15 +403,23 @@
                         </template>
                     </paper-listbox>
                 </paper-dropdown-menu>
-                [[ dependecyName ]]
+                [[ dependencyName ]]
+                <paper-input
+                    always-float-label
+                    label="Value"
+                    value="{{ dependencyValue }}">
+                </paper-input>
+                [[ dependencyValue ]]
             </div>
             <div class="buttons">
                 <paper-button
-                    id="dependencyDialogCancel">
+                    id="dependencyDialogCancel"
+                    on-tap="_cancel">
                     Cancel
                 </paper-button>
                 <paper-button
                     id="dependencyDialogConfirm"
+                    on-tap="_confirm"
                     autofocus>
                     Add
                 </paper-button>
@@ -434,7 +443,7 @@
                         value: new Sheet(),
                         notify: true
                     },
-                    
+
                     dependencyDialogOpened: {
                         type: Boolean,
                         value: false
@@ -445,6 +454,9 @@
                     },
                     dependencyName: {
                         type: String
+                    },
+                    dependencyValue: {
+                        type: Number
                     }
                 };
             }
@@ -478,7 +490,7 @@
             /*
              *  Status Methods
              */
-            _addStatus() {
+            _addStatus(event) {
                 this.push('newSheet.statusList', new Status());
                 return;
             }
@@ -489,9 +501,31 @@
                 return;
             }
 
-            _addStatusDependency() {
+            _addStatusDependency(event) {
+                let index = event.detail.sourceEvent.target.index,
+                    element = this;
+                this._cancel = tapEvent => {
+                    this.set('dependencyLocation', 'statusList');
+                    this.set('dependencyName', '');
+                    this.set('dependencyValue', 0);
+                    this.$.dependencyDialog.close();
+                }
+                this._confirm = tapEvent => {
+                    this.push('newSheet.statusList.' + index + '.dependencyList', new Dependency(element.dependencyLocation, element.dependencyName, element.dependencyValue));
+                    this.set('dependencyLocation', 'statusList');
+                    this.set('dependencyName', '');
+                    this.set('dependencyValue', 0);
+                    this.$.dependencyDialog.close();
+                }
                 this.$.dependencyDialog.open();
                 return;
+            }
+
+            _editStatusDependency(event) {
+                this.set('dependencyLocation', 'statusList');
+                this.set('dependencyName', '');
+                this.set('dependencyValue', 0);
+                _addStatusDependency();
             }
             /*
              */
@@ -499,7 +533,7 @@
             /*
              *  Resources Methods
              */
-            _addResource() {
+            _addResource(event) {
                 this.push('newSheet.resourcesList', new StatusBased());
                 return;
             }
@@ -515,7 +549,7 @@
             /*
              *  Defenses Methods
              */
-            _addDefense() {
+            _addDefense(event) {
                 this.push('newSheet.defensesList', new StatusBased());
                 return;
             }
@@ -531,7 +565,7 @@
             /*
              *  Skills Methods
              */
-            _addSkill() {
+            _addSkill(event) {
                 this.push('newSheet.skillsList', new StatusBased());
                 return;
             }
@@ -547,7 +581,7 @@
             /*
              *  Sheet Object Functions
              */
-            _newSheet() {
+            _newSheet(event) {
                 // Each Status, Resource, Defense and Skill and SUM
                 const element = this;
                 let dependencyChain = [];
