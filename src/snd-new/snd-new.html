@@ -1,4 +1,6 @@
 <link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/polymer/lib/elements/dom-if.html">
+<link rel="import" href="../../bower_components/polymer/lib/elements/dom-repeat.html">
 
 <link rel="import" href="../../bower_components/paper-tabs/paper-tab.html">
 <link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
@@ -162,7 +164,8 @@
                 <template
                     is="dom-repeat"
                     items="[[ newSheet.statusList ]]"
-                    as="status">
+                    as="status"
+                    index-as="statusIndex">
                     <paper-card
                         elevation="2">
                         <div class="card-content">
@@ -184,16 +187,20 @@
                             <template
                                 is="dom-repeat"
                                 items="[[ status.dependencyList ]]"
-                                as="dependency">
-                                <div>
+                                as="dependency"
+                                index-as="dependencyIndex">
+                                <div 
+                                    on-tap="_editStatusDependency"
+                                    data-status-index$="[[ statusIndex ]]"
+                                    data-dependency-index$="[[ dependencyIndex ]]">
                                     [[ dependency.location ]]
                                     [[ dependency.name ]]
                                     [[ dependency.modifier ]]
                                 </div>
                             </template>
                             <paper-button
-                                index="[[index]]"
                                 on-tap="_addStatusDependency"
+                                data-status-index$="[[ statusIndex ]]"
                                 class="dependency-paper-button">
                                 Add Dependency
                             </paper-button>
@@ -468,6 +475,10 @@
                 ];
             }
 
+            _teste(event) {
+                console.log(event.target.dataset);
+            }
+
             /*
              *  Observers
              */
@@ -496,7 +507,7 @@
             }
 
             _deleteStatus(event) {
-                let index = event.detail.sourceEvent.target.index;
+                let index = event.target.dataset.statusIndex;
                 this.splice('newSheet.statusList', index, 1);
                 return;
             }
@@ -728,9 +739,9 @@
                 this.hasMinimumStatusModifierValue = false;
                 this.minimumStatusModifierValue = 10;
                 this.statusList = [ new Status("Vitality") ];
-                this.resourcesList = [ new StatusBased("HP") ];
-                this.defensesList = [ new StatusBased("Armor") ];
-                this.skillsList = [ new StatusBased("Diplomacy") ];
+                this.resourcesList = [ new Status("HP") ];
+                this.defensesList = [ new Status("Armor") ];
+                this.skillsList = [ new Status("Diplomacy") ];
                 this.persistBonusList = [];
                 this.volatileBonusList = [];
                 this.notesList = [];
@@ -746,18 +757,6 @@
                 this.persistBonus = 0;
                 this.volatileBonus = 0;
                 this.dependencyList = [ ];
-            }
-        };
-
-        class StatusBased {
-            constructor(name) {
-                this.name = name;
-                this.value = 0;
-                this.baseValue = 0;
-                this.levelModifier = 0.5;
-                this.persistBonus = 0;
-                this.volatileBonus = 0;
-                this.dependencyList = [ ]
             }
         };
 

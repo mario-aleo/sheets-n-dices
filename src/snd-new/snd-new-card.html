@@ -1,0 +1,96 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/polymer/lib/elements/dom-if.html">
+<link rel="import" href="../../bower_components/polymer/lib/elements/dom-repeat.html">
+
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+
+<dom-module id="snd-new-card">
+    <template>
+        <style>
+            :host {
+                display: block;
+                height: 100%;
+                width: 100%;
+            }
+        </style>
+
+        <paper-card
+            elevation="2">
+            <div class="card-content">
+                <paper-input
+                    always-float-label
+                    label="Name"
+                    value="{{ statusItem.name }}">
+                </paper-input>
+                <paper-input
+                    always-float-label
+                    label="Base Value"
+                    value="{{ statusItem.baseValue }}">
+                </paper-input>
+                <paper-input
+                    always-float-label
+                    label="Level Modifier"
+                    value="{{ statusItem.levelModifier }}">
+                </paper-input>
+                <template
+                    is="dom-repeat"
+                    items="[[ statusItem.dependencyList ]]"
+                    as="dependency">
+                    <div>
+                        [[ dependency.location ]]
+                        [[ dependency.name ]]
+                        [[ dependency.modifier ]]
+                    </div>
+                </template>
+                <paper-button
+                    on-tap="_addStatusDependency"
+                    class="dependency-paper-button">
+                    Add Dependency
+                </paper-button>
+            </div>
+            <div class="card-actions">
+                <paper-button
+                    on-tap="_deleteStatus"
+                    class="delete-paper-button">
+                    Delete Status
+                </paper-button>
+            </div>
+        </paper-card>
+    </template>
+
+    <script>
+        class SndNewCard extends Polymer.Element {
+            static get is() { return 'snd-new-card'; }
+
+            static get properties() {
+                return {
+                    statusItem: {
+                        type: Object
+                    },
+                    statusList: {
+                        type: Array
+                    },
+                    resoucersList: {
+                        type: Array
+                    },
+                    defensesList: {
+                        type: Array
+                    },
+                    skillsList: {
+                        type: Array
+                    }
+                };
+            }
+
+            static get observers() {
+                return [
+                ];
+            }
+        }
+
+        window.customElements.define(SndNewCard.is, SndNewCard);
+    </script>
+</dom-module>
+
