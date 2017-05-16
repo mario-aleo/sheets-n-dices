@@ -69,11 +69,14 @@
                 flex-direction: row;
                 align-items: center;
             }
-            .add-paper-button {
+            .primary-paper-button {
                 background-color: var(--primary-color);
                 color: #FFF;
             }
-            .delete-paper-button {
+            .secondary-paper-button {
+                color: var(--secondary-color);
+            }
+            .red-paper-button {
                 color: #FF5252
             }
             .add-button-container {
@@ -214,7 +217,7 @@
                                 on-tap="_addStatusDependency"
                                 data-status-index$="[[ statusIndex ]]"
                                 data-status-location="statusList"
-                                class="dependency-paper-button">
+                                class="secondary-paper-button">
                                 Add Dependency
                             </paper-button>
                         </div>
@@ -223,7 +226,7 @@
                                 on-tap="_deleteStatus"
                                 data-status-index$="[[ statusIndex ]]"
                                 data-status-location="statusList"
-                                class="delete-paper-button">
+                                class="red-paper-button">
                                 Delete Status
                             </paper-button>
                         </div>
@@ -234,7 +237,7 @@
                         raised
                         on-tap="_addStatus"
                         data-status-location="statusList"
-                        class="add-paper-button">
+                        class="primary-paper-button">
                         Add Status
                     </paper-button>
                 </div>
@@ -283,7 +286,7 @@
                                 on-tap="_addStatusDependency"
                                 data-status-index$="[[ resourcesIndex ]]"
                                 data-status-location="resourcesList"
-                                class="dependency-paper-button">
+                                class="secondary-paper-button">
                                 Add Dependency
                             </paper-button>
                         </div>
@@ -292,7 +295,7 @@
                                 on-tap="_deleteStatus"
                                 data-status-index$="[[ resourcesIndex ]]"
                                 data-status-location="resourcesList"
-                                class="delete-paper-button">
+                                class="red-paper-button">
                                 Delete Resoruce
                             </paper-button>
                         </div>
@@ -303,7 +306,7 @@
                         raised
                         on-tap="_addStatus"
                         data-status-location="resourcesList"
-                        class="add-paper-button">
+                        class="primary-paper-button">
                         Add Resource
                     </paper-button>
                 </div>
@@ -352,7 +355,7 @@
                                 on-tap="_addStatusDependency"
                                 data-status-index$="[[ defensesIndex ]]"
                                 data-status-location="defensesList"
-                                class="dependency-paper-button">
+                                class="secondary-paper-button">
                                 Add Dependency
                             </paper-button>
                         </div>
@@ -361,7 +364,7 @@
                                 on-tap="_deleteStatus"
                                 data-status-index$="[[ defensesIndex ]]"
                                 data-status-location="defensesList"
-                                class="delete-paper-button">
+                                class="red-paper-button">
                                 Delete Defense
                             </paper-button>
                         </div>
@@ -372,7 +375,7 @@
                         raised
                         on-tap="_addStatus"
                         data-status-location="defensesList"
-                        class="add-paper-button">
+                        class="primary-paper-button">
                         Add Defense
                     </paper-button>
                 </div>
@@ -421,7 +424,7 @@
                                 on-tap="_addStatusDependency"
                                 data-status-index$="[[ skillsIndex ]]"
                                 data-status-location="skillsList"
-                                class="dependency-paper-button">
+                                class="secondary-paper-button">
                                 Add Dependency
                             </paper-button>
                         </div>
@@ -430,7 +433,7 @@
                                 on-tap="_deleteStatus"
                                 data-status-index$="[[ skillsIndex ]]"
                                 data-status-location="skillsList"
-                                class="delete-paper-button">
+                                class="red-paper-button">
                                 Delete Skill
                             </paper-button>
                         </div>
@@ -441,7 +444,7 @@
                         raised
                         on-tap="_addStatus"
                         data-status-location="skillsList"
-                        class="add-paper-button">
+                        class="primary-paper-button">
                         Add Skill
                     </paper-button>
                 </div>
@@ -514,15 +517,17 @@
             </div>
             <div class="buttons">
                 <paper-button
+                    class="red-paper-button"
                     id="dependencyDialogCancel"
                     on-tap="_cancel">
                     Cancel
                 </paper-button>
                 <paper-button
+                    class="secondary-paper-button"
                     id="dependencyDialogConfirm"
                     on-tap="_confirm"
                     autofocus>
-                    Add
+                    Confirm
                 </paper-button>
             </div>
         </paper-dialog>
@@ -810,16 +815,16 @@
                     });
                     // Init the Element Value
                     obj.value = parseInt( parseInt(element._numberTypeCheck(obj.baseValue)) + parseInt(element._numberTypeCheck(element.newSheet.level)) * parseFloat(element._numberTypeCheck(obj.levelModifier)) );
-                    console.log("Init " + obj.name + " the Element Value: " + obj.value);
+                    console.log("Initial " + obj.name + " Value: " + obj.value);
                     // Update the Element Value with the dependencyElements Values
                     obj.dependencyList.forEach(function (dependencyItem) {
                         dependencyElements.forEach(function (dependencyElement){
                             if (dependencyElement.name == dependencyItem.name) {
-                                if (dependencyElement.location == "statusList") {
+                                if (dependencyItem.location == "statusList") {
                                     if (element.newSheet.hasMinimumStatusModifierValue) obj.value = parseInt( element._numberTypeCheck(obj.value) + _returnStatusModifier(parseInt(element._numberTypeCheck(dependencyElement.value)), element.newSheet.minimumStatusModifierValue));
-                                    else obj.value = parseInt( element._numberTypeCheck(obj.value) + parseInt(element._numberTypeCheck(dependencyElement.value)) * parseFloat(element._numberTypeCheck(dependencyItem.value)) );
+                                    else obj.value = parseInt( element._numberTypeCheck(obj.value) + parseInt(element._numberTypeCheck(dependencyElement.value)) * parseFloat(element._numberTypeCheck(dependencyItem.modifier)) );
                                 } else {
-                                    obj.value = parseInt( element._numberTypeCheck(obj.value) + parseInt(element._numberTypeCheck(dependencyElement.value)) * parseFloat(element._numberTypeCheck(dependencyItem.value)) );
+                                    obj.value = parseInt( element._numberTypeCheck(obj.value) + parseInt(element._numberTypeCheck(dependencyElement.value)) * parseFloat(element._numberTypeCheck(dependencyItem.modifier)) );
                                 }
                                 console.log("Update " + obj.name + " Value with " + dependencyElement.name +  " Value: " + obj.value);
                             }
@@ -829,8 +834,8 @@
                     dependencyElements = [];
                     console.log("End " + obj.name + " Value Calculation: " + obj.value);
                 } else {
-                    obj.value = obj.baseValue;
-                    console.log("Init " + obj.name + " the Element Value: " + obj.value);
+                    obj.value = parseInt( parseInt(element._numberTypeCheck(obj.baseValue)) + parseInt(element._numberTypeCheck(element.newSheet.level)) * parseFloat(element._numberTypeCheck(obj.levelModifier)) );
+                    console.log("Init " + obj.name + " Value: " + obj.value);
                     console.log("End " + obj.name + " Value Calculation: " + obj.value);
                 }
                 return;
