@@ -193,26 +193,27 @@
                                 items="[[ status.dependencyList ]]"
                                 as="dependency"
                                 index-as="dependencyIndex">
-                                <div 
+                                <snd-chip
                                     on-tap="_editStatusDependency"
                                     data-status-index$="[[ statusIndex ]]"
+                                    data-status-location="statusList"
                                     data-dependency-index$="[[ dependencyIndex ]]">
-                                    <snd-chip>
-                                        [[ _dependencyChipName(dependency.name, dependency.location) ]]
-                                    </snd-chip>
-                                </div>
+                                    [[ _dependencyChipName(dependency.name, dependency.location) ]]
+                                </snd-chip>
                             </template>
                             <paper-button
                                 on-tap="_addStatusDependency"
                                 data-status-index$="[[ statusIndex ]]"
+                                data-status-location="statusList"
                                 class="dependency-paper-button">
                                 Add Dependency
                             </paper-button>
                         </div>
                         <div class="card-actions">
                             <paper-button
-                                index="[[index]]"
                                 on-tap="_deleteStatus"
+                                data-status-index$="[[ statusIndex ]]"
+                                data-status-location="statusList"
                                 class="delete-paper-button">
                                 Delete Status
                             </paper-button>
@@ -223,6 +224,7 @@
                     <paper-button
                         raised
                         on-tap="_addStatus"
+                        data-status-location="statusList"
                         class="add-paper-button">
                         Add Status
                     </paper-button>
@@ -550,37 +552,40 @@
                 }
                 return;
             }
-             /*
-              */
+            /*
+             */
 
             /*
-             *  Status Methods
+             *  Generic Functions
              */
             _addStatus(event) {
-                this.push('newSheet.statusList', new Status());
+                let path = 'newSheet.' + event.target.dataset.statusLocation;
+                this.push(path, new Status());
                 return;
             }
 
             _deleteStatus(event) {
-                let index = event.target.dataset.statusIndex;
-                this.splice('newSheet.statusList', index, 1);
+                let index = event.target.dataset.statusIndex,
+                    path = 'newSheet.' + event.target.dataset.statusLocation;
+                this.splice(path, index, 1);
                 return;
             }
 
             _addStatusDependency(event) {
                 let index = event.target.dataset.statusIndex,
+                    location = event.target.dataset.statusLocation,
                     element = this;
-                this.requestStatusDependencyLocation = 'statusList';
+                this.requestStatusDependencyLocation = location;
                 this.requestStatusDependencyName = this.newSheet.statusList[index].name;
                 this._cancel = tapEvent => {
-                    this.set('dependencyLocation', 'statusList');
+                    this.set('dependencyLocation', location);
                     this.set('dependencyName', '');
                     this.set('dependencyValue', 0);
                     this.$.dependencyDialog.close();
                 }
                 this._confirm = tapEvent => {
-                    this.push('newSheet.statusList.' + index + '.dependencyList', new Dependency(element.dependencyLocation, element.dependencyName, element.dependencyValue));
-                    this.set('dependencyLocation', 'statusList');
+                    this.push('newSheet.' + location + '.' + index + '.dependencyList', new Dependency(element.dependencyLocation, element.dependencyName, element.dependencyValue));
+                    this.set('dependencyLocation', location);
                     this.set('dependencyName', '');
                     this.set('dependencyValue', 0);
                     this.$.dependencyDialog.close();
@@ -590,58 +595,11 @@
             }
 
             _editStatusDependency(event) {
-                this.set('dependencyLocation', 'statusList');
+                console.log("_editStatusDependency");
+                this.set('dependencyLocation', location);
                 this.set('dependencyName', '');
                 this.set('dependencyValue', 0);
-                _addStatusDependency();
-            }
-            /*
-             */
-
-            /*
-             *  Resources Methods
-             */
-            _addResource(event) {
-                this.push('newSheet.resourcesList', new StatusBased());
-                return;
-            }
-
-            _deleteResource(event) {
-                let index = event.detail.sourceEvent.target.index;
-                this.splice('newSheet.resourcesList', index, 1);
-                return;
-            }
-            /*
-             */
-
-            /*
-             *  Defenses Methods
-             */
-            _addDefense(event) {
-                this.push('newSheet.defensesList', new StatusBased());
-                return;
-            }
-
-            _deleteDefense(event) {
-                let index = event.detail.sourceEvent.target.index;
-                this.splice('newSheet.defensesList', index, 1);
-                return;
-            }
-            /*
-             */
-
-            /*
-             *  Skills Methods
-             */
-            _addSkill(event) {
-                this.push('newSheet.skillsList', new StatusBased());
-                return;
-            }
-
-            _deleteSkill(event) {
-                let index = event.detail.sourceEvent.target.index;
-                this.splice('newSheet.skillsList', index, 1);
-                return;
+                this._addStatusDependency();
             }
             /*
              */
