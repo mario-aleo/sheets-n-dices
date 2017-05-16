@@ -60,6 +60,10 @@
                 bottom: 16px;
                 right: 16px;
             }
+            paper-input,
+            paper-dropdown-menu {
+                width: 100%;
+            }
             .paper-card-row {
                 display: flex;
                 flex-direction: row;
@@ -89,9 +93,6 @@
                 left: 0;
                 z-index: 102;
                 background-color: rgba(0,0,0,0.7)
-            }
-            .chip {
-
             }
         </style>
 
@@ -155,7 +156,6 @@
                             checked="{{ newSheet.hasMinimumStatusModifierValue }}">
                         </paper-checkbox>
                         <paper-input
-                            style="flex-grow: 1;"
                             always-float-label
                             label="Minimum Status Value Modifier"
                             value="{{ newSheet.minimumStatusModifierValue }}"
@@ -197,38 +197,9 @@
                                     on-tap="_editStatusDependency"
                                     data-status-index$="[[ statusIndex ]]"
                                     data-dependency-index$="[[ dependencyIndex ]]">
-                                    <template
-                                        is="dom-if"
-                                        if="{{_equals(dependency.location, 'statusList')}}"
-                                        restamp="true">
-                                        <snd-chip>
-                                            [[ dependency.name ]] on Status
-                                        </snd-chip>
-                                    </template>
-                                    <template
-                                        is="dom-if"
-                                        if="{{_equals(dependency.location, 'resourcesList')}}"
-                                        restamp="true">
-                                        <snd-chip>
-                                            [[ dependency.name ]] on Resources
-                                        </snd-chip>
-                                    </template>
-                                    <template
-                                        is="dom-if"
-                                        if="{{_equals(dependency.location, 'defensesList')}}"
-                                        restamp="true">
-                                        <snd-chip>
-                                            [[ dependency.name ]] on Defenses
-                                        </snd-chip>
-                                    </template>
-                                    <template
-                                        is="dom-if"
-                                        if="{{_equals(dependency.location, 'skillsList')}}"
-                                        restamp="true">
-                                        <snd-chip>
-                                            [[ dependency.name ]] on Skills
-                                        </snd-chip>
-                                    </template>
+                                    <snd-chip>
+                                        [[ _dependencyChipName(dependency.name, dependency.location) ]]
+                                    </snd-chip>
                                 </div>
                             </template>
                             <paper-button
@@ -422,7 +393,6 @@
                         </paper-item>
                     </paper-listbox>
                 </paper-dropdown-menu>
-                [[ dependencyLocation ]]
                 <paper-dropdown-menu
                     label="Dependency">
                     <paper-listbox
@@ -437,19 +407,19 @@
                             items="[[ newSheet.statusList ]]"
                             as="attr"
                             mutable-data>
-                            <paper-item name="[[ attr.name ]]">
+                            <paper-item 
+                                name="[[ attr.name ]]">
                                 [[ attr.name ]]
                             </paper-item>
                         </template>
                     </paper-listbox>
                 </paper-dropdown-menu>
-                [[ dependencyName ]]
                 <paper-input
+                    id="dependencyDialogValue"
                     always-float-label
                     label="Value"
                     value="{{ dependencyValue }}">
                 </paper-input>
-                [[ dependencyValue ]]
             </div>
             <div class="buttons">
                 <paper-button
@@ -484,6 +454,13 @@
                         notify: true
                     },
 
+                    requestStatusDependencyLocation: {
+                        type: String
+                    },
+                    requestStatusDependencyName: {
+                        type: String
+                    },
+
                     dependencyDialogOpened: {
                         type: Boolean,
                         value: false
@@ -504,16 +481,10 @@
             static get observers() {
                 return [
                     '_dependencyDialogOpenedChanged(dependencyDialogOpened)',
-                    '_dependencyLocationChanged(dependencyLocation)'
+                    '_dependencyLocationChanged(dependencyLocation)',
+                    '_dependencyNameChanged(dependencyName)',
+                    '_dependencyValueChanged(dependencyValue)'
                 ];
-            }
-
-            _teste(event) {
-                console.log(event.target.dataset);
-            }
-
-            _equals(valueA, valueB) {
-                return valueA == valueB;
             }
 
             /*
@@ -530,10 +501,57 @@
                 this.$.dependencyListOptions.items = this.newSheet[dependencyLocation];
                 this.$.dependencyListOptions.render();
                 this.set('dependencyName', '');
+                this._dependencyValueDisabled();
+                return;
+            }
+
+            _dependencyNameChanged() {
+                this._dependencyAddDisabled();
+                return;
+            }
+
+            _dependencyValueChanged() {
+                this._dependencyAddDisabled();
                 return;
             }
             /*
              */
+
+            /*
+             *  Calculate Value Functions
+             */
+            _dependencyChipName(dependencyName, dependencyLocation) {
+                let dependencyChip = dependencyName;
+                if (dependencyLocation == 'statusList') dependencyChip = dependencyChip + " on Status";
+                else if (dependencyLocation == 'recourcesList') dependencyChip = dependencyChip + " on Resources";
+                else if (dependencyLocation == 'defensesList') dependencyChip = dependencyChip + " on Defenses";
+                else dependencyChip = dependencyChip + " on Skills";
+                return dependencyChip;
+            }
+
+            _dependencyValueDisabled() {
+                if (this.dependencyLocation == 'statusList' && this.newSheet.hasMinimumStatusModifierValue) {
+                    this.$.dependencyDialogValue.disabled = true;
+                } else {
+                    this.$.dependencyDialogValue.disabled = false;
+                };
+                return;
+            }
+
+            _dependencyAddDisabled() {
+                if (this.dependencyLocation == this.requestStatusDependencyLocation && this.dependencyName == this.requestStatusDependencyName) {
+                    this.$.dependencyDialogConfirm.disabled = true;
+                } else if (!this.dependencyName) {
+                    this.$.dependencyDialogConfirm.disabled = true;
+                } else if (!this.dependencyValue && !this.newSheet.hasMinimumStatusModifierValue) {
+                    this.$.dependencyDialogConfirm.disabled = true;
+                } else {
+                    this.$.dependencyDialogConfirm.disabled = false;
+                }
+                return;
+            }
+             /*
+              */
 
             /*
              *  Status Methods
@@ -552,6 +570,8 @@
             _addStatusDependency(event) {
                 let index = event.target.dataset.statusIndex,
                     element = this;
+                this.requestStatusDependencyLocation = 'statusList';
+                this.requestStatusDependencyName = this.newSheet.statusList[index].name;
                 this._cancel = tapEvent => {
                     this.set('dependencyLocation', 'statusList');
                     this.set('dependencyName', '');
