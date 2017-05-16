@@ -821,7 +821,7 @@
                         dependencyElements.forEach(function (dependencyElement){
                             if (dependencyElement.name == dependencyItem.name) {
                                 if (dependencyItem.location == "statusList") {
-                                    if (element.newSheet.hasMinimumStatusModifierValue) obj.value = parseInt( element._numberTypeCheck(obj.value) + _returnStatusModifier(parseInt(element._numberTypeCheck(dependencyElement.value)), element.newSheet.minimumStatusModifierValue));
+                                    if (element.newSheet.hasMinimumStatusModifierValue) obj.value = parseInt( element._numberTypeCheck(obj.value) + element._returnStatusModifier(parseInt(element._numberTypeCheck(dependencyElement.value)), element.newSheet.minimumStatusModifierValue));
                                     else obj.value = parseInt( element._numberTypeCheck(obj.value) + parseInt(element._numberTypeCheck(dependencyElement.value)) * parseFloat(element._numberTypeCheck(dependencyItem.modifier)) );
                                 } else {
                                     obj.value = parseInt( element._numberTypeCheck(obj.value) + parseInt(element._numberTypeCheck(dependencyElement.value)) * parseFloat(element._numberTypeCheck(dependencyItem.modifier)) );
@@ -847,8 +847,13 @@
             }
 
             _returnStatusModifier(statusValue, minimumStatusModifierValue) {
-                if (statusValue >= minimumModifier) return parseInt((statusValue - minimumStatusModifierValue) / 2);
-                else return parseInt((statusValue - minimumStatusModifierValue) / 2 - 0.5);
+                let element = this;
+                if (parseInt(element._numberTypeCheck(statusValue)) >= parseInt(element._numberTypeCheck(minimumStatusModifierValue))) {
+                    return parseInt((parseInt(element._numberTypeCheck(statusValue)) - parseInt(element._numberTypeCheck(minimumStatusModifierValue))) / 2);
+                } 
+                else {
+                    return parseInt((parseInt(element._numberTypeCheck(statusValue)) - parseInt(element._numberTypeCheck(minimumStatusModifierValue))) / 2 - 0.5);
+                }
             }
             /*
              */
