@@ -136,26 +136,31 @@
                     <div class="card-content">
                         <paper-input
                             always-float-label
+                            type="text"
                             label="Name"
                             value="{{ newSheet.name }}">
                         </paper-input>
                         <paper-input
                             always-float-label
+                            type="text"
                             label="Class"
                             value="{{ newSheet.job }}">
                         </paper-input>
                         <paper-input
                             always-float-label
+                            type="text"
                             label="Race"
                             value="{{ newSheet.race }}">
                         </paper-input>
                         <paper-input
                             always-float-label
+                            type="number"
                             label="Level"
                             value="{{ newSheet.level }}">
                         </paper-input>
                         <paper-input
                             always-float-label
+                            type="text"
                             label="System"
                             value="{{ newSheet.system }}">
                         </paper-input>
@@ -165,6 +170,7 @@
                             </paper-checkbox>
                             <paper-input
                                 always-float-label
+                                type="number"
                                 label="Minimum Status Value Modifier"
                                 value="{{ newSheet.minimumStatusModifierValue }}"
                                 disabled="{{ !newSheet.hasMinimumStatusModifierValue }}">
@@ -185,16 +191,19 @@
                         <div class="card-content">
                             <paper-input
                                 always-float-label
+                                type="text"
                                 label="Name"
                                 value="{{ status.name }}">
                             </paper-input>
                             <paper-input
                                 always-float-label
+                                type="number"
                                 label="Base Value"
                                 value="{{ status.baseValue }}">
                             </paper-input>
                             <paper-input
                                 always-float-label
+                                type="number"
                                 label="Level Modifier"
                                 value="{{ status.levelModifier }}">
                             </paper-input>
@@ -254,16 +263,19 @@
                         <div class="card-content">
                             <paper-input
                                 always-float-label
+                                type="text"
                                 label="Name"
                                 value="{{ resouces.name }}">
                             </paper-input>
                             <paper-input
                                 always-float-label
+                                type="number"
                                 label="Base Value"
                                 value="{{ resouces.baseValue }}">
                             </paper-input>
                             <paper-input
                                 always-float-label
+                                type="number"
                                 label="Level Modifier"
                                 value="{{ resouces.levelModifier }}">
                             </paper-input>
@@ -323,16 +335,19 @@
                         <div class="card-content">
                             <paper-input
                                 always-float-label
+                                type="text"
                                 label="Name"
                                 value="{{ defenses.name }}">
                             </paper-input>
                             <paper-input
                                 always-float-label
+                                type="number"
                                 label="Base Value"
                                 value="{{ defenses.baseValue }}">
                             </paper-input>
                             <paper-input
                                 always-float-label
+                                type="number"
                                 label="Level Modifier"
                                 value="{{ defenses.levelModifier }}">
                             </paper-input>
@@ -392,16 +407,19 @@
                         <div class="card-content">
                             <paper-input
                                 always-float-label
+                                type="text"
                                 label="Name"
                                 value="{{ skills.name }}">
                             </paper-input>
                             <paper-input
                                 always-float-label
+                                type="number"
                                 label="Base Value"
                                 value="{{ skills.baseValue }}">
                             </paper-input>
                             <paper-input
                                 always-float-label
+                                type="number"
                                 label="Level Modifier"
                                 value="{{ skills.levelModifier }}">
                             </paper-input>
@@ -511,6 +529,7 @@
                 <paper-input
                     id="dependencyDialogValue"
                     always-float-label
+                    type="number"
                     label="Value"
                     value="{{ dependencyValue }}">
                 </paper-input>
@@ -603,11 +622,13 @@
 
             _dependencyNameChanged() {
                 this._dependencyAddDisabled();
+                this._dependencyValueDisabled();
                 return;
             }
 
             _dependencyValueChanged() {
                 this._dependencyAddDisabled();
+                this._dependencyValueDisabled();
                 return;
             }
             /*
@@ -626,6 +647,7 @@
             }
 
             _dependencyValueDisabled() {
+                debugger;
                 if (this.dependencyLocation == 'statusList' && this.newSheet.hasMinimumStatusModifierValue) {
                     this.$.dependencyDialogValue.disabled = true;
                 } else {
@@ -672,15 +694,17 @@
                     element = this;
                 this.requestStatusDependencyLocation = location;
                 this.requestStatusDependencyName = this.newSheet.statusList[index].name;
+                this._dependencyValueDisabled();
+                this._dependencyAddDisabled();
                 this._cancel = tapEvent => {
-                    this.set('dependencyLocation', location);
+                    this.set('dependencyLocation', 'statusList');
                     this.set('dependencyName', '');
                     this.set('dependencyValue', 0);
                     this.$.dependencyDialog.close();
                 }
                 this._confirm = tapEvent => {
                     this.push(path, new Dependency(element.dependencyLocation, element.dependencyName, element.dependencyValue));
-                    this.set('dependencyLocation', location);
+                    this.set('dependencyLocation', 'statusList');
                     this.set('dependencyName', '');
                     this.set('dependencyValue', 0);
                     this.$.dependencyDialog.close();
@@ -842,6 +866,7 @@
             }
 
             _numberTypeCheck(number) {
+                number.replace(',', '.');
                 if (isNaN(parseInt(number))) return "0";
                 else return number;
             }
