@@ -17,6 +17,7 @@
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
 
 <link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower_components/paper-toast/paper-toast.html">
 
 <link rel="import" href="../../bower_components/paper-fab/paper-fab.html">
 <link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
@@ -550,6 +551,12 @@
                 </paper-button>
             </div>
         </paper-dialog>
+
+        <!-- Toast -->
+        <paper-toast 
+            id="snd-new-toast"
+            duration="1500">
+        </paper-toast>
     </template>
 
     <script>
@@ -745,6 +752,14 @@
              *  Sheet Object Functions
              */
             _newSheet(event) {
+                if (!this.newSheet.name
+                    || !this.newSheet.job
+                    || !this.newSheet.race
+                    || !this.newSheet.level
+                    || !this.newSheet.system) {
+                    this.$.sndNewToast.text = "Please, fill the Basic tab.";
+                    this.$.sndNewToast.opened = true;
+                }
                 // Each Status, Resource, Defense and Skill and SUM
                 const element = this;
                 let dependencyChain = [];

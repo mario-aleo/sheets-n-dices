@@ -20,7 +20,8 @@
     "paper-listbox": "PolymerElements/paper-listbox#2.0-preview",
     "neon-animation": "PolymerElements/neon-animation#2.0-preview",
     "web-animations-js": "^2.2.5",
-    "paper-dialog": "PolymerElements/paper-dialog#2.0-preview"
+    "paper-dialog": "PolymerElements/paper-dialog#2.0-preview",
+    "paper-toast": "PolymerElements/paper-toast#2.0-preview"
   },
   "devDependencies": {
     "web-component-tester": "^6.0.0-prerelease.5",
