@@ -83,6 +83,9 @@
                 width: 100%;
                 padding: 16px 0;
             }
+            .dependency-section {
+                padding: 12px 0 4px 0;
+            }
             .dependency-overlay::after {
                 content:"&nbsp;";
                 display: block;
@@ -123,47 +126,51 @@
         <iron-pages
             id="ironPages"
             selected="{{ tabSelected }}">
-            <paper-card
-                elevation="2">
-                <div class="card-content">
-                    <paper-input
-                        always-float-label
-                        label="Name"
-                        value="{{ newSheet.name }}">
-                    </paper-input>
-                    <paper-input
-                        always-float-label
-                        label="Class"
-                        value="{{ newSheet.job }}">
-                    </paper-input>
-                    <paper-input
-                        always-float-label
-                        label="Race"
-                        value="{{ newSheet.race }}">
-                    </paper-input>
-                    <paper-input
-                        always-float-label
-                        label="Level"
-                        value="{{ newSheet.level }}">
-                    </paper-input>
-                    <paper-input
-                        always-float-label
-                        label="System"
-                        value="{{ newSheet.system }}">
-                    </paper-input>
-                    <div class="paper-card-row">
-                        <paper-checkbox
-                            checked="{{ newSheet.hasMinimumStatusModifierValue }}">
-                        </paper-checkbox>
+            <!-- Basic Tab -->
+            <div>
+                <paper-card
+                    elevation="2">
+                    <div class="card-content">
                         <paper-input
                             always-float-label
-                            label="Minimum Status Value Modifier"
-                            value="{{ newSheet.minimumStatusModifierValue }}"
-                            disabled="{{ !newSheet.hasMinimumStatusModifierValue }}">
+                            label="Name"
+                            value="{{ newSheet.name }}">
                         </paper-input>
+                        <paper-input
+                            always-float-label
+                            label="Class"
+                            value="{{ newSheet.job }}">
+                        </paper-input>
+                        <paper-input
+                            always-float-label
+                            label="Race"
+                            value="{{ newSheet.race }}">
+                        </paper-input>
+                        <paper-input
+                            always-float-label
+                            label="Level"
+                            value="{{ newSheet.level }}">
+                        </paper-input>
+                        <paper-input
+                            always-float-label
+                            label="System"
+                            value="{{ newSheet.system }}">
+                        </paper-input>
+                        <div class="paper-card-row">
+                            <paper-checkbox
+                                checked="{{ newSheet.hasMinimumStatusModifierValue }}">
+                            </paper-checkbox>
+                            <paper-input
+                                always-float-label
+                                label="Minimum Status Value Modifier"
+                                value="{{ newSheet.minimumStatusModifierValue }}"
+                                disabled="{{ !newSheet.hasMinimumStatusModifierValue }}">
+                            </paper-input>
+                        </div>
                     </div>
-                </div>
-            </paper-card>
+                </paper-card>
+            </div>
+            <!-- Status Tab -->
             <div>
                 <template
                     is="dom-repeat"
@@ -188,19 +195,21 @@
                                 label="Level Modifier"
                                 value="{{ status.levelModifier }}">
                             </paper-input>
-                            <template
-                                is="dom-repeat"
-                                items="[[ status.dependencyList ]]"
-                                as="dependency"
-                                index-as="dependencyIndex">
-                                <snd-chip
-                                    on-click="_editStatusDependency"
-                                    data-status-index$="[[ statusIndex ]]"
-                                    data-status-location="statusList"
-                                    data-dependency-index$="[[ dependencyIndex ]]">
-                                    [[ _dependencyChipName(dependency.name, dependency.location) ]]
-                                </snd-chip>
-                            </template>
+                            <section class="dependency-section">
+                                <template
+                                    is="dom-repeat"
+                                    items="[[ status.dependencyList ]]"
+                                    as="dependency"
+                                    index-as="dependencyIndex">
+                                    <snd-chip
+                                        on-click="_editStatusDependency"
+                                        data-status-index$="[[ statusIndex ]]"
+                                        data-status-location="statusList"
+                                        data-dependency-index$="[[ dependencyIndex ]]">
+                                        [[ _dependencyChipName(dependency.name, dependency.location) ]]
+                                    </snd-chip>
+                                </template>
+                            </section>
                             <paper-button
                                 on-tap="_addStatusDependency"
                                 data-status-index$="[[ statusIndex ]]"
@@ -230,36 +239,61 @@
                     </paper-button>
                 </div>
             </div>
+            <!-- Resources Tab -->
             <div>
                 <template
                     is="dom-repeat"
                     items="[[ newSheet.resourcesList ]]"
-                    as="resource">
+                    as="resouces"
+                    index-as="resourcesIndex">
                     <paper-card
                         elevation="2">
                         <div class="card-content">
                             <paper-input
                                 always-float-label
                                 label="Name"
-                                value="{{ resource.name }}">
+                                value="{{ resouces.name }}">
                             </paper-input>
                             <paper-input
                                 always-float-label
                                 label="Base Value"
-                                value="{{ resource.baseValue }}">
+                                value="{{ resouces.baseValue }}">
                             </paper-input>
                             <paper-input
                                 always-float-label
                                 label="Level Modifier"
-                                value="{{ resource.levelModifier }}">
+                                value="{{ resouces.levelModifier }}">
                             </paper-input>
+                            <section class="dependency-section">
+                                <template
+                                    is="dom-repeat"
+                                    items="[[ resouces.dependencyList ]]"
+                                    as="dependency"
+                                    index-as="dependencyIndex">
+                                    <snd-chip
+                                        on-click="_editStatusDependency"
+                                        data-status-index$="[[ resourcesIndex ]]"
+                                        data-status-location="resourcesList"
+                                        data-dependency-index$="[[ dependencyIndex ]]">
+                                        [[ _dependencyChipName(dependency.name, dependency.location) ]]
+                                    </snd-chip>
+                                </template>
+                            </section>
+                            <paper-button
+                                on-tap="_addStatusDependency"
+                                data-status-index$="[[ resourcesIndex ]]"
+                                data-status-location="resourcesList"
+                                class="dependency-paper-button">
+                                Add Dependency
+                            </paper-button>
                         </div>
                         <div class="card-actions">
                             <paper-button
-                                index="[[index]]"
-                                on-tap="_deleteResource"
+                                on-tap="_deleteStatus"
+                                data-status-index$="[[ resourcesIndex ]]"
+                                data-status-location="resourcesList"
                                 class="delete-paper-button">
-                                Delete Resource
+                                Delete Resoruce
                             </paper-button>
                         </div>
                     </paper-card>
@@ -267,40 +301,66 @@
                 <div class="add-button-container">
                     <paper-button
                         raised
-                        on-tap="_addResource"
+                        on-tap="_addStatus"
+                        data-status-location="resourcesList"
                         class="add-paper-button">
                         Add Resource
                     </paper-button>
                 </div>
             </div>
+            <!-- Defenses Tab -->
             <div>
                 <template
                     is="dom-repeat"
                     items="[[ newSheet.defensesList ]]"
-                    as="defense">
+                    as="defenses"
+                    index-as="defensesIndex">
                     <paper-card
                         elevation="2">
                         <div class="card-content">
                             <paper-input
                                 always-float-label
                                 label="Name"
-                                value="{{ defense.name }}">
+                                value="{{ defenses.name }}">
                             </paper-input>
                             <paper-input
                                 always-float-label
                                 label="Base Value"
-                                value="{{ defense.baseValue }}">
+                                value="{{ defenses.baseValue }}">
                             </paper-input>
                             <paper-input
                                 always-float-label
                                 label="Level Modifier"
-                                value="{{ defense.levelModifier }}">
+                                value="{{ defenses.levelModifier }}">
                             </paper-input>
+                            <section class="dependency-section">
+                                <template
+                                    is="dom-repeat"
+                                    items="[[ defenses.dependencyList ]]"
+                                    as="dependency"
+                                    index-as="dependencyIndex">
+                                    <snd-chip
+                                        on-click="_editStatusDependency"
+                                        data-status-index$="[[ defensesIndex ]]"
+                                        data-status-location="defensesList"
+                                        data-dependency-index$="[[ dependencyIndex ]]">
+                                        [[ _dependencyChipName(dependency.name, dependency.location) ]]
+                                    </snd-chip>
+                                </template>
+                            </section>
+                            <paper-button
+                                on-tap="_addStatusDependency"
+                                data-status-index$="[[ defensesIndex ]]"
+                                data-status-location="defensesList"
+                                class="dependency-paper-button">
+                                Add Dependency
+                            </paper-button>
                         </div>
                         <div class="card-actions">
                             <paper-button
-                                index="[[index]]"
-                                on-tap="_deleteDefense"
+                                on-tap="_deleteStatus"
+                                data-status-index$="[[ defensesIndex ]]"
+                                data-status-location="defensesList"
                                 class="delete-paper-button">
                                 Delete Defense
                             </paper-button>
@@ -310,40 +370,66 @@
                 <div class="add-button-container">
                     <paper-button
                         raised
-                        on-tap="_addDefense"
+                        on-tap="_addStatus"
+                        data-status-location="defensesList"
                         class="add-paper-button">
                         Add Defense
                     </paper-button>
                 </div>
             </div>
+            <!-- Skills Tab -->
             <div>
                 <template
                     is="dom-repeat"
                     items="[[ newSheet.skillsList ]]"
-                    as="skill">
+                    as="skills"
+                    index-as="skillsIndex">
                     <paper-card
                         elevation="2">
                         <div class="card-content">
                             <paper-input
                                 always-float-label
                                 label="Name"
-                                value="{{ skill.name }}">
+                                value="{{ skills.name }}">
                             </paper-input>
                             <paper-input
                                 always-float-label
                                 label="Base Value"
-                                value="{{ skill.baseValue }}">
+                                value="{{ skills.baseValue }}">
                             </paper-input>
                             <paper-input
                                 always-float-label
                                 label="Level Modifier"
-                                value="{{ skill.levelModifier }}">
+                                value="{{ skills.levelModifier }}">
                             </paper-input>
+                            <section class="dependency-section">
+                                <template
+                                    is="dom-repeat"
+                                    items="[[ skills.dependencyList ]]"
+                                    as="dependency"
+                                    index-as="dependencyIndex">
+                                    <snd-chip
+                                        on-click="_editStatusDependency"
+                                        data-status-index$="[[ skillsIndex ]]"
+                                        data-status-location="skillsList"
+                                        data-dependency-index$="[[ dependencyIndex ]]">
+                                        [[ _dependencyChipName(dependency.name, dependency.location) ]]
+                                    </snd-chip>
+                                </template>
+                            </section>
+                            <paper-button
+                                on-tap="_addStatusDependency"
+                                data-status-index$="[[ skillsIndex ]]"
+                                data-status-location="skillsList"
+                                class="dependency-paper-button">
+                                Add Dependency
+                            </paper-button>
                         </div>
                         <div class="card-actions">
                             <paper-button
-                                index="[[index]]"
-                                on-tap="_deleteSkill"
+                                on-tap="_deleteStatus"
+                                data-status-index$="[[ skillsIndex ]]"
+                                data-status-location="skillsList"
                                 class="delete-paper-button">
                                 Delete Skill
                             </paper-button>
@@ -353,7 +439,8 @@
                 <div class="add-button-container">
                     <paper-button
                         raised
-                        on-tap="_addSkill"
+                        on-tap="_addStatus"
+                        data-status-location="skillsList"
                         class="add-paper-button">
                         Add Skill
                     </paper-button>
@@ -361,11 +448,13 @@
             </div>
         </iron-pages>
 
+        <!-- Save Fab Button -->
         <paper-fab
             icon="save"
             on-tap="_newSheet">
         </paper-fab>
 
+        <!-- Dependency Dialog -->
         <paper-dialog
             id="dependencyDialog"
             opened="{{ dependencyDialogOpened }}">
@@ -798,7 +887,7 @@
             constructor(location, name, value) {
                 this.location = location;
                 this.name = name;
-                this.modifier = value || 0;
+                this.modifier = value;
             }
         };
         /*
