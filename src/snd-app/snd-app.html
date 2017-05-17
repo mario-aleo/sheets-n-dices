@@ -27,6 +27,7 @@
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
 
 <link rel="import" href="../snd-new/snd-new.html">
+<link rel="import" href="../snd-sheet/snd-sheet.html">
 
 <dom-module id="snd-app">
     <template>
@@ -144,13 +145,13 @@
                     selected="[[ page ]]"
                     attr-for-selected="name"
                     fallback-selection="error">
-                    <div
+                    
+                    <section
                         name="Sheet-List">
                         <template 
                             is="dom-repeat"
                             items="[[ liveData ]]"
                             as="sheet">
-                            <!--[[ _firebaseStringify(sheet) ]]-->
                             <div
                                 on-click="_accessSheet"
                                 data-sheet$="[[ sheet ]]">
@@ -225,17 +226,17 @@
                             icon="save"
                             on-tap="_newSheet">
                         </paper-fab>
-                    </div>
+                    </section>
 
                     <snd-new
                         name="New-Sheet">
                     </snd-new>
 
-                    <div
-                        name="Sheet">
-                        Access Sheet
-                        [[ sheetString ]]
-                    </div>
+                    <snd-sheet
+                        name="Sheet"
+                        sheet="[[ sheet ]]"
+                        sheet-string="[[ sheetString ]]">
+                    </snd-sheet>
 
                     <div
                         name="error">

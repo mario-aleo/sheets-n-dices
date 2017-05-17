@@ -1,0 +1,50 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/polymer/lib/elements/dom-if.html">
+<link rel="import" href="../../bower_components/polymer/lib/elements/dom-repeat.html">
+
+
+<dom-module id="snd-sheet">
+    <template>
+        <style>
+            :host {
+                display: block;
+                height: 100%;
+                width: 100%;
+            }
+        </style>
+
+        [[ sheetString ]]
+
+    </template>
+
+    <script>
+        class SndSheet extends Polymer.Element {
+            static get is() { return 'snd-sheet'; }
+
+            static get properties() {
+                return {
+                    sheet: {
+                        type: Object
+                    },
+                    sheetString: {
+                        type: String
+                    }
+                };
+            }
+
+            static get observers() {
+                return [
+                    
+                ];
+            }
+
+            /*
+             *  Observers
+             */
+            /*
+             */
+        }
+
+        window.customElements.define(SndSheet.is, SndSheet);
+    </script>
+</dom-module>
