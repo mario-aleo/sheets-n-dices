@@ -2,6 +2,11 @@
 <link rel="import" href="../../bower_components/polymer/lib/elements/dom-if.html">
 <link rel="import" href="../../bower_components/polymer/lib/elements/dom-repeat.html">
 
+<link rel="import" href="../../bower_components/polymerfire/firebase.html">
+<link rel="import" href="../../bower_components/polymerfire/polymerfire.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-auth.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-query.html">
+
 <link rel="import" href="../../bower_components/paper-tabs/paper-tab.html">
 <link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
 <link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
@@ -34,7 +39,7 @@
                 width: 100%;
                 --paper-tabs-selection-bar-color: var(--secondary-color);
                 --paper-fab-background: var(--secondary-color);
-                --paper-fab-keyboard-focus-background: var(--focus-color)
+                --paper-fab-keyboard-focus-background: var(--focus-color);
             }
             paper-tabs {
                 background-color: var(--primary-color);
@@ -103,6 +108,18 @@
             }
         </style>
 
+        <firebase-auth
+            id="auth"
+            user="{{user}}"
+            provider="google">
+        </firebase-auth>
+
+        <firebase-query
+            id="query"
+            path="/users/[[user.uid]]/sheetList"
+            data="{{liveData}}">
+        </firebase-query>
+
         <paper-tabs 
             id="sndNewTabs"
             noink
@@ -131,7 +148,7 @@
             id="ironPages"
             selected="{{ tabSelected }}">
             <!-- Basic Tab -->
-            <div>
+            <section>
                 <paper-card
                     elevation="2">
                     <div class="card-content">
@@ -179,9 +196,9 @@
                         </div>
                     </div>
                 </paper-card>
-            </div>
+            </section>
             <!-- Status Tab -->
-            <div>
+            <section>
                 <template
                     is="dom-repeat"
                     items="[[ newSheet.statusList ]]"
@@ -251,9 +268,9 @@
                         Add Status
                     </paper-button>
                 </div>
-            </div>
+            </section>
             <!-- Resources Tab -->
-            <div>
+            <section>
                 <template
                     is="dom-repeat"
                     items="[[ newSheet.resourcesList ]]"
@@ -323,9 +340,9 @@
                         Add Resource
                     </paper-button>
                 </div>
-            </div>
+            </section>
             <!-- Defenses Tab -->
-            <div>
+            <section>
                 <template
                     is="dom-repeat"
                     items="[[ newSheet.defensesList ]]"
@@ -395,9 +412,9 @@
                         Add Defense
                     </paper-button>
                 </div>
-            </div>
+            </section>
             <!-- Skills Tab -->
-            <div>
+            <section>
                 <template
                     is="dom-repeat"
                     items="[[ newSheet.skillsList ]]"
@@ -467,7 +484,7 @@
                         Add Skill
                     </paper-button>
                 </div>
-            </div>
+            </section>
         </iron-pages>
 
         <!-- Save Fab Button -->
@@ -808,6 +825,8 @@
                     }
                 );
                 console.log(this.newSheet);
+                this.$.query.ref.push(element.newSheet);
+                this.set("newSheet", new Sheet());
                 window.location.hash = '/sheetList';
                 return;
             }

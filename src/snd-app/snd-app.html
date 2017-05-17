@@ -6,6 +6,7 @@
 <link rel="import" href="../../bower_components/polymerfire/polymerfire.html">
 <link rel="import" href="../../bower_components/polymerfire/firebase-app.html">
 <link rel="import" href="../../bower_components/polymerfire/firebase-auth.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-query.html">
 <link rel="import" href="../../bower_components/polymerfire/firebase-document.html">
 
 <link rel="import" href="../../bower_components/app-storage/app-indexeddb-mirror/app-indexeddb-mirror.html">
@@ -18,9 +19,12 @@
 <link rel="import" href="../../bower_components/app-layout/app-toolbar/app-toolbar.html">
 <link rel="import" href="../../bower_components/app-layout/app-scroll-effects/effects/waterfall.html">
 
-<link rel="import" href="../../bower_components/paper-button/paper-button.html">
-
 <link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
+
+<link rel="import" href="../../bower_components/paper-fab/paper-fab.html">
+
+<link rel="import" href="../../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
 
 <link rel="import" href="../snd-new/snd-new.html">
 
@@ -39,6 +43,8 @@
                 --primary-text: #212121;
                 --secondary-text: #727272;
                 --divider-color: #B6B6B6;
+                --paper-fab-background: var(--secondary-color);
+                --paper-fab-keyboard-focus-background: var(--focus-color);
             }
             app-header-layout {
                 height: 100%;
@@ -55,17 +61,43 @@
             iron-pages {
                 height: calc(100% - 64px);
             }
+            paper-card {
+                margin-top: 16px;
+                width: 100%;
+            }
+            paper-card,
+            paper-card * {
+                pointer-events: none;
+            }
+            paper-fab {
+                position: fixed;
+                bottom: 16px;
+                right: 16px;
+            }
+            .sheet-summary {
+                display: flex;
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 16px;
+            }
+            .sheet-summary:last-child {
+                margin-bottom: 0;
+            }
+            .sheet-summary-name {
+                font-weight: 500;
+            }
         </style>
 
         <app-location
-            route="{{route}}"
+            route="{{ route }}"
             use-hash-as-path>
         </app-location>
         <app-route
-            route="{{route}}"
+            route="{{ route }}"
             pattern="/:page"
-            data="{{routeData}}"
-            tail="{{subroute}}">
+            data="{{ routeData }}"
+            tail="{{ subRoute }}">
         </app-route>
 
         <firebase-app
@@ -106,51 +138,111 @@
 
             <template
                 is="dom-if" 
-                if="[[user]]">
+                if="[[ user ]]">
                 <iron-pages
                     role="main"
-                    selected="[[page]]"
+                    selected="[[ page ]]"
                     attr-for-selected="name"
                     fallback-selection="error">
-
                     <div
-                        name="sheetList">
+                        name="Sheet-List">
+                        <template 
+                            is="dom-repeat"
+                            items="[[ liveData ]]"
+                            as="sheet">
+                            <!--[[ _firebaseStringify(sheet) ]]-->
+                            <div
+                                on-click="_accessSheet"
+                                data-sheet$="[[ sheet ]]">
+                            <paper-card
+                                elevation="2">
+                                <div class="card-content">
+                                    <div class="sheet-summary">
+                                        <span class="sheet-summary-name">
+                                            Name:
+                                        </span>
+                                        <span class="sheet-summary-value">
+                                            [[ sheet.name ]]
+                                        </span>
+                                    </div>
+                                    <div class="sheet-summary">
+                                        <span class="sheet-summary-name">
+                                            Class:
+                                        </span>
+                                        <span class="sheet-summary-value">
+                                            [[ sheet.job ]]
+                                        </span>
+                                    </div>
+                                    <div class="sheet-summary">
+                                        <span class="sheet-summary-name">
+                                            Race:
+                                        </span>
+                                        <span class="sheet-summary-value">
+                                            [[ sheet.race ]]
+                                        </span>
+                                    </div>
+                                    <div class="sheet-summary">
+                                        <span class="sheet-summary-name">
+                                            Level:
+                                        </span>
+                                        <span class="sheet-summary-value">
+                                            [[ sheet.level ]]
+                                        </span>
+                                    </div>
+                                    <div class="sheet-summary">
+                                        <span class="sheet-summary-name">
+                                            System:
+                                        </span>
+                                        <span class="sheet-summary-value">
+                                            [[ sheet.system ]]
+                                        </span>
+                                    </div>
+                                </div>
+                            </paper-card>
+                            </div>
+                            <template
+                                is="dom-if" 
+                                if="[[ !sheet ]]">
+                                <div>
+                                    You don't have any sheet ): 
+                                </div>
+                            </template>
+                        </template>
+
                         <template
                             is="dom-if" 
-                            if="[[!user]]">
+                            if="[[ !user ]]">
+                            <div>
+                                Login to Start using Sheets 'n Dices 
+                            </div>
                             <paper-button 
                                 on-tap="_logIn">
                                 Log In
                             </paper-button>
                         </template>
 
-                        <template is="dom-repeat" items="[[ liveData ]]">
-                            [[ item.teste ]]
-                        </template>
-
-                        <a href="#/newSheet">New Sheet</a>
+                        <paper-fab
+                            icon="save"
+                            on-tap="_newSheet">
+                        </paper-fab>
                     </div>
 
                     <snd-new
-                        name="newSheet">
+                        name="New-Sheet">
                     </snd-new>
 
-                    <!--<div
-                        name="sheetList">
-                        <template is="dom-repeat" items="[[ liveData ]]">
-                            [[ item.teste ]]
-                        </template>
-                    </div>-->
+                    <div
+                        name="Sheet">
+                        Access Sheet
+                        [[ sheetString ]]
+                    </div>
 
                     <div
                         name="error">
                         Ops, page not found D:
                     </div>
-
                 </iron-pages>
             </template>
-
-            
         </app-header-layout>
 
     </template>
@@ -166,6 +258,12 @@
                     },
                     page: {
                         type: String
+                    },
+                    sheet: {
+                        type: Object
+                    },
+                    sheetString: {
+                        type: String
                     }
                 };
             }
@@ -180,11 +278,29 @@
              *  Observers
              */
             _routePageChanged(page) {
-                if (!page) return window.location.hash = window.location.hash || '/sheetList';
-                this.page = page;
+                if (!page) {
+                    return window.location.hash = window.location.hash || '/Sheet-List';
+                } else if (page == 'Sheet' && !this.sheet) {
+                    return window.location.hash = '/Sheet-List';
+                } else {
+                    return this.set('page', page);
+                }
             }
             /*
              */
+
+            _newSheet(event) {
+                window.location.hash = '/New-Sheet';
+                return;
+            }
+
+            _accessSheet(event) {
+                let sheet = JSON.parse(event.target.dataset.sheet);
+                this.set('sheet', sheet);
+                this.set('sheetString', JSON.stringify(sheet));
+                window.location.hash = '/Sheet/' + sheet.$key;
+                return;
+            }
 
             /*
              *  Login Methods
@@ -197,6 +313,7 @@
                 .catch(function(error) {
                     console.log(error);
                 });
+                return;
             }
 
             _logOut() {
@@ -207,6 +324,7 @@
                 .catch(function(error) {
                     console.log(error);
                 });
+                return;
             }
             /*
              */
