@@ -113,8 +113,26 @@
                     attr-for-selected="name"
                     fallback-selection="error">
 
-                    <snd-new
+                    <div
                         name="sheetList">
+                        <template
+                            is="dom-if" 
+                            if="[[!user]]">
+                            <paper-button 
+                                on-tap="_logIn">
+                                Log In
+                            </paper-button>
+                        </template>
+
+                        <template is="dom-repeat" items="[[ liveData ]]">
+                            [[ item.teste ]]
+                        </template>
+
+                        <a href="#/newSheet">New Sheet</a>
+                    </div>
+
+                    <snd-new
+                        name="newSheet">
                     </snd-new>
 
                     <!--<div
@@ -132,14 +150,7 @@
                 </iron-pages>
             </template>
 
-            <template
-                is="dom-if" 
-                if="[[!user]]">
-                <paper-button 
-                    on-tap="_logIn">
-                    Log In
-                </paper-button>
-            </template>
+            
         </app-header-layout>
 
     </template>
@@ -165,11 +176,19 @@
                 ];
             }
             
+            /*
+             *  Observers
+             */
             _routePageChanged(page) {
-                if (!page) return window.location.hash = window.location.hash || '#/sheetList';
+                if (!page) return window.location.hash = window.location.hash || '/sheetList';
                 this.page = page;
             }
+            /*
+             */
 
+            /*
+             *  Login Methods
+             */
             _logIn() {
                 this.$.auth.signInWithPopup()
                 .then(function(response) {
@@ -189,6 +208,8 @@
                     console.log(error);
                 });
             }
+            /*
+             */
         }
 
         window.customElements.define(SndApp.is, SndApp);

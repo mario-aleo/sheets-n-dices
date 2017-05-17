@@ -554,8 +554,8 @@
 
         <!-- Toast -->
         <paper-toast 
-            id="snd-new-toast"
-            duration="1500">
+            id="sndNewToast"
+            duration="2000">
         </paper-toast>
     </template>
 
@@ -654,7 +654,6 @@
             }
 
             _dependencyValueDisabled() {
-                debugger;
                 if (this.dependencyLocation == 'statusList' && this.newSheet.hasMinimumStatusModifierValue) {
                     this.$.dependencyDialogValue.disabled = true;
                 } else {
@@ -759,6 +758,7 @@
                     || !this.newSheet.system) {
                     this.$.sndNewToast.text = "Please, fill the Basic tab.";
                     this.$.sndNewToast.opened = true;
+                    return;
                 }
                 // Each Status, Resource, Defense and Skill and SUM
                 const element = this;
@@ -808,6 +808,7 @@
                     }
                 );
                 console.log(this.newSheet);
+                window.location.hash = '/sheetList';
                 return;
             }
 
@@ -860,10 +861,10 @@
                         dependencyElements.forEach(function (dependencyElement){
                             if (dependencyElement.name == dependencyItem.name) {
                                 if (dependencyItem.location == "statusList") {
-                                    if (element.newSheet.hasMinimumStatusModifierValue) obj.value = parseInt( element._numberTypeCheck(obj.value) + element._returnStatusModifier(parseInt(element._numberTypeCheck(dependencyElement.value)), element.newSheet.minimumStatusModifierValue));
-                                    else obj.value = parseInt( element._numberTypeCheck(obj.value) + parseInt(element._numberTypeCheck(dependencyElement.value)) * parseFloat(element._numberTypeCheck(dependencyItem.modifier)) );
+                                    if (element.newSheet.hasMinimumStatusModifierValue) obj.value = parseInt( parseInt(element._numberTypeCheck(obj.value)) + element._returnStatusModifier(parseInt(element._numberTypeCheck(dependencyElement.value)), parseFloat(element.newSheet.minimumStatusModifierValue)));
+                                    else obj.value = parseInt( parseInt(element._numberTypeCheck(obj.value)) + parseInt(element._numberTypeCheck(dependencyElement.value)) * parseFloat(element._numberTypeCheck(dependencyItem.modifier)) );
                                 } else {
-                                    obj.value = parseInt( element._numberTypeCheck(obj.value) + parseInt(element._numberTypeCheck(dependencyElement.value)) * parseFloat(element._numberTypeCheck(dependencyItem.modifier)) );
+                                    obj.value = parseInt( parseInt(element._numberTypeCheck(obj.value)) + parseInt(element._numberTypeCheck(dependencyElement.value)) * parseFloat(element._numberTypeCheck(dependencyItem.modifier)) );
                                 }
                                 console.log("Update " + obj.name + " Value with " + dependencyElement.name +  " Value: " + obj.value);
                             }
@@ -881,7 +882,7 @@
             }
 
             _numberTypeCheck(number) {
-                number.replace(',', '.');
+                number = number.toString().replace(',', '.');
                 if (isNaN(parseInt(number))) return "0";
                 else return number;
             }
