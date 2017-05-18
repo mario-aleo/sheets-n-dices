@@ -106,6 +106,39 @@
                 z-index: 102;
                 background-color: rgba(0,0,0,0.7)
             }
+            @media (min-width: 426px) {
+                .basic-page {
+                    width: calc(100% - 16px);
+                    height: calc(100% - 16px);
+                    padding: 8px;
+                }
+                .basic-card {
+                    width: 50%;
+                    margin: 8px 25%;
+                }
+                .status-page {
+                    display: flex;
+                    flex-direction: row;
+                    flex-wrap: wrap;
+                    align-content: flex-start;
+                    width: calc(100% - 16px);
+                    height: calc(100% - 16px);
+                    padding: 8px;
+                }
+                .status-card {
+                    width: calc(50% - 16px);
+                    margin: 8px;
+                }
+            }
+            @media (min-width: 769px) {
+                .status-card {
+                    width: calc((100% / 3) - 16px);
+                }
+                .basic-card {
+                    width: calc(100% / 3);
+                    margin: 8px calc(100% / 3);
+                }
+            }
         </style>
 
         <firebase-auth
@@ -148,8 +181,10 @@
             id="ironPages"
             selected="{{ tabSelected }}">
             <!-- Basic Tab -->
-            <section>
+            <section
+                class="basic-page">
                 <paper-card
+                    class="basic-card"
                     elevation="2">
                     <div class="card-content">
                         <paper-input
@@ -198,13 +233,15 @@
                 </paper-card>
             </section>
             <!-- Status Tab -->
-            <section>
+            <section
+                class="status-page">
                 <template
                     is="dom-repeat"
                     items="[[ newSheet.statusList ]]"
                     as="status"
                     index-as="statusIndex">
                     <paper-card
+                        class="status-card"
                         elevation="2">
                         <div class="card-content">
                             <paper-input
@@ -270,13 +307,15 @@
                 </div>
             </section>
             <!-- Resources Tab -->
-            <section>
+            <section
+                class="status-page">
                 <template
                     is="dom-repeat"
                     items="[[ newSheet.resourcesList ]]"
                     as="resouces"
                     index-as="resourcesIndex">
                     <paper-card
+                        class="status-card"
                         elevation="2">
                         <div class="card-content">
                             <paper-input
@@ -342,13 +381,15 @@
                 </div>
             </section>
             <!-- Defenses Tab -->
-            <section>
+            <section
+                class="status-page">
                 <template
                     is="dom-repeat"
                     items="[[ newSheet.defensesList ]]"
                     as="defenses"
                     index-as="defensesIndex">
                     <paper-card
+                        class="status-card"
                         elevation="2">
                         <div class="card-content">
                             <paper-input
@@ -414,15 +455,18 @@
                 </div>
             </section>
             <!-- Skills Tab -->
-            <section>
+            <section
+                class="status-page">
                 <template
                     is="dom-repeat"
                     items="[[ newSheet.skillsList ]]"
                     as="skills"
                     index-as="skillsIndex">
                     <paper-card
+                        class="status-card"
                         elevation="2">
-                        <div class="card-content">
+                        <div
+                            class="card-content">
                             <paper-input
                                 always-float-label
                                 type="text"
@@ -586,11 +630,13 @@
                         type: Number,
                         value: 0
                     },
-
                     newSheet: {
                         type: Object,
                         value: new Sheet(),
                         notify: true
+                    },
+                    dependencyChain: {
+                        type: Array
                     },
 
                     requestStatusDependencyLocation: {
@@ -664,7 +710,7 @@
             _dependencyChipName(dependencyName, dependencyLocation) {
                 let dependencyChip = dependencyName;
                 if (dependencyLocation == 'statusList') dependencyChip = dependencyChip + " on Status";
-                else if (dependencyLocation == 'recourcesList') dependencyChip = dependencyChip + " on Resources";
+                else if (dependencyLocation == 'resourcesList') dependencyChip = dependencyChip + " on Resources";
                 else if (dependencyLocation == 'defensesList') dependencyChip = dependencyChip + " on Defenses";
                 else dependencyChip = dependencyChip + " on Skills";
                 return dependencyChip;
@@ -779,15 +825,15 @@
                 }
                 // Each Status, Resource, Defense and Skill and SUM
                 const element = this;
-                let dependencyChain = [];
+                this.dependencyChain = [];
                 parseInt(element._numberTypeCheck(element.newSheet.level));
                 // SUM Status = baseValue + (levelModifier * level)
                 this.newSheet.statusList.forEach(
                     function (status) {
                         if (status.value === 0) {
-                            dependencyChain.push(status);
+                            element.dependencyChain.push(status);
                             element._objectCalculation(status);
-                            dependencyChain = [];
+                            element.dependencyChain = [];
                         }
                     }
                 );
@@ -796,9 +842,9 @@
                 this.newSheet.resourcesList.forEach(
                     function (resource) {
                         if (resource.value === 0) {
-                            dependencyChain.push(resource);
+                            element.dependencyChain.push(resource);
                             element._objectCalculation(resource);
-                            dependencyChain = [];
+                            element.dependencyChain = [];
                         }
                     }
                 );
@@ -807,9 +853,9 @@
                 this.newSheet.defensesList.forEach(
                     function (defense) {
                         if (defense.value === 0) {
-                            dependencyChain.push(defense);
+                            element.dependencyChain.push(defense);
                             element._objectCalculation(defense);
-                            dependencyChain = [];
+                            element.dependencyChain = [];
                         }
                     }
                 );
@@ -818,16 +864,16 @@
                 this.newSheet.skillsList.forEach(
                     function (skill) {
                         if (skill.value === 0) {
-                            dependencyChain.push(skill);
+                            element.dependencyChain.push(skill);
                             element._objectCalculation(skill);
-                            dependencyChain = [];
+                            element.dependencyChain = [];
                         }
                     }
                 );
                 console.log(this.newSheet);
                 this.$.query.ref.push(element.newSheet);
                 this.set("newSheet", new Sheet());
-                window.location.hash = '/sheetList';
+                window.location.hash = '/New-Sheet';
                 return;
             }
 
@@ -853,7 +899,9 @@
                             dependencyElements.forEach(function (dependencyElement) {
                                 if (dependencyElement.name == nullDependencyElement.name) {
                                     element.dependencyChain.push(nullDependencyElement);
-                                    console.log(dependencyChain);
+                                    console.log(element.dependencyChain);
+                                    element.$.sndNewToast.text = "Please, very all dependencies.";
+                                    element.$.sndNewToast.opened = true;
                                     throw "Deadlock Warlord";
                                 }
                             });
@@ -938,6 +986,7 @@
                 this.persistBonusList = [];
                 this.volatileBonusList = [];
                 this.notesList = [];
+                this.itemsList = [];
             }
         };
         

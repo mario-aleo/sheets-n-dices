@@ -75,6 +75,9 @@
                 bottom: 16px;
                 right: 16px;
             }
+            .sheet-card-content {
+                cursor: pointer;
+            }
             .sheet-summary {
                 display: flex;
                 flex-direction: row;
@@ -87,6 +90,31 @@
             }
             .sheet-summary-name {
                 font-weight: 500;
+            }
+            @media (min-width: 426px) {
+                #sheet-list {
+                    display: flex;
+                    flex-direction: row;
+                    flex-wrap: wrap;
+                    align-content: flex-start;
+                    width: calc(100% - 16px);
+                    height: calc(100% - 16px);
+                    padding: 8px;
+                }
+                .sheet-card-content {
+                    width: calc(50% - 16px);
+                    height: 191px;
+                    margin: 8px;
+                }
+                .sheet-card {
+                    width: 100%;
+                    margin: 0;
+                }
+            }
+            @media (min-width: 769px) {
+                .sheet-card-content {
+                    width: calc((100% / 3) - 16px);
+                }
             }
         </style>
 
@@ -147,59 +175,62 @@
                     fallback-selection="error">
                     
                     <section
+                        id="sheet-list"
                         name="Sheet-List">
                         <template 
                             is="dom-repeat"
                             items="[[ liveData ]]"
                             as="sheet">
                             <div
+                                class="sheet-card-content"
                                 on-click="_accessSheet"
                                 data-sheet$="[[ sheet ]]">
-                            <paper-card
-                                elevation="2">
-                                <div class="card-content">
-                                    <div class="sheet-summary">
-                                        <span class="sheet-summary-name">
-                                            Name:
-                                        </span>
-                                        <span class="sheet-summary-value">
-                                            [[ sheet.name ]]
-                                        </span>
+                                <paper-card
+                                    class="sheet-card"
+                                    elevation="2">
+                                    <div class="card-content">
+                                        <div class="sheet-summary">
+                                            <span class="sheet-summary-name">
+                                                Name:
+                                            </span>
+                                            <span class="sheet-summary-value">
+                                                [[ sheet.name ]]
+                                            </span>
+                                        </div>
+                                        <div class="sheet-summary">
+                                            <span class="sheet-summary-name">
+                                                Class:
+                                            </span>
+                                            <span class="sheet-summary-value">
+                                                [[ sheet.job ]]
+                                            </span>
+                                        </div>
+                                        <div class="sheet-summary">
+                                            <span class="sheet-summary-name">
+                                                Race:
+                                            </span>
+                                            <span class="sheet-summary-value">
+                                                [[ sheet.race ]]
+                                            </span>
+                                        </div>
+                                        <div class="sheet-summary">
+                                            <span class="sheet-summary-name">
+                                                Level:
+                                            </span>
+                                            <span class="sheet-summary-value">
+                                                [[ sheet.level ]]
+                                            </span>
+                                        </div>
+                                        <div class="sheet-summary">
+                                            <span class="sheet-summary-name">
+                                                System:
+                                            </span>
+                                            <span class="sheet-summary-value">
+                                                [[ sheet.system ]]
+                                            </span>
+                                        </div>
                                     </div>
-                                    <div class="sheet-summary">
-                                        <span class="sheet-summary-name">
-                                            Class:
-                                        </span>
-                                        <span class="sheet-summary-value">
-                                            [[ sheet.job ]]
-                                        </span>
-                                    </div>
-                                    <div class="sheet-summary">
-                                        <span class="sheet-summary-name">
-                                            Race:
-                                        </span>
-                                        <span class="sheet-summary-value">
-                                            [[ sheet.race ]]
-                                        </span>
-                                    </div>
-                                    <div class="sheet-summary">
-                                        <span class="sheet-summary-name">
-                                            Level:
-                                        </span>
-                                        <span class="sheet-summary-value">
-                                            [[ sheet.level ]]
-                                        </span>
-                                    </div>
-                                    <div class="sheet-summary">
-                                        <span class="sheet-summary-name">
-                                            System:
-                                        </span>
-                                        <span class="sheet-summary-value">
-                                            [[ sheet.system ]]
-                                        </span>
-                                    </div>
-                                </div>
-                            </paper-card>
+                                </paper-card>
                             </div>
                             <template
                                 is="dom-if" 
