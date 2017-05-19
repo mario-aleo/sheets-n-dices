@@ -1,0 +1,183 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/polymer/lib/elements/dom-if.html">
+<link rel="import" href="../../bower_components/polymer/lib/elements/dom-repeat.html">
+
+<link rel="import" href="../../bower_components/polymerfire/firebase.html">
+<link rel="import" href="../../bower_components/polymerfire/polymerfire.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-auth.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-query.html">
+<link rel="import" href="../../bower_components/app-storage/app-indexeddb-mirror/app-indexeddb-mirror.html">
+
+<link rel="import" href="../../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-fab/paper-fab.html">
+
+
+<dom-module id="snd-list">
+    <template>
+        <style>
+            :host {
+                display: block;
+                height: 100%;
+                width: 100%;
+            }
+            paper-card {
+                width: 100%;
+                margin-top: 16px;
+                pointer-events: none;
+            }
+            paper-card * {
+                pointer-events: none;
+            }
+            paper-fab {
+                position: fixed;
+                bottom: 16px;
+                right: 16px;
+            }
+            .sheet-card-content {
+                cursor: pointer;
+            }
+            .sheet-summary {
+                display: flex;
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 16px;
+            }
+            .sheet-summary:last-child {
+                margin-bottom: 0;
+            }
+            .sheet-summary-name {
+                font-weight: 500;
+            }
+            @media (min-width: 426px) {
+                :host {
+                    display: flex;
+                    flex-direction: row;
+                    flex-wrap: wrap;
+                    align-content: flex-start;
+                    width: calc(100% - 16px);
+                    height: calc(100% - 16px);
+                    padding: 8px;
+                }
+                .sheet-card-content {
+                    width: calc(50% - 16px);
+                    height: 191px;
+                    margin: 8px;
+                }
+                .sheet-card {
+                    width: 100%;
+                    margin: 0;
+                }
+            }
+            @media (min-width: 769px) {
+                .sheet-card-content {
+                    width: calc((100% / 3) - 16px);
+                }
+            }
+        </style>
+
+        <firebase-auth
+            id="auth"
+            user="{{user}}"
+            provider="google">
+        </firebase-auth>
+
+        <firebase-query
+            id="query"
+            path="/users/[[user.uid]]/sheetList"
+            data="{{liveData}}">
+        </firebase-query>
+        <app-indexeddb-mirror
+            key="sheetList"
+            data="{{liveData}}"
+            persisted-data="{{persistedData}}">
+        </app-indexeddb-mirror>
+
+        <template  is="dom-repeat" items="[[ liveData ]]" as="sheet">
+            <div class="sheet-card-content" on-click="_accessSheet" data-sheet$="[[ sheet ]]">
+                <paper-card class="sheet-card"  elevation="2">
+                    <div class="card-content">
+                        <div class="sheet-summary">
+                            <span class="sheet-summary-name">
+                                Name:
+                            </span>
+                            <span class="sheet-summary-value">
+                                [[ sheet.name ]]
+                            </span>
+                        </div>
+                        <div class="sheet-summary">
+                            <span class="sheet-summary-name">
+                                Class:
+                            </span>
+                            <span class="sheet-summary-value">
+                                [[ sheet.job ]]
+                            </span>
+                        </div>
+                        <div class="sheet-summary">
+                            <span class="sheet-summary-name">
+                                Race:
+                            </span>
+                            <span class="sheet-summary-value">
+                                [[ sheet.race ]]
+                            </span>
+                        </div>
+                        <div class="sheet-summary">
+                            <span class="sheet-summary-name">
+                                Level:
+                            </span>
+                            <span class="sheet-summary-value">
+                                [[ sheet.level ]]
+                            </span>
+                        </div>
+                        <div class="sheet-summary">
+                            <span class="sheet-summary-name">
+                                System:
+                            </span>
+                            <span class="sheet-summary-value">
+                                [[ sheet.system ]]
+                            </span>
+                        </div>
+                    </div>
+                </paper-card>
+            </div>
+            <template is="dom-if" if="[[ !sheet ]]">
+                <div>
+                    You don't have any sheet ): 
+                </div>
+            </template>
+        </template>
+
+        <paper-fab
+            icon="add"
+            on-tap="_newSheet">
+        </paper-fab>
+    </template>
+
+    <script>
+        class SndList extends Polymer.Element {
+            static get is() { return 'snd-list'; }
+
+            static get properties() {
+                return { };
+            }
+
+            static get observers() {
+                return [ ];
+            }
+
+            _newSheet(event) {
+                window.location.hash = '/New-Sheet';
+                return;
+            }
+
+            _accessSheet(event) {
+                let sheet = JSON.parse(event.target.dataset.sheet);
+                window.location.hash = '/Sheet/' + sheet.$key;
+                return;
+            }
+        }
+
+        window.customElements.define(SndList.is, SndList);
+    </script>
+</dom-module>
