@@ -21,10 +21,11 @@
     "neon-animation": "PolymerElements/neon-animation#^2.0.0",
     "web-animations-js": "^2.2.5",
     "paper-dialog": "PolymerElements/paper-dialog#^2.0.0",
-    "paper-toast": "PolymerElements/paper-toast#^2.0.0"
+    "paper-toast": "PolymerElements/paper-toast#^2.0.0",
+    "webcomponentsjs": "^1.0.0"
   },
   "devDependencies": {
-    "web-component-tester": "^6.0.0-prerelease.5",
-    "webcomponentsjs": "webcomponents/webcomponentsjs#^1.0.0-rc.7"
+    "web-component-tester": "^6.0.0",
+    "webcomponentsjs": "webcomponents/webcomponentsjs#^v1.0.0"
   }
 }
