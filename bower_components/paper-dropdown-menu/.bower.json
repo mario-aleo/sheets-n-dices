@@ -72,14 +72,13 @@
     }
   },
   "ignore": [],
-  "_release": "0d5786984c",
+  "_release": "7fc6c082a0",
   "_resolution": {
     "type": "branch",
     "branch": "2.0-preview",
-    "commit": "0d5786984c8a77b3aa73877fd715d29bdcb1690c"
+    "commit": "7fc6c082a0060bbf44aebd685f82a8a51dcdeee7"
   },
   "_source": "https://github.com/PolymerElements/paper-dropdown-menu.git",
   "_target": "2.0-preview",
-  "_originalSource": "PolymerElements/paper-dropdown-menu",
-  "_direct": true
+  "_originalSource": "PolymerElements/paper-dropdown-menu"
 }

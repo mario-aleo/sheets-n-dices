@@ -52,14 +52,13 @@
       }
     }
   },
-  "_release": "30310015af",
+  "_release": "d642a36663",
   "_resolution": {
     "type": "branch",
     "branch": "2.0-preview",
-    "commit": "30310015af5d6357db324168ebf9903049262239"
+    "commit": "d642a36663542baa7e55ecd1002f2add382d118e"
   },
   "_source": "https://github.com/PolymerElements/paper-fab.git",
   "_target": "2.0-preview",
-  "_originalSource": "PolymerElements/paper-fab",
-  "_direct": true
+  "_originalSource": "PolymerElements/paper-fab"
 }

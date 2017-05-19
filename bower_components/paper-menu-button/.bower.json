@@ -72,11 +72,11 @@
     }
   },
   "ignore": [],
-  "_release": "9fec8c3be1",
+  "_release": "bfdc54b391",
   "_resolution": {
     "type": "branch",
     "branch": "2.0-preview",
-    "commit": "9fec8c3be1211fbcf83d3b2d1054b421f99f5766"
+    "commit": "bfdc54b391cf926a6b567647f4e56f4e5111ad4e"
   },
   "_source": "https://github.com/PolymerElements/paper-menu-button.git",
   "_target": "2.0-preview",

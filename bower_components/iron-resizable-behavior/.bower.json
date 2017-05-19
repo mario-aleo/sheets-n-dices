@@ -39,11 +39,11 @@
   },
   "ignore": [],
   "homepage": "https://github.com/PolymerElements/iron-resizable-behavior",
-  "_release": "c0955db7d1",
+  "_release": "a448923e68",
   "_resolution": {
     "type": "branch",
     "branch": "2.0-preview",
-    "commit": "c0955db7d1091393e10a2ba45b0b3753869a900d"
+    "commit": "a448923e682f28f993f384d4c1de71bddeae0dd4"
   },
   "_source": "https://github.com/PolymerElements/iron-resizable-behavior.git",
   "_target": "2.0-preview",

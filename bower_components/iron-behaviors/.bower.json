@@ -44,11 +44,11 @@
     }
   },
   "homepage": "https://github.com/PolymerElements/iron-behaviors",
-  "_release": "bee1b0e2e4",
+  "_release": "cdcb3a8fb0",
   "_resolution": {
     "type": "branch",
     "branch": "2.0-preview",
-    "commit": "bee1b0e2e48850c5df9512705e9429da073b21f7"
+    "commit": "cdcb3a8fb01d886fdd420a7c08d64175829d7312"
   },
   "_source": "https://github.com/PolymerElements/iron-behaviors.git",
   "_target": "2.0-preview",

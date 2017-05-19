@@ -42,14 +42,13 @@
       }
     }
   },
-  "_release": "805cf1351b",
+  "_release": "2177bd7683",
   "_resolution": {
     "type": "branch",
     "branch": "2.0-preview",
-    "commit": "805cf1351b6efe0fa33dd54d0e8bbdb67f42e40c"
+    "commit": "2177bd76832310ceeb6cce0de9ddb0f7582fe511"
   },
   "_source": "https://github.com/firebase/polymerfire.git",
   "_target": "2.0-preview",
-  "_originalSource": "firebase/polymerfire",
-  "_direct": true
+  "_originalSource": "firebase/polymerfire"
 }

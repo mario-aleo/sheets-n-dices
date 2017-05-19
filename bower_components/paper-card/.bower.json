@@ -57,14 +57,13 @@
       }
     }
   },
-  "_release": "310c01922c",
+  "_release": "4123692e18",
   "_resolution": {
     "type": "branch",
     "branch": "2.0-preview",
-    "commit": "310c01922cfadaa6dad71a3799262d5e9bad8cb8"
+    "commit": "4123692e182a28b786a077264cdaa8bc85fa7c5b"
   },
   "_source": "https://github.com/PolymerElements/paper-card.git",
   "_target": "2.0-preview",
-  "_originalSource": "PolymerElements/paper-card",
-  "_direct": true
+  "_originalSource": "PolymerElements/paper-card"
 }

@@ -56,11 +56,11 @@
       }
     }
   },
-  "_release": "6dc82626b3",
+  "_release": "939387f1d9",
   "_resolution": {
     "type": "branch",
     "branch": "2.0-preview",
-    "commit": "6dc82626b3affe85dc27ec22fcc6b1097637033c"
+    "commit": "939387f1d970b089886549321ad7aac28fcf84d4"
   },
   "_source": "https://github.com/PolymerElements/paper-behaviors.git",
   "_target": "2.0-preview",

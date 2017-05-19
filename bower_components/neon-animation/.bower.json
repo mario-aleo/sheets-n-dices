@@ -70,11 +70,11 @@
       }
     }
   },
-  "_release": "f714b15f6d",
+  "_release": "bcc8a509cb",
   "_resolution": {
     "type": "branch",
     "branch": "2.0-preview",
-    "commit": "f714b15f6d47ce19e09d0ff3922405c2b5f5f043"
+    "commit": "bcc8a509cbad42484494620886122a14d4f92726"
   },
   "_source": "https://github.com/PolymerElements/neon-animation.git",
   "_target": "2.0-preview",

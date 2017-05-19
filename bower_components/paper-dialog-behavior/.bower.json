@@ -58,11 +58,11 @@
       }
     }
   },
-  "_release": "ca81c0a72c",
+  "_release": "8d0dd6041b",
   "_resolution": {
     "type": "branch",
     "branch": "2.0-preview",
-    "commit": "ca81c0a72cfe14120c76919c70e0c3cdbffaed08"
+    "commit": "8d0dd6041b303fb190c449d5b96cc8859189764b"
   },
   "_source": "https://github.com/PolymerElements/paper-dialog-behavior.git",
   "_target": "2.0-preview",
