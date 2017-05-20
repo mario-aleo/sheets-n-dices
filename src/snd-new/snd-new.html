@@ -142,23 +142,6 @@
             }
         </style>
 
-        <firebase-auth
-            id="auth"
-            user="{{user}}"
-            provider="google">
-        </firebase-auth>
-
-        <firebase-query
-            id="query"
-            path="/users/[[user.uid]]/sheetList"
-            data="{{liveData}}">
-        </firebase-query>
-        <app-indexeddb-mirror
-            key="sheetList"
-            data="{{liveData}}"
-            persisted-data="{{persistedData}}">
-        </app-indexeddb-mirror>
-
         <paper-tabs 
             noink
             scrollable
@@ -845,9 +828,8 @@
                     }
                 );
                 console.log(this.newSheet);
-                this.$.query.ref.push(element.newSheet);
+                this.dispatchEvent(new CustomEvent('addNewSheet', {detail: {sheetData: this.newSheet}, composed: true}));
                 this.set("newSheet", new Sheet());
-                window.location.hash = '/New-Sheet';
                 return;
             }
 

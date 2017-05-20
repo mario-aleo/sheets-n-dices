@@ -24,8 +24,8 @@
             paper-card {
                 width: 100%;
                 margin-top: 16px;
-                pointer-events: none;
             }
+            paper-card,
             paper-card * {
                 pointer-events: none;
             }
@@ -36,6 +36,9 @@
             }
             .sheet-card-content {
                 cursor: pointer;
+            }
+            .sheet-card-content:last-of-type {
+                margin-bottom: 64px;
             }
             .sheet-summary {
                 display: flex;
@@ -77,25 +80,8 @@
             }
         </style>
 
-        <firebase-auth
-            id="auth"
-            user="{{user}}"
-            provider="google">
-        </firebase-auth>
-
-        <firebase-query
-            id="query"
-            path="/users/[[user.uid]]/sheetList"
-            data="{{liveData}}">
-        </firebase-query>
-        <app-indexeddb-mirror
-            key="sheetList"
-            data="{{liveData}}"
-            persisted-data="{{persistedData}}">
-        </app-indexeddb-mirror>
-
-        <template  is="dom-repeat" items="[[ liveData ]]" as="sheet">
-            <div class="sheet-card-content" on-click="_accessSheet" data-sheet$="[[ sheet ]]">
+        <template is="dom-repeat" items="[[ sheetList ]]" as="sheet">
+            <div class="sheet-card-content" on-click="_accessSheet" data-sheet-key$="[[ sheet.$key ]]">
                 <paper-card class="sheet-card"  elevation="2">
                     <div class="card-content">
                         <div class="sheet-summary">
@@ -141,11 +127,12 @@
                     </div>
                 </paper-card>
             </div>
-            <template is="dom-if" if="[[ !sheet ]]">
-                <div>
-                    You don't have any sheet ): 
-                </div>
-            </template>
+        </template>
+
+        <template is="dom-if" if="[[ !sheetList ]]">
+            <div>
+                You don't have any sheet ): 
+            </div>
         </template>
 
         <paper-fab
@@ -159,7 +146,11 @@
             static get is() { return 'snd-list'; }
 
             static get properties() {
-                return { };
+                return {
+                    sheetList: {
+                        type: Array
+                    }
+                };
             }
 
             static get observers() {
@@ -172,8 +163,8 @@
             }
 
             _accessSheet(event) {
-                let sheet = JSON.parse(event.target.dataset.sheet);
-                window.location.hash = '/Sheet/' + sheet.$key;
+                let sheetKey = event.target.dataset.sheetKey;
+                this.dispatchEvent(new CustomEvent('openSheet', {detail: {sheetKey: sheetKey}, composed: true}));
                 return;
             }
         }

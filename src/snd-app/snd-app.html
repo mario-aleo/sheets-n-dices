@@ -86,9 +86,25 @@
 
         <firebase-auth
             id="auth"
-            user="{{user}}"
+            user="{{ user }}"
             provider="google">
         </firebase-auth>
+
+        <firebase-query
+            id="query"
+            path="/users/[[ user.uid ]]/sheetList"
+            data="{{ liveData }}">
+        </firebase-query>
+        <app-indexeddb-mirror
+            key="sheetList"
+            data="{{ liveData }}"
+            persisted-data="{{ persistedData }}">
+        </app-indexeddb-mirror>
+
+        <firebase-document
+            path="/users/[[ user.uid ]]/sheetList/{{ sheetKey }}"
+            data="{{ sheetData }}">
+        </firebase-document>
 
         <app-header-layout has-scrolling-region fullbleed>
             <app-header slot="header" fixed effects="waterfall">
@@ -110,7 +126,8 @@
 
             <iron-pages role="main" selected="[[ page ]]" attr-for-selected="name" fallback-selection="error">
                 <snd-list
-                    name="Sheet-List">
+                    name="Sheet-List"
+                    sheet-list="{{ liveData }}">
                 </snd-list>
 
                 <snd-new
@@ -118,7 +135,8 @@
                 </snd-new>
 
                 <snd-sheet
-                    name="Sheet">
+                    name="Sheet"
+                    sheet-data="{{ sheetData }}">
                 </snd-sheet>
 
                 <div name="error">
@@ -140,6 +158,9 @@
                     },
                     page: {
                         type: String
+                    },
+                    sheetKey: {
+                        type: String
                     }
                 };
             }
@@ -148,6 +169,12 @@
                 return [
                     '_routePageChanged(routeData.page)'
                 ];
+            }
+
+            ready() {
+                super.ready();
+                this.addEventListener('addNewSheet', e => this._addNewSheet(e.detail.sheetData));
+                this.addEventListener('openSheet', e => this._openSheet(e.detail.sheetKey));
             }
             
             /*
@@ -162,6 +189,18 @@
             }
             /*
              */
+
+            _addNewSheet(newSheetData) {
+                this.$.query.ref.push(newSheetData);
+                window.location.hash = '/Sheet-List';
+                return;
+            }
+
+            _openSheet(sheetKey) {
+                this.set('sheetKey', sheetKey);
+                window.location.hash = '/Sheet/' + sheetKey;
+                return;
+            }
 
             /*
              *  Login Methods
