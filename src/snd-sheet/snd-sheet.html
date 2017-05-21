@@ -26,7 +26,130 @@
                 height: calc(100% - 48px);
                 overflow-y: auto;
             }
+            paper-card {
+                width: 100%;
+                margin-top: 16px;
+            }
+            .sheet-detail {
+                display: flex;
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 16px;
+            }
+            .sheet-detail:last-child {
+                margin-bottom: 0;
+            }
+            .sheet-detail-name {
+                font-weight: 500;
+            }
         </style>
+
+        <paper-tabs 
+            noink
+            scrollable
+            hide-scroll-buttons
+            fit-container
+            selected="{{ tabSelected }}">
+            <paper-tab>
+                Summary
+            </paper-tab>
+            <paper-tab>
+                Inventory
+            </paper-tab>
+            <paper-tab>
+                Notes
+            </paper-tab>
+            <paper-tab>
+                Dice Roll
+            </paper-tab>
+        </paper-tabs>
+
+        <iron-pages id="ironPages"
+            selected="{{ tabSelected }}">
+
+            <section class="summary-page">
+                <paper-card class="basic-card"
+                    elevation="2">
+                    <div class="card-content">
+                        <div class="sheet-detail">
+                            <span class="sheet-detail-name">
+                                Name:
+                            </span>
+                            <span class="sheet-detail-value">
+                                [[ sheetData.name ]]
+                            </span>
+                        </div>
+                        <div class="sheet-detail">
+                            <span class="sheet-detail-name">
+                                Class:
+                            </span>
+                            <span class="sheet-detail-value">
+                                [[ sheetData.job ]]
+                            </span>
+                        </div>
+                        <div class="sheet-detail">
+                            <span class="sheet-detail-name">
+                                Race:
+                            </span>
+                            <span class="sheet-detail-value">
+                                [[ sheetData.race ]]
+                            </span>
+                        </div>
+                        <div class="sheet-detail">
+                            <span class="sheet-detail-name">
+                                Level:
+                            </span>
+                            <span class="sheet-detail-value">
+                                [[ sheetData.level ]]
+                            </span>
+                        </div>
+                        <div class="sheet-detail">
+                            <span class="sheet-detail-name">
+                                System:
+                            </span>
+                            <span class="sheet-detail-value">
+                                [[ sheetData.system ]]
+                            </span>
+                        </div>
+                    </div>
+                </paper-card>
+
+                <paper-card class="status-card"
+                    elevation="2">
+                    <div class="card-content">
+                    </div>
+                </paper-card>
+
+                <paper-card class="resources-card"
+                    elevation="2">
+                    <div class="card-content">
+                    </div>
+                </paper-card>
+
+                <paper-card class="defenses-card"
+                    elevation="2">
+                    <div class="card-content">
+                    </div>
+                </paper-card>
+
+                <paper-card class="skills-card"
+                    elevation="2">
+                    <div class="card-content">
+                    </div>
+                </paper-card>
+            </section>
+
+            <section class="inventory-page">
+            </section>
+
+            <section class="notes-page">
+            </section>
+
+            <section class="dice-roll-page">
+            </section>
+
+        </iron-pages>
 
     </template>
 
@@ -36,6 +159,10 @@
 
             static get properties() {
                 return {
+                    tabSelected: {
+                        type: Number,
+                        value: 0
+                    },
                     sheetData: {
                         type: Object
                     }
