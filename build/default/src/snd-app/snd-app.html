@@ -2,17 +2,16 @@
 <link rel="import" href="../../bower_components/polymer/lib/elements/dom-if.html">
 <link rel="import" href="../../bower_components/polymer/lib/elements/dom-repeat.html">
 
+<link rel="import" href="../../bower_components/app-route/app-location.html">
+<link rel="import" href="../../bower_components/app-route/app-route.html">
+
 <link rel="import" href="../../bower_components/polymerfire/firebase.html">
 <link rel="import" href="../../bower_components/polymerfire/polymerfire.html">
 <link rel="import" href="../../bower_components/polymerfire/firebase-app.html">
 <link rel="import" href="../../bower_components/polymerfire/firebase-auth.html">
 <link rel="import" href="../../bower_components/polymerfire/firebase-query.html">
 <link rel="import" href="../../bower_components/polymerfire/firebase-document.html">
-
 <link rel="import" href="../../bower_components/app-storage/app-indexeddb-mirror/app-indexeddb-mirror.html">
-
-<link rel="import" href="../../bower_components/app-route/app-location.html">
-<link rel="import" href="../../bower_components/app-route/app-route.html">
 
 <link rel="import" href="../../bower_components/app-layout/app-header-layout/app-header-layout.html">
 <link rel="import" href="../../bower_components/app-layout/app-header/app-header.html">
@@ -22,7 +21,6 @@
 <link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
 
 <link rel="import" href="../../bower_components/paper-fab/paper-fab.html">
-
 <link rel="import" href="../../bower_components/paper-card/paper-card.html">
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
 
@@ -54,14 +52,43 @@
             }
             app-header {
                 background-color: var(--primary-color);
-                color: #fff;
+                color: #FFF;
+                letter-spacing: 1px;
             }
             app-toolbar {
                 background-color: var(--primary-color);
-                color: #fff;
+                color: #FFF;
             }
             iron-pages {
                 height: calc(100% - 64px);
+            }
+            #signInOverlay {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                height: 100%;
+                width: 100%;
+                position: absolute;
+                z-index: 1;
+                opacity: 1;
+                background-color: var(--primary-color);
+                pointer-events: auto;
+                transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+                will-change: opacity;
+            }
+            #signInOverlay paper-button {
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                justify-content: center;
+                width: 128px;
+                color: #FFF;
+                font-weight: 500;
+                letter-spacing: 0.5px;
+            }
+            #signInOverlay span {
+                margin-left: 8px;
             }
         </style>
 
@@ -93,14 +120,14 @@
                 </app-toolbar>
             </app-header>
 
-            <template is="dom-if" if="[[ !user ]]">
-                <div>
-                    Login to Start using Sheets 'n Dices 
-                </div>
+            <div id="signInOverlay">
                 <paper-button on-tap="_logIn">
-                    Log In
+                    <iron-icon icon="account-circle">
+                    </iron-icon>
+                    <span>Sign In</span>
                 </paper-button>
-            </template>
+            </div>
+
 
             <iron-pages role="main" selected="[[ page ]]" attr-for-selected="name" fallback-selection="error">
                 <snd-list name="Sheet-List" sheet-list="{{ liveData }}">
@@ -116,6 +143,7 @@
                     Ops, page not found D:
                 </div>
             </iron-pages>
+           
         </app-header-layout>
 
     </template>
@@ -140,7 +168,8 @@
 
             static get observers() {
                 return [
-                    '_routePageChanged(routeData.page)'
+                    '_routePageChanged(routeData.page)',
+                    '_userChanged(user)'
                 ];
             }
 
@@ -153,10 +182,22 @@
             /*
              *  Observers
              */
+            _userChanged(user) {
+                if (!user) {
+                    this.$.signInOverlay.style.opacity = 1;
+                    this.$.signInOverlay.style.pointerEvents = 'auto';
+                } else {
+                    this.$.signInOverlay.style.opacity = 0;
+                    this.$.signInOverlay.style.pointerEvents = 'none';
+                }
+            }
+
             _routePageChanged(page) {
                 if (!page) {
                     return window.location.hash = window.location.hash || '/Sheet-List';
-                }  else {
+                }  else if (page == "Sheet" && !this.sheetKey) {
+                    return  window.location.hash = '/Sheet-List';
+                } else {
                     return this.set('page', page);
                 }
             }

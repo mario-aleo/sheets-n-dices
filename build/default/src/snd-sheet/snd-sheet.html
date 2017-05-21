@@ -2,6 +2,10 @@
 <link rel="import" href="../../bower_components/polymer/lib/elements/dom-if.html">
 <link rel="import" href="../../bower_components/polymer/lib/elements/dom-repeat.html">
 
+<link rel="import" href="../../bower_components/paper-tabs/paper-tab.html">
+<link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
+<link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
+
 
 <dom-module id="snd-sheet">
     <template>
@@ -10,10 +14,19 @@
                 display: block;
                 height: 100%;
                 width: 100%;
+                --paper-tabs-selection-bar-color: var(--secondary-color);
+                --paper-fab-background: var(--secondary-color);
+                --paper-fab-keyboard-focus-background: var(--focus-color);
+            }
+            paper-tabs {
+                background-color: var(--primary-color);
+                color: #FFF;
+            }
+            iron-pages{
+                height: calc(100% - 48px);
+                overflow-y: auto;
             }
         </style>
-
-        [[ sheetData ]]
 
     </template>
 
@@ -36,9 +49,9 @@
             /*
              *  Observers
              */
-             _sheetDataChanged(sheetData){
-                 console.log(sheetData);
-             }
+            _sheetDataChanged(sheetData){
+                console.log(sheetData);
+            }
             /*
              */
         }

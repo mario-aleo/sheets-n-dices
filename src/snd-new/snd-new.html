@@ -60,6 +60,7 @@
                 position: fixed;
                 bottom: 16px;
                 right: 16px;
+                box-shadow: var(--paper-material-elevation-4_-_box-shadow);
             }
             paper-input,
             paper-dropdown-menu {
@@ -88,7 +89,7 @@
                 padding: 16px 0;
             }
             .dependency-section {
-                padding: 12px 0 4px 0;
+                padding: 12px 0 8px 0;
             }
             .dependency-overlay::after {
                 content:"&nbsp;";
@@ -493,6 +494,7 @@
         <!-- Save Fab Button -->
         <paper-fab
             icon="save"
+            elevation="4"
             on-tap="_newSheet">
         </paper-fab>
 
