@@ -1,7 +1,4 @@
 <link rel="import" href="../../bower_components/polymer/polymer-element.html">
-<link rel="import" href="../../bower_components/polymer/lib/elements/dom-if.html">
-<link rel="import" href="../../bower_components/polymer/lib/elements/dom-repeat.html">
-
 
 <dom-module id="snd-chip">
     <template>
@@ -31,10 +28,6 @@
     <script>
         class SndChip extends Polymer.Element {
             static get is() { return 'snd-chip'; }
-
-            static get properties() {
-                return { }
-            }
         }
 
         window.customElements.define(SndChip.is, SndChip);
