@@ -773,66 +773,59 @@
                 }
                 // Each Status, Resource, Defense and Skill and SUM
                 const element = this;
-                this.dependencyChain = [];
+                this.set("dependencyChain", []);
                 parseInt(element._numberTypeCheck(element.newSheet.level));
                 // SUM Status = baseValue + (levelModifier * level)
-                this.newSheet.statusList.forEach(
-                    function (status) {
-                        if (status.value === 0) {
-                            element.dependencyChain.push({
-                                location: "statusList",
-                                status: status
-                            });
-                            element._objectCalculation(status);
-                            element.dependencyChain = [];
-                        }
+                this.newSheet.statusList.forEach(function (status) {
+                    if (status.value === 0) {
+                        element.push("dependencyChain", {
+                            location: "statusList",
+                            status: status
+                        });
+                        element._objectCalculation(status);
+                        element.dependencyChain = [];
                     }
-                );
+                });
                 // SUM Resource = baseValue + (statusBase.value * statusBaseModifier) + (levelModifier * level)
                 // or if statusBase == None => SUM Resource = baseValue + (levelModifier * level)
-                this.newSheet.resourcesList.forEach(
-                    function (resource) {
-                        if (resource.value === 0) {
-                            element.dependencyChain.push({
-                                location: "resourcesList",
-                                status: resource
-                            });
-                            element._objectCalculation(resource);
-                            element.dependencyChain = [];
-                        }
+                this.newSheet.resourcesList.forEach(function (resource) {
+                    if (resource.value === 0) {
+                        element.push("dependencyChain", {
+                            location: "resourcesList",
+                            status: resource
+                        });
+                        element._objectCalculation(resource);
+                        element.dependencyChain = [];
                     }
-                );
+                });
                 // SUM Defense = baseValue + (statusBase.value * statusBaseModifier) + (levelModifier * level)
                 // or if statusBase == None => SUM Defense = baseValue + (levelModifier * level)
-                this.newSheet.defensesList.forEach(
-                    function (defense) {
-                        if (defense.value === 0) {
-                            element.dependencyChain.push({
-                                location: "defensesList",
-                                status: defense
-                            });
-                            element._objectCalculation(defense);
-                            element.dependencyChain = [];
-                        }
+                this.newSheet.defensesList.forEach(function (defense) {
+                    if (defense.value === 0) {
+                        element.push("dependencyChain", {
+                            location: "defensesList",
+                            status: defense
+                        });
+                        element._objectCalculation(defense);
+                        element.dependencyChain = [];
                     }
-                );
+                });
                 // SUM Skill = baseValue + (statusBase.value * statusBaseModifier) + (levelModifier * level)
                 // or if statusBase == None => SUM Skill = baseValue + (levelModifier * level)
-                this.newSheet.skillsList.forEach(
-                    function (skill) {
-                        if (skill.value === 0) {
-                            element.dependencyChain.push({
-                                location: "skillsList",
-                                status: skill
-                            });
-                            element._objectCalculation(skill);
-                            element.dependencyChain = [];
-                        }
+                this.newSheet.skillsList.forEach(function (skill) {
+                    if (skill.value === 0) {
+                        element.push("dependencyChain", {
+                            location: "skillsList",
+                            status: skill
+                        });
+                        element._objectCalculation(skill);
+                        element.dependencyChain = [];
                     }
-                );
+                });
                 console.log(this.newSheet);
-                this.dispatchEvent(new CustomEvent('addNewSheet', {detail: {sheetData: this.newSheet}, composed: true}));
                 this.set("newSheet", new Sheet());
+                this.set("tabSelected", 0);
+                this.dispatchEvent(new CustomEvent('addNewSheet', {detail: {sheetData: element.newSheet}, composed: true}));
                 return;
             }
 
@@ -840,7 +833,7 @@
                 // Encapsulation
                 const element = this;
                 // Init statusItem Value
-                statusItem.value = parseInt( parseInt(element._numberTypeCheck(statusItem.baseValue)) + parseInt(element._numberTypeCheck(element.newSheet.level)) * parseFloat(element._numberTypeCheck(statusItem.levelModifier)) );
+                statusItem.value = parseInt(parseInt(element._numberTypeCheck(statusItem.baseValue)) + parseInt(element._numberTypeCheck(element.newSheet.level)) * parseFloat(element._numberTypeCheck(statusItem.levelModifier)));
                 console.log("Initial " + statusItem.name + " Value: " + statusItem.value);
                 // Verify statusItem Dependency
                 if (statusItem.dependencyList.length > 0) {
@@ -856,8 +849,10 @@
                                 // Localize Dependency Object
                                 element.newSheet[statusItemDependencyItem.location].forEach(function (statusItemDependencyItemStatusItem) {
                                     if (statusItemDependencyItemStatusItem.name == statusItemDependencyItem.name) {
+                                        // Verify Dependency Object
                                         if (statusItemDependencyItemStatusItem.value === 0) {
-                                            element.dependencyChain.push({
+                                            // Calculate Dependency Object
+                                            element.push("dependencyChain", {
                                                 location: statusItemDependencyItem.location,
                                                 status: statusItemDependencyItemStatusItem
                                             });
