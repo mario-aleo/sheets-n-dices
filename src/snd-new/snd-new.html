@@ -709,22 +709,25 @@
                     location = event.target.dataset.statusLocation,
                     path = 'newSheet.' + location + '.' + index + '.dependencyList',
                     element = this;
-                this.requestStatusDependencyLocation = location;
-                this.requestStatusDependencyName = this.newSheet.statusList[index].name;
+                this.set('dependencyLocation', 'statusList');
+                this.set('dependencyName', '');
+                this.set('dependencyValue', 0);
+                this.set('requestStatusDependencyLocation', location);
+                this.set('requestStatusDependencyName', this.newSheet.statusList[index].name);
                 this._dependencyValueDisabled();
                 this._dependencyAddDisabled();
                 this._cancel = tapEvent => {
-                    this.set('dependencyLocation', 'statusList');
-                    this.set('dependencyName', '');
-                    this.set('dependencyValue', 0);
-                    this.$.dependencyDialog.close();
+                    element.set('dependencyLocation', 'statusList');
+                    element.set('dependencyName', '');
+                    element.set('dependencyValue', 0);
+                    element.$.dependencyDialog.close();
                 }
                 this._confirm = tapEvent => {
-                    this.push(path, new Dependency(element.dependencyLocation, element.dependencyName, element.dependencyValue));
-                    this.set('dependencyLocation', 'statusList');
-                    this.set('dependencyName', '');
-                    this.set('dependencyValue', 0);
-                    this.$.dependencyDialog.close();
+                    element.push(path, new Dependency(element.dependencyLocation, element.dependencyName, element.dependencyValue));
+                    element.set('dependencyLocation', 'statusList');
+                    element.set('dependencyName', '');
+                    element.set('dependencyValue', 0);
+                    element.$.dependencyDialog.close();
                 }
                 this.$.dependencyDialog.open();
                 return;
@@ -737,20 +740,20 @@
                     depencencyStatus = this.newSheet[statusLocation][statusIndex].dependencyList[dependencyIndex],
                     path = 'newSheet.' + statusLocation + '.' + statusIndex + '.dependencyList.' + dependencyIndex,
                     element = this;
-                this.requestStatusDependencyLocation = statusLocation;
-                this.requestStatusDependencyName = this.newSheet.statusList[statusIndex].name;
                 this.set('dependencyLocation', depencencyStatus.location);
                 this.set('dependencyName', depencencyStatus.name);
                 this.set('dependencyValue', depencencyStatus.modifier);
+                this.set('requestStatusDependencyLocation', statusLocation);
+                this.set('requestStatusDependencyName', this.newSheet.statusList[statusIndex].name);
                 this._cancel = tapEvent => {
-                    this.set('dependencyLocation', statusLocation);
-                    this.set('dependencyName', '');
-                    this.set('dependencyValue', 0);
-                    this.$.dependencyDialog.close();
+                    element.set('dependencyLocation', statusLocation);
+                    element.set('dependencyName', '');
+                    element.set('dependencyValue', 0);
+                    element.$.dependencyDialog.close();
                 }
                 this._confirm = tapEvent => {
-                    this.set(path, new Dependency(element.dependencyLocation, element.dependencyName, element.dependencyValue));
-                    this.$.dependencyDialog.close();
+                    element.set(path, new Dependency(element.dependencyLocation, element.dependencyName, element.dependencyValue));
+                    element.$.dependencyDialog.close();
                 }
                 this.$.dependencyDialog.open();
                 return;
