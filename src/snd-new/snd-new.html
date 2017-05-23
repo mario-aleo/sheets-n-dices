@@ -826,9 +826,9 @@
                     }
                 });
                 console.log(this.newSheet);
-                this.set("newSheet", new Sheet());
-                this.set("tabSelected", 0);
                 this.dispatchEvent(new CustomEvent('addNewSheet', {detail: {sheetData: element.newSheet}, composed: true}));
+                this.set("tabSelected", 0);
+                this.set("newSheet", new Sheet());
                 return;
             }
 
