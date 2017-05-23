@@ -6,6 +6,15 @@
 <link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
 <link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
 
+<link rel="import" href="../../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../../bower_components/paper-fab/paper-fab.html">
+
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/paper-input/paper-textarea.html">
+
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
+
 
 <dom-module id="snd-sheet">
     <template>
@@ -22,26 +31,42 @@
                 background-color: var(--primary-color);
                 color: #FFF;
             }
-            iron-pages{
-                height: calc(100% - 48px);
-                overflow-y: auto;
-            }
             paper-card {
                 width: 100%;
                 margin-top: 16px;
+            }
+            paper-fab {
+                position: fixed;
+                bottom: 16px;
+                right: 16px;
+                box-shadow: var(--paper-material-elevation-4_-_box-shadow);
+            }
+            .status-card:last-child {
+                margin-bottom: 32px;
             }
             .sheet-detail {
                 display: flex;
                 flex-direction: row;
                 justify-content: space-between;
                 align-items: center;
-                margin-bottom: 16px;
+                margin-top: 16px;
             }
-            .sheet-detail:last-child {
-                margin-bottom: 0;
+            .sheet-detail:first-child {
+                margin-top: 0;
             }
             .sheet-detail-name {
                 font-weight: 500;
+            }
+            .dialog-overlay:after {
+                content:"&nbsp;";
+                display: block;
+                position: fixed;
+                width: 100%;
+                height: 100%;
+                top: 0;
+                left: 0;
+                z-index: 102;
+                background-color: rgba(0,0,0,0.7)
             }
         </style>
 
@@ -70,6 +95,7 @@
 
             <section class="summary-page">
                 <paper-card class="basic-card"
+                    heading="Basic"
                     elevation="2">
                     <div class="card-content">
                         <div class="sheet-detail">
@@ -116,37 +142,173 @@
                 </paper-card>
 
                 <paper-card class="status-card"
+                    heading="Status"
                     elevation="2">
                     <div class="card-content">
+                        <template
+                            is="dom-repeat"
+                            items="[[ sheetData.statusList ]]"
+                            as="status">
+                            <div class="sheet-detail">
+                                <span class="sheet-detail-name">
+                                    [[ status.name ]]
+                                </span>
+                                <span class="sheet-detail-value">
+                                    [[ status.value ]]
+                                </span>
+                            </div>
+                        </template>
                     </div>
                 </paper-card>
 
-                <paper-card class="resources-card"
+                <paper-card class="status-card"
+                    heading="Resources"
                     elevation="2">
                     <div class="card-content">
+                        <template
+                            is="dom-repeat"
+                            items="[[ sheetData.resourcesList ]]"
+                            as="resources">
+                            <div class="sheet-detail">
+                                <span class="sheet-detail-name">
+                                    [[ resources.name ]]
+                                </span>
+                                <span class="sheet-detail-value">
+                                    [[ resources.value ]]
+                                </span>
+                            </div>
+                        </template>
                     </div>
                 </paper-card>
 
-                <paper-card class="defenses-card"
+                <paper-card class="status-card"
+                    heading="Defenses"
                     elevation="2">
                     <div class="card-content">
+                        <template
+                            is="dom-repeat"
+                            items="[[ sheetData.defensesList ]]"
+                            as="defenses">
+                            <div class="sheet-detail">
+                                <span class="sheet-detail-name">
+                                    [[ defenses.name ]]
+                                </span>
+                                <span class="sheet-detail-value">
+                                    [[ defenses.value ]]
+                                </span>
+                            </div>
+                        </template>
                     </div>
                 </paper-card>
 
-                <paper-card class="skills-card"
+                <paper-card class="status-card"
+                    heading="Skills"
                     elevation="2">
                     <div class="card-content">
+                        <template
+                            is="dom-repeat"
+                            items="[[ sheetData.skillsList ]]"
+                            as="skills">
+                            <div class="sheet-detail">
+                                <span class="sheet-detail-name">
+                                    [[ skills.name ]]
+                                </span>
+                                <span class="sheet-detail-value">
+                                    [[ skills.value ]]
+                                </span>
+                            </div>
+                        </template>
                     </div>
                 </paper-card>
             </section>
 
             <section class="inventory-page">
+                <template
+                    is="dom-repeat"
+                    items="[[ sheetData.itemsList ]]"
+                    as="item">
+                    <paper-card class="status-card"
+                        heading="[[ item.name ]]"
+                        elevation="2">
+                        <div class="card-content">
+                            <div class="item-description">
+                                [[ item.description ]]
+                            </div>
+                            <div class="item-effects">
+
+                            </div>
+                        </div>
+                    </paper-card>
+                </template>
+
+                <template is="dom-if" if="[[ !sheetData.itemsList ]]">
+                    <div>
+                        You don't have any item :( 
+                    </div>
+                </template>
             </section>
 
             <section class="notes-page">
+                <template
+                    is="dom-repeat"
+                    items="[[ sheetData.notesList ]]"
+                    as="note">
+                    <paper-card class="status-card"
+                        heading="[[ note.name ]]"
+                        elevation="2">
+                        <div class="card-content">
+                            [[ note.text ]]
+                        </div>
+                    </paper-card>
+                </template>
+
+                <template is="dom-if" if="[[ !sheetData.notesList ]]">
+                    <div>
+                        You don't have any note :( 
+                    </div>
+                </template>
+
+                <paper-fab
+                    icon="add"
+                    elevation="4"
+                    on-tap="_addNote">
+                </paper-fab>
+
+                <paper-dialog id="noteDialog"
+                    no-cancel-on-esc-key
+                    no-cancel-on-outside-click>
+                    <div>
+                        <paper-input id="noteDialogName"
+                            always-float-label
+                            type="text"
+                            label="Name">
+                        </paper-input>
+                        <paper-textarea id="noteDialogText"
+                            always-float-label
+                            type="text"
+                            label="Text">
+                        </paper-textarea>
+                    </div>
+                    <div class="buttons">
+                        <paper-button id="noteDialogCancel"
+                            class="red-paper-button"
+                            on-tap="_cancel">
+                            Cancel
+                        </paper-button>
+                        <paper-button id="noteDialogConfirm"
+                            class="secondary-paper-button"
+                            on-tap="_confirm"
+                            autofocus>
+                            Confirm
+                        </paper-button>
+                    </div>
+                </paper-dialog>
             </section>
 
             <section class="dice-roll-page">
+                <div>
+                    Under development :) 
+                </div>
             </section>
 
         </iron-pages>
@@ -181,7 +343,53 @@
             }
             /*
              */
+
+            _addNote(event) {
+                let element = this;
+                this.$.ironPages.classList.add("dialog-overlay");
+                this._cancel = tapEvent => {
+                    this.$.noteDialogName.value = "";
+                    this.$.noteDialogText.value = "";
+                    this.$.noteDialog.close();
+                    this.$.ironPages.classList.remove("dialog-overlay");
+                }
+                this._confirm = tapEvent => {
+                    let name = element.$.noteDialogName.value,
+                        text = element.$.noteDialogText.value;
+                    if (!element.sheetData.notesList) this.set("sheetData.notesList", []);
+                    this.push("sheetData.notesList", new Note(name, text));
+                    this.$.noteDialog.close();
+                    this.$.ironPages.classList.remove("dialog-overlay");
+                }
+                this.$.noteDialog.open();
+                return;
+            }
         }
+
+        class Note {
+            constructor(name, text) {
+                this.name = name;
+                this.text = text;
+            }
+        };
+
+        class Item {
+            constructor() {
+                this.name = "";
+                this.description = "";
+                this.equippable = true;
+                this.charges = 0;
+                this.effectList = [];
+            }
+        };
+
+        class Effect {
+            constructor(location, name, value) {
+                this.location = location;
+                this.name = name;
+                this.modifier = value;
+            }
+        };
 
         window.customElements.define(SndSheet.is, SndSheet);
     </script>
