@@ -26,6 +26,10 @@
                 --paper-tabs-selection-bar-color: var(--secondary-color);
                 --paper-fab-background: var(--secondary-color);
                 --paper-fab-keyboard-focus-background: var(--focus-color);
+
+                --paper-input-container-input:{
+                    max-height: 120px;
+                }
             }
             paper-tabs {
                 background-color: var(--primary-color);
@@ -40,6 +44,9 @@
                 bottom: 16px;
                 right: 16px;
                 box-shadow: var(--paper-material-elevation-4_-_box-shadow);
+            }
+            paper-dialog {
+                width: calc(100% - 80px);
             }
             .status-card:last-child {
                 margin-bottom: 32px;
@@ -68,10 +75,34 @@
                 z-index: 102;
                 background-color: rgba(0,0,0,0.7)
             }
+            .note-text {
+                word-break: break-word;
+            }
+            .primary-paper-button {
+                background-color: var(--primary-color);
+                color: #FFF;
+            }
+            .secondary-paper-button {
+                color: var(--secondary-color);
+            }
+            .red-paper-button {
+                color: #FF5252
+            }
+            @media (min-width: 426px) {
+                paper-dialog {
+                    width: calc(60% - 80px);
+                    max-width: calc(60% - 80px);
+                }
+            }
+            @media (min-width: 769px) {
+                paper-dialog {
+                    width: calc(60% - 80px);
+                    max-width: calc(60% - 80px);
+                }
+            }
         </style>
 
-        <paper-tabs 
-            noink
+        <paper-tabs
             scrollable
             hide-scroll-buttons
             fit-container
@@ -252,12 +283,32 @@
                 <template
                     is="dom-repeat"
                     items="[[ sheetData.notesList ]]"
-                    as="note">
+                    as="note"
+                    index-as="noteIndex">
                     <paper-card class="status-card"
                         heading="[[ note.name ]]"
                         elevation="2">
-                        <div class="card-content">
-                            [[ note.text ]]
+                        <div class="card-content note-text">
+                            <p>
+                                [[ note.text ]]
+                            </p>
+                        </div>
+                        <div class="card-actions">
+                            <paper-button
+                                class="red-paper-button"
+                                on-tap="_deleteNote"
+                                data-note-index$="[[ noteIndex ]]">
+                                Delete
+                            </paper-button>
+                            <paper-button
+                                class="secondary-paper-button"
+                                on-tap="_editNote"
+                                data-note-index$="[[ noteIndex ]]"
+                                data-note-name$="[[ note.name ]]"
+                                data-note-text$="[[ note.text ]]"
+                                autofocus>
+                                Edit
+                            </paper-button>
                         </div>
                     </paper-card>
                 </template>
@@ -277,7 +328,7 @@
                 <paper-dialog id="noteDialog"
                     no-cancel-on-esc-key
                     no-cancel-on-outside-click>
-                    <div>
+                    <div class="content">
                         <paper-input id="noteDialogName"
                             always-float-label
                             type="text"
@@ -286,7 +337,9 @@
                         <paper-textarea id="noteDialogText"
                             always-float-label
                             type="text"
-                            label="Text">
+                            label="Text"
+                            rows="5"
+                            max-rows="5">
                         </paper-textarea>
                     </div>
                     <div class="buttons">
@@ -344,6 +397,9 @@
             /*
              */
 
+            /*
+             *  Notes Functions
+             */
             _addNote(event) {
                 let element = this;
                 this.$.ironPages.classList.add("dialog-overlay");
@@ -364,6 +420,47 @@
                 this.$.noteDialog.open();
                 return;
             }
+
+            _editNote(event) {
+                let element = this,
+                    path = "sheetData.notesList." + event.target.dataset.noteIndex,
+                    name = event.target.dataset.noteName,
+                    text = event.target.dataset.noteText;
+                this.$.ironPages.classList.add("dialog-overlay");
+                this.$.noteDialogName.value = name;
+                this.$.noteDialogText.value = text;
+                this._cancel = tapEvent => {
+                    this.$.noteDialogName.value = "";
+                    this.$.noteDialogText.value = "";
+                    this.$.noteDialog.close();
+                    this.$.ironPages.classList.remove("dialog-overlay");
+                }
+                this._confirm = tapEvent => {
+                    let name = element.$.noteDialogName.value,
+                        text = element.$.noteDialogText.value;
+                    this.set(path, new Note(name, text));
+                    this.$.noteDialog.close();
+                    this.$.ironPages.classList.remove("dialog-overlay");
+                }
+                this.$.noteDialog.open();
+                return;
+            }
+
+            _deleteNote(event) {
+                let noteIndex = event.target.dataset.noteIndex;
+                this.splice("sheetData.notesList", noteIndex, 1);
+            }
+            /*
+             */
+
+            /*
+             *  Dices Functions
+             */
+            _rollDices() {
+
+            }
+            /*
+             */
         }
 
         class Note {

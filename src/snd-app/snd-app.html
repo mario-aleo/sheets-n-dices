@@ -130,8 +130,8 @@
             data="{{ sheetData }}">
         </firebase-document>
 
-        <app-header-layout has-scrolling-region fullbleed>
-            <app-header slot="header" fixed effects="waterfall">
+        <app-header-layout has-scrolling-region fullbleed scroll-target="ironPages">
+            <app-header id="appHeader" slot="header" fixed effects="waterfall">
                 <app-toolbar>
                     <div main-title>
                         Sheets 'n Dices
@@ -149,7 +149,7 @@
             </div>
 
 
-            <iron-pages role="main" selected="[[ page ]]" attr-for-selected="name" fallback-selection="error">
+            <iron-pages id="ironPages" role="main" selected="[[ page ]]" attr-for-selected="name" fallback-selection="error">
                 <snd-list
                     name="Sheet-List"
                     sheet-list="{{ liveData }}">
@@ -218,6 +218,7 @@
             }
 
             _routePageChanged(page) {
+                this.$.appHeader.scroll(0, 0);
                 if (!page) {
                     return window.location.hash = window.location.hash || '/Sheet-List';
                 }  else if (page == "Sheet" && !this.sheetKey) {
