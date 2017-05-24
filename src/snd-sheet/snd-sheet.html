@@ -39,10 +39,6 @@
                 width: 100%;
                 margin-top: 16px;
             }
-            paper-button {
-                margin-top: 16px;
-                margin: auto;
-            }
             paper-fab {
                 position: fixed;
                 bottom: 16px;
@@ -54,6 +50,9 @@
             }
             paper-dialog .buttons {
                 padding: 8px;
+            }
+            paper-dialog .buttons paper-button {
+                margin: auto;
             }
             .status-card:last-child {
                 margin-bottom: 32px;
@@ -70,6 +69,10 @@
             }
             .sheet-detail-name {
                 font-weight: 500;
+            }
+            .affect-add-content {
+                display: flex;
+                flex-direction: row;
             }
             .dialog-overlay:after {
                 content:"&nbsp;";
@@ -261,7 +264,144 @@
             </section>
 
             <section class="effects-page">
+                <template
+                    is="dom-repeat"
+                    items="[[ sheetData.effectsList ]]"
+                    as="effect"
+                    index-as="effectIndex">
+                    <paper-card class="status-card"
+                        heading="[[ effect.name ]]"
+                        elevation="2">
+                        <div class="card-content note-text">
+                            <template
+                                is="dom-repeat"
+                                items="[[ effect.affectsList ]]"
+                                as="affect">
+                                <snd-chip>
+                                    [[ _affectChipName(affect.value, affect.name, affect.location) ]]
+                                </snd-chip>
+                            </template>
+                        </div>
+                        <div class="card-actions">
+                            <paper-button
+                                class="red-paper-button"
+                                on-tap="_deleteEffect"
+                                data-effect-index$="[[ effectIndex ]]">
+                                Delete
+                            </paper-button>
+                            <paper-button
+                                class="secondary-paper-button"
+                                on-tap="_editEffect"
+                                data-effect-index$="[[ effectIndex ]]"
+                                autofocus>
+                                Edit
+                            </paper-button>
+                        </div>
+                    </paper-card>
+                </template>
 
+                <template is="dom-if" if="[[ !sheetData.effectsList ]]">
+                    <div>
+                        <p>You don't have any effect</p>
+                        <p>Brightside, you don't have any negative effect :)</p>
+                    </div>
+                </template>
+
+                <paper-fab
+                    icon="add"
+                    elevation="4"
+                    on-tap="_addEffect">
+                </paper-fab>
+
+                <paper-dialog id="effectDialog"
+                    no-cancel-on-esc-key
+                    no-cancel-on-outside-click>
+                    <div class="content">
+                        <paper-input id="effectDialogName"
+                            always-float-label
+                            type="text"
+                            label="Name">
+                        </paper-input>
+                        <section>
+                            <template
+                                is="dom-repeat"
+                                items="[[ affectList ]]"
+                                as="affect">
+                                <snd-chip>
+                                    [[ _affectChipName(affect.value, affect.name, affect.location) ]]
+                                </snd-chip>
+                            </template>
+                            <section class="affect-add-content">
+                                <paper-dropdown-menu>
+                                    <paper-listbox id="affectDialogStatus"
+                                        slot="dropdown-content"
+                                        attr-for-selected="affectItem">
+                                        <template
+                                            is="dom-repeat"
+                                            items="[[ sheetData.statusList ]]"
+                                            as="status">
+                                            </paper-item>
+                                            <paper-item 
+                                                affect-item="[[ _affectItemStringify('statusList', status.name) ]]">
+                                                [[ status.name ]] on Status
+                                            </paper-item>
+                                        </template>
+                                        <template
+                                            is="dom-repeat"
+                                            items="[[ sheetData.resourcesList ]]"
+                                            as="status">
+                                            <paper-item 
+                                                affect-item="[[ _affectItemStringify('resourcesList', status.name) ]]">
+                                                [[ status.name ]] on Resources
+                                            </paper-item>
+                                        </template>
+                                        <template
+                                            is="dom-repeat"
+                                            items="[[ sheetData.defensesList ]]"
+                                            as="status">
+                                            <paper-item 
+                                                affect-item="[[ _affectItemStringify('defensesList', status.name) ]]">
+                                                [[ status.name ]] on Defenses
+                                            </paper-item>
+                                        </template>
+                                        <template
+                                            is="dom-repeat"
+                                            items="[[ sheetData.skillsList ]]"
+                                            as="status">
+                                            <paper-item 
+                                                affect-item="[[ _affectItemStringify('skillsList', status.name) ]]">
+                                                [[ status.name ]] on Skills
+                                            </paper-item>
+                                        </template>
+                                    </paper-listbox>
+                                </paper-dropdown-menu>
+                                <paper-input id="affectDialogValue"
+                                    always-float-label
+                                    type="number"
+                                    label="Value">
+                                </paper-input>
+                                <paper-button
+                                    class="secondary-paper-button"
+                                    on-tap="_addAffect">
+                                    Add
+                                </paper-button>
+                            </section>
+                        </section>
+                    </div>
+                    <div class="buttons">
+                        <paper-button id="noteDialogCancel"
+                            class="red-paper-button"
+                            on-tap="_effectCancel">
+                            Cancel
+                        </paper-button>
+                        <paper-button id="noteDialogConfirm"
+                            class="secondary-paper-button"
+                            on-tap="_effectConfirm"
+                            autofocus>
+                            Confirm
+                        </paper-button>
+                    </div>
+                </paper-dialog>
             </section>
 
             <section class="inventory-page">
@@ -371,7 +511,6 @@
                     Under development :) 
                 </div>
             </section>-->
-
         </iron-pages>
 
     </template>
@@ -388,19 +527,84 @@
                     },
                     sheetData: {
                         type: Object
+                    },
+
+                    affectList: {
+                        type: Array,
+                        value: []
+                    },
+                    affectItemString: {
+                        type: String
                     }
                 };
             }
 
             static get observers() {
-                return [ ];
+                return [
+                    '_affectItemStringChanged(affectItemString)'
+                ];
             }
 
             /*
              *  Observers
              */
-            _sheetDataChanged(sheetData){
-                console.log(sheetData);
+            _affectItemStringChanged(affectItemString) {
+                console.log(affectItemString);
+            }
+            /*
+             */
+
+            /*
+             *  Calculated Value Functions
+             */
+            _affectChipName(value, name, location) {
+                if (value > 0) return "+" + value + " " + name + " on " + location;
+                else return value + " " + name + " on " + location;
+            }
+
+            _affectItemStringify(location, name) {
+                return JSON.stringify({ location: location, name: name });
+            }
+            /*
+             */
+
+            /*
+             *  Effects Functions
+             */
+            _addAffect() {
+                let affectStatusItem = JSON.parse(this.$.affectDialogStatus.selected),
+                    affectStatusValue = this.$.affectDialogValue.value;
+                this.push("affectList", new Affect(affectStatusItem.location, affectStatusItem.name, affectStatusValue));
+                this.$.affectDialogValue.value = 0;
+                this.$.affectDialogStatus.selected = this._affectItemStringify("statusList", this.sheetData.statusList[0].name);
+            }
+
+            _addEffect() {
+                let element = this;
+                this.$.ironPages.classList.add("dialog-overlay");
+                this.$.affectDialogStatus.selected = this._affectItemStringify("statusList", this.sheetData.statusList[0].name);
+                this.$.affectDialogValue.value = 0;
+                this._effectCancel = tapEvent => {
+                    element.$.effectDialogName.value = "";
+                    element.set("affectList", []);
+                    element.$.affectDialogStatus.selected = element._affectItemStringify("statusList", this.sheetData.statusList[0].name);
+                    element.$.affectDialogValue.value = 0;
+                    element.$.effectDialog.close();
+                    thelementis.$.ironPages.classList.remove("dialog-overlay");
+                }
+                this._effectConfirm = tapEvent => {
+                    let name = element.$.effectDialogName.value;
+                    if (!element.sheetData.effectsList) this.set("sheetData.effectsList", []);
+                    element.push("sheetData.effectsList", new Effect(name, element.affectList));
+                    element.$.effectDialogName.value = "";
+                    element.set("affectList", []);
+                    element.$.affectDialogStatus.selected = element._affectItemStringify("statusList", this.sheetData.statusList[0].name);
+                    element.$.affectDialogValue.value = 0;
+                    element.$.effectDialog.close();
+                    element.$.ironPages.classList.remove("dialog-overlay");
+                }
+                this.$.effectDialog.open();
+                return;
             }
             /*
              */
@@ -484,15 +688,22 @@
                 this.description = "";
                 this.equippable = true;
                 this.charges = 0;
-                this.effectList = [];
+                this.effectsList = [];
             }
         };
 
         class Effect {
+            constructor(name, affectList) {
+                this.name = name;
+                this.affectList = affectList || [];
+            }
+        };
+
+        class Affect {
             constructor(location, name, value) {
                 this.location = location;
                 this.name = name;
-                this.modifier = value;
+                this.value = value;
             }
         };
 
