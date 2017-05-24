@@ -111,13 +111,13 @@
                 Summary
             </paper-tab>
             <paper-tab>
+                Effects
+            </paper-tab>
+            <paper-tab>
                 Inventory
             </paper-tab>
             <paper-tab>
                 Notes
-            </paper-tab>
-            <paper-tab>
-                Dice Roll
             </paper-tab>
         </paper-tabs>
 
@@ -253,6 +253,10 @@
                 </paper-card>
             </section>
 
+            <section class="effects-page">
+
+            </section>
+
             <section class="inventory-page">
                 <template
                     is="dom-repeat"
@@ -312,19 +316,16 @@
                         </div>
                     </paper-card>
                 </template>
-
                 <template is="dom-if" if="[[ !sheetData.notesList ]]">
                     <div>
                         You don't have any note :( 
                     </div>
                 </template>
-
                 <paper-fab
                     icon="add"
                     elevation="4"
                     on-tap="_addNote">
                 </paper-fab>
-
                 <paper-dialog id="noteDialog"
                     no-cancel-on-esc-key
                     no-cancel-on-outside-click>
@@ -358,11 +359,11 @@
                 </paper-dialog>
             </section>
 
-            <section class="dice-roll-page">
+            <!--<section class="dice-roll-page">
                 <div>
                     Under development :) 
                 </div>
-            </section>
+            </section>-->
 
         </iron-pages>
 
