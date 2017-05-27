@@ -108,6 +108,14 @@
                 display: flex;
                 flex-direction: row;
             }
+            .affects-list snd-chip {
+                padding: 8px 8px 8px 16px;
+            }
+            .affects-list snd-chip iron-icon {
+                --iron-icon-width: 18px;
+                --iron-icon-height: 18px;
+                margin-left: 8px;
+            }
             .dialog-overlay:after {
                 content:"&nbsp;";
                 display: block;
@@ -168,6 +176,7 @@
         <iron-pages id="ironPages"
             selected="{{ tabSelected }}">
 
+            <!-- Summary Tab -->
             <section class="summary-page">
                 <paper-card class="basic-card"
                     heading="Basic"
@@ -297,6 +306,7 @@
                 </paper-card>
             </section>
 
+            <!-- Effects Tab -->
             <section class="effects-page">
                 <template
                     is="dom-repeat"
@@ -313,6 +323,12 @@
                                 as="affect">
                                 <snd-chip>
                                     [[ _affectChipName(affect.value, affect.name, affect.location) ]]
+                                    <iron-icon
+                                        icon="clear"
+                                        on-tap="_deleteAffect"
+                                        data-affect-index="effectIndex"
+                                        data-affect-index="affectIndex">
+                                    </iron-icon>
                                 </snd-chip>
                             </template>
                         </div>
@@ -351,6 +367,70 @@
                     no-cancel-on-esc-key
                     no-cancel-on-outside-click>
                     <div class="content">
+                        <paper-input id="noteDialogName"
+                            always-float-label
+                            type="text"
+                            label="Name">
+                        </paper-input>
+                        <paper-textarea id="noteDialogText"
+                            always-float-label
+                            type="text"
+                            label="Text"
+                            rows="10"
+                            max-rows="10">
+                        </paper-textarea>
+                    </div>
+                    <div class="buttons">
+                        <paper-button id="noteDialogCancel"
+                            class="red-paper-button"
+                            on-tap="_cancel">
+                            Cancel
+                        </paper-button>
+                        <paper-button id="noteDialogConfirm"
+                            class="secondary-paper-button"
+                            on-tap="_confirm"
+                            autofocus>
+                            Confirm
+                        </paper-button>
+                    </div>
+                </paper-dialog>
+
+                <paper-dialog id="affectDialog"
+                    no-cancel-on-esc-key
+                    no-cancel-on-outside-click>
+                    <div class="content">
+                        <paper-input id="noteDialogName"
+                            always-float-label
+                            type="text"
+                            label="Name">
+                        </paper-input>
+                        <paper-textarea id="noteDialogText"
+                            always-float-label
+                            type="text"
+                            label="Text"
+                            rows="10"
+                            max-rows="10">
+                        </paper-textarea>
+                    </div>
+                    <div class="buttons">
+                        <paper-button id="noteDialogCancel"
+                            class="red-paper-button"
+                            on-tap="_cancel">
+                            Cancel
+                        </paper-button>
+                        <paper-button id="noteDialogConfirm"
+                            class="secondary-paper-button"
+                            on-tap="_confirm"
+                            autofocus>
+                            Confirm
+                        </paper-button>
+                    </div>
+                </paper-dialog>
+
+                <!--<paper-dialog id="effectDialog"
+                    no-cancel-on-esc-key
+                    no-cancel-on-outside-click>
+                    <div class="content">
                         <paper-input id="effectDialogName"
                             always-float-label
                             type="text"
@@ -361,9 +441,15 @@
                                 <template
                                     is="dom-repeat"
                                     items="[[ affectsList ]]"
-                                    as="affect">
+                                    as="affect"
+                                    index-as="affectIndex">
                                     <snd-chip>
                                         [[ _affectChipName(affect.value, affect.name, affect.location) ]]
+                                        <iron-icon
+                                            icon="clear"
+                                            on-tap="_deleteAffect"
+                                            data-affect-index="affectIndex">
+                                        </iron-icon>
                                     </snd-chip>
                                 </template>
                             </div>
@@ -416,7 +502,8 @@
                                     <paper-input id="affectDialogValue"
                                         always-float-label
                                         type="number"
-                                        label="Value">
+                                        label="Value"
+                                        value="{{ affectValue }}">
                                     </paper-input>
 
                                     <paper-button
@@ -442,8 +529,9 @@
                         </paper-button>
                     </div>
                 </paper-dialog>
-            </section>
+            </section>-->
 
+            <!-- Inventory Tab -->
             <section class="inventory-page">
                 <template
                     is="dom-repeat"
@@ -470,6 +558,7 @@
                 </template>
             </section>
 
+            <!-- Notes Page -->
             <section class="notes-page">
                 <template
                     is="dom-repeat"
@@ -575,6 +664,9 @@
                     },
                     affectItemString: {
                         type: String
+                    },
+                    affectValue: {
+                        type: Number
                     }
                 };
             }
@@ -616,14 +708,6 @@
             /*
              *  Effects Functions
              */
-            _addAffect() {
-                let affectStatusItem = JSON.parse(this.$.affectDialogStatus.selected),
-                    affectStatusValue = this.$.affectDialogValue.value;
-                this.push("affectsList", new Affect(affectStatusItem.location, affectStatusItem.name, affectStatusValue));
-                this.$.affectDialogValue.value = 0;
-                this.$.affectDialogStatus.selected = this._affectItemStringify("statusList", this.sheetData.statusList[0].name);
-            }
-
             _addEffect() {
                 let element = this;
                 this.$.ironPages.classList.add("dialog-overlay");
@@ -632,24 +716,76 @@
                 this._effectCancel = tapEvent => {
                     element.$.effectDialogName.value = "";
                     element.set("affectsList", []);
-                    element.$.affectDialogStatus.selected = element._affectItemStringify("statusList", this.sheetData.statusList[0].name);
+                    element.$.affectDialogStatus.selected = element._affectItemStringify("statusList", element.sheetData.statusList[0].name);
                     element.$.affectDialogValue.value = 0;
                     element.$.ironPages.classList.remove("dialog-overlay");
                     element.$.effectDialog.close();
                 }
                 this._effectConfirm = tapEvent => {
                     let name = element.$.effectDialogName.value;
-                    if (!element.sheetData.effectsList) this.set("sheetData.effectsList", []);
+                    if (!element.sheetData.effectsList) element.set("sheetData.effectsList", []);
                     element.push("sheetData.effectsList", new Effect(name, element.affectsList));
                     element.$.effectDialogName.value = "";
                     element.set("affectsList", []);
-                    element.$.affectDialogStatus.selected = element._affectItemStringify("statusList", this.sheetData.statusList[0].name);
+                    element.$.affectDialogStatus.selected = element._affectItemStringify("statusList", element.sheetData.statusList[0].name);
                     element.$.affectDialogValue.value = 0;
                     element.$.ironPages.classList.remove("dialog-overlay");
                     element.$.effectDialog.close();
                 }
                 this.$.effectDialog.open();
                 return;
+            }
+
+            _editEffect() {
+                let element = this,
+                    effectIndex = event.target.dataset.effectIndex,
+                    effectName = this.sheetData.effectsList[effectIndex].name,
+                    affectsList = this.sheetData.effectsList[effectIndex].affectsList,
+                    path = "sheetData.effectsList." + effectIndex;
+                this.$.ironPages.classList.add("dialog-overlay");
+                this.$.affectDialogStatus.selected = element._affectItemStringify("statusList", element.sheetData.statusList[0].name);
+                this.$.affectDialogValue.value = 0;
+                this.$.effectDialogName.value = effectName;
+                this.set("affectsList", affectsList);
+                this._effectCancel = tapEvent => {
+                    element.set("affectsList", []);
+                    element.$.effectDialogName.value = "";
+                    element.$.affectDialogStatus.selected = element._affectItemStringify("statusList", element.sheetData.statusList[0].name);
+                    element.$.affectDialogValue.value = 0;
+                    element.$.ironPages.classList.remove("dialog-overlay");
+                    element.$.effectDialog.close();
+                }
+                this._effectConfirm = tapEvent => {
+                    let name = element.$.effectDialogName.value;
+                    if (!element.sheetData.effectsList) element.set("sheetData.effectsList", []);
+                    element.set(path, new Effect(name, element.affectsList));
+                    element.$.effectDialogName.value = "";
+                    element.set("affectsList", []);
+                    element.$.affectDialogStatus.selected = element._affectItemStringify("statusList", element.sheetData.statusList[0].name);
+                    element.$.affectDialogValue.value = 0;
+                    element.$.ironPages.classList.remove("dialog-overlay");
+                    element.$.effectDialog.close();
+                }
+                this.$.effectDialog.open();
+                return;
+            }
+
+            _deleteEffect() {
+                let effectIndex = event.target.dataset.effectIndex;
+                this.splice("sheetData.effectsList", effectIndex, 1);
+            }
+
+            _addAffect() {
+                let affectStatusItem = JSON.parse(this.$.affectDialogStatus.selected),
+                    affectStatusValue = this.$.affectDialogValue.value;
+                this.push("affectsList", new Affect(affectStatusItem.location, affectStatusItem.name, affectStatusValue));
+                this.$.affectDialogValue.value = 0;
+                this.$.affectDialogStatus.selected = this._affectItemStringify("statusList", this.sheetData.statusList[0].name);
+            }
+
+            _deleteAffect() {
+                let affectIndex = event.target.dataset.affectIndex;
+                this.splice("affectsList", affectIndex, 1);
             }
             /*
              */
