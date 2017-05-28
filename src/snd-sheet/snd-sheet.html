@@ -614,7 +614,6 @@
 
             static get observers() {
                 return [
-                    '_affectItemStringChanged(affectItemString)',
                     '_affectValueChanged(affectValue)'
                 ];
             }
@@ -622,10 +621,6 @@
             /*
              *  Observers
              */
-            _affectItemStringChanged(affectItemString) {
-                console.log(affectItemString);
-            }
-
             _affectValueChanged(affectValue) {
                 affectValue = parseFloat(this._numberTypeCheck(affectValue));
                 if (!affectValue || affectValue === 0) this.$.affectDialogConfirm.disabled = true;
@@ -796,7 +791,7 @@
                 this._confirm = tapEvent => {
                     let name = element.$.noteDialogName.value,
                         text = element.$.noteDialogText.value;
-                    if (!element.sheetData.notesList) this.set("sheetData.notesList", []);
+                    if (!element.sheetData.notesList) element.set("sheetData.notesList", []);
                     element.push("sheetData.notesList", new Note(name, text));
                     element.$.noteDialog.close();
                     element.$.ironPages.classList.remove("dialog-overlay");
