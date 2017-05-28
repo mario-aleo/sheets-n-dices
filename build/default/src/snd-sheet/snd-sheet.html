@@ -6,6 +6,21 @@
 <link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
 <link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
 
+<link rel="import" href="../../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../../bower_components/paper-fab/paper-fab.html">
+
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/paper-input/paper-textarea.html">
+
+<link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower_components/paper-item/paper-item.html">
+
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
+
+<link rel="import" href="../snd-chip/snd-chip.html">
+
 
 <dom-module id="snd-sheet">
     <template>
@@ -17,16 +32,420 @@
                 --paper-tabs-selection-bar-color: var(--secondary-color);
                 --paper-fab-background: var(--secondary-color);
                 --paper-fab-keyboard-focus-background: var(--focus-color);
+
+                --paper-input-container-input:{
+                    max-height: 120px;
+                }
             }
             paper-tabs {
                 background-color: var(--primary-color);
                 color: #FFF;
             }
-            iron-pages{
-                height: calc(100% - 48px);
-                overflow-y: auto;
+            paper-card {
+                width: 100%;
+                margin-top: 16px;
+            }
+            paper-fab {
+                position: fixed;
+                bottom: 16px;
+                right: 16px;
+                box-shadow: var(--paper-material-elevation-4_-_box-shadow);
+            }
+            paper-dialog {
+                width: calc(100% - 80px);
+            }
+            paper-dialog .buttons {
+                padding: 8px;
+            }
+            paper-dialog .buttons paper-button {
+                margin: auto;
+            }
+            snd-chip {
+                margin: 4px 0;
+            }
+            paper-dropdown-menu {
+                width: 100%;
+            }
+            .status-card:last-child {
+                margin-bottom: 32px;
+            }
+            .effect-card:last-child {
+                margin-bottom: 32px;
+            }
+            .effect-card .effect-description {
+                padding-bottom: 0;
+            }
+            .effect-card .affects-list {
+                padding-bottom: 0;
+            }
+            .sheet-detail {
+                display: flex;
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+                margin-top: 16px;
+            }
+            .sheet-detail:first-child {
+                margin-top: 0;
+            }
+            .sheet-detail-name {
+                font-weight: 500;
+            }
+            .affect-add-content {
+                display: flex;
+                flex-direction: row;
+            }
+            .affects-list snd-chip {
+                padding: 8px 8px 8px 16px;
+            }
+            .affects-list snd-chip iron-icon {
+                --iron-icon-width: 18px;
+                --iron-icon-height: 18px;
+                margin-left: 8px;
+            }
+            .dialog-overlay:after {
+                content:"&nbsp;";
+                display: block;
+                position: fixed;
+                width: 100%;
+                height: 100%;
+                top: 0;
+                left: 0;
+                z-index: 102;
+                background-color: rgba(0,0,0,0.7)
+            }
+            .note-text {
+                word-break: break-word;
+            }
+            .primary-paper-button {
+                background-color: var(--primary-color);
+                color: #FFF;
+            }
+            .secondary-paper-button {
+                color: var(--secondary-color);
+            }
+            .red-paper-button {
+                color: #FF5252
+            }
+            @media (min-width: 426px) {
+                paper-dialog {
+                    width: calc(60% - 80px);
+                    max-width: calc(60% - 80px);
+                }
+            }
+            @media (min-width: 769px) {
+                paper-dialog {
+                    width: calc(60% - 80px);
+                    max-width: calc(60% - 80px);
+                }
             }
         </style>
+
+        <paper-tabs scrollable="" hide-scroll-buttons="" fit-container="" selected="{{ tabSelected }}">
+            <paper-tab>
+                Summary
+            </paper-tab>
+            <paper-tab>
+                Effects
+            </paper-tab>
+            <paper-tab>
+                Inventory
+            </paper-tab>
+            <paper-tab>
+                Notes
+            </paper-tab>
+            <paper-tab>
+                Dices
+            </paper-tab>
+        </paper-tabs>
+
+        <iron-pages id="ironPages" selected="{{ tabSelected }}">
+
+            <!-- Summary Tab -->
+            <section class="summary-page">
+                <paper-card class="basic-card" heading="Basic" elevation="2">
+                    <div class="card-content">
+                        <div class="sheet-detail">
+                            <span class="sheet-detail-name">
+                                Name:
+                            </span>
+                            <span class="sheet-detail-value">
+                                [[ sheetData.name ]]
+                            </span>
+                        </div>
+                        <div class="sheet-detail">
+                            <span class="sheet-detail-name">
+                                Class:
+                            </span>
+                            <span class="sheet-detail-value">
+                                [[ sheetData.job ]]
+                            </span>
+                        </div>
+                        <div class="sheet-detail">
+                            <span class="sheet-detail-name">
+                                Race:
+                            </span>
+                            <span class="sheet-detail-value">
+                                [[ sheetData.race ]]
+                            </span>
+                        </div>
+                        <div class="sheet-detail">
+                            <span class="sheet-detail-name">
+                                Level:
+                            </span>
+                            <span class="sheet-detail-value">
+                                [[ sheetData.level ]]
+                            </span>
+                        </div>
+                        <div class="sheet-detail">
+                            <span class="sheet-detail-name">
+                                System:
+                            </span>
+                            <span class="sheet-detail-value">
+                                [[ sheetData.system ]]
+                            </span>
+                        </div>
+                    </div>
+                </paper-card>
+
+                <paper-card class="status-card" heading="Status" elevation="2">
+                    <div class="card-content">
+                        <template is="dom-repeat" items="[[ sheetData.statusList ]]" as="status">
+                            <div class="sheet-detail">
+                                <span class="sheet-detail-name">
+                                    [[ status.name ]]
+                                </span>
+                                <span class="sheet-detail-value">
+                                    [[ status.value ]]
+                                </span>
+                            </div>
+                        </template>
+                    </div>
+                </paper-card>
+
+                <paper-card class="status-card" heading="Resources" elevation="2">
+                    <div class="card-content">
+                        <template is="dom-repeat" items="[[ sheetData.resourcesList ]]" as="resources">
+                            <div class="sheet-detail">
+                                <span class="sheet-detail-name">
+                                    [[ resources.name ]]
+                                </span>
+                                <span class="sheet-detail-value">
+                                    [[ resources.value ]]
+                                </span>
+                            </div>
+                        </template>
+                    </div>
+                </paper-card>
+
+                <paper-card class="status-card" heading="Defenses" elevation="2">
+                    <div class="card-content">
+                        <template is="dom-repeat" items="[[ sheetData.defensesList ]]" as="defenses">
+                            <div class="sheet-detail">
+                                <span class="sheet-detail-name">
+                                    [[ defenses.name ]]
+                                </span>
+                                <span class="sheet-detail-value">
+                                    [[ defenses.value ]]
+                                </span>
+                            </div>
+                        </template>
+                    </div>
+                </paper-card>
+
+                <paper-card class="status-card" heading="Skills" elevation="2">
+                    <div class="card-content">
+                        <template is="dom-repeat" items="[[ sheetData.skillsList ]]" as="skills">
+                            <div class="sheet-detail">
+                                <span class="sheet-detail-name">
+                                    [[ skills.name ]]
+                                </span>
+                                <span class="sheet-detail-value">
+                                    [[ skills.value ]]
+                                </span>
+                            </div>
+                        </template>
+                    </div>
+                </paper-card>
+            </section>
+
+            <!-- Effects Tab -->
+            <section class="effects-page">
+                <template is="dom-repeat" items="[[ sheetData.effectsList ]]" as="effect" index-as="effectIndex">
+                    <paper-card class="effect-card" heading="[[ effect.name ]]" elevation="2">
+                        <template is="dom-if" if="[[ effect.description ]]">
+                            <div class="card-content effect-description">
+                                [[ effect.description ]]
+                            </div>
+                        </template>
+                        <div class="card-content affects-list">
+                            <template is="dom-repeat" items="[[ effect.affectsList ]]" as="affect" index-as="affectIndex">
+                                <snd-chip>
+                                    <div on-click="_editAffect" data-effect-index$="[[ effectIndex ]]" data-affect-index$="[[ affectIndex ]]">
+                                        [[ _affectChipName(affect.value, affect.name, affect.location) ]]
+                                    </div>
+                                    <iron-icon icon="clear" on-click="_deleteAffect" data-effect-index$="[[ effectIndex ]]" data-affect-index$="[[ affectIndex ]]">
+                                    </iron-icon>
+                                </snd-chip>
+                            </template>
+                        </div>
+                        <div class="card-content">
+                            <paper-button class="secondary-paper-button" on-tap="_addAffect" data-effect-index$="[[ effectIndex ]]">
+                                Add Effect Bonus
+                            </paper-button>
+                        </div>
+                        <div class="card-actions">
+                            <paper-button class="red-paper-button" on-tap="_deleteEffect" data-effect-index$="[[ effectIndex ]]">
+                                Delete
+                            </paper-button>
+                            <paper-button class="secondary-paper-button" on-tap="_editEffect" data-effect-index$="[[ effectIndex ]]" autofocus="">
+                                Edit
+                            </paper-button>
+                        </div>
+                    </paper-card>
+                </template>
+
+                <template is="dom-if" if="[[ !sheetData.effectsList ]]">
+                    <div>
+                        <p>You don't have any effect</p>
+                        <p>Brightside, you don't have any negative effect :)</p>
+                    </div>
+                </template>
+
+                <paper-fab icon="add" elevation="4" on-tap="_addEffect">
+                </paper-fab>
+
+                <paper-dialog id="effectDialog" no-cancel-on-esc-key="" no-cancel-on-outside-click="">
+                    <div class="content">
+                        <paper-input id="effectDialogName" always-float-label="" type="text" label="Name">
+                        </paper-input>
+                        <paper-textarea id="effectDialogDescription" always-float-label="" type="text" label="Description" rows="5" max-rows="5">
+                        </paper-textarea>
+                    </div>
+                    <div class="buttons">
+                        <paper-button id="effectDialogCancel" class="red-paper-button" on-tap="_cancel">
+                            Cancel
+                        </paper-button>
+                        <paper-button id="effectDialogConfirm" class="secondary-paper-button" on-tap="_confirm" autofocus="">
+                            Confirm
+                        </paper-button>
+                    </div>
+                </paper-dialog>
+
+                <paper-dialog id="affectDialog" no-cancel-on-esc-key="" no-cancel-on-outside-click="">
+                    <div class="content">
+                        <paper-dropdown-menu label="Affect">
+                            <paper-listbox id="affectDialogStatus" slot="dropdown-content" attr-for-selected="affectItem">
+                                <template is="dom-repeat" items="[[ sheetData.statusList ]]" as="status">
+                                    
+                                    <paper-item affect-item="[[ _affectItemStringify('statusList', status.name) ]]">
+                                        [[ status.name ]] on Status
+                                    </paper-item>
+                                </template>
+                                <template is="dom-repeat" items="[[ sheetData.resourcesList ]]" as="status">
+                                    <paper-item affect-item="[[ _affectItemStringify('resourcesList', status.name) ]]">
+                                        [[ status.name ]] on Resources
+                                    </paper-item>
+                                </template>
+                                <template is="dom-repeat" items="[[ sheetData.defensesList ]]" as="status">
+                                    <paper-item affect-item="[[ _affectItemStringify('defensesList', status.name) ]]">
+                                        [[ status.name ]] on Defenses
+                                    </paper-item>
+                                </template>
+                                <template is="dom-repeat" items="[[ sheetData.skillsList ]]" as="status">
+                                    <paper-item affect-item="[[ _affectItemStringify('skillsList', status.name) ]]">
+                                        [[ status.name ]] on Skills
+                                    </paper-item>
+                                </template>
+                            </paper-listbox>
+                        </paper-dropdown-menu>
+                        <paper-input id="affectDialogValue" always-float-label="" type="number" label="Value" value="{{ affectValue }}">
+                        </paper-input>
+                    </div>
+                    <div class="buttons">
+                        <paper-button id="affectDialogCancel" class="red-paper-button" on-tap="_cancel">
+                            Cancel
+                        </paper-button>
+                        <paper-button id="affectDialogConfirm" class="secondary-paper-button" on-tap="_confirm" autofocus="">
+                            Confirm
+                        </paper-button>
+                    </div>
+                </paper-dialog>
+            </section>
+
+            <!-- Inventory Tab -->
+            <section class="inventory-page">
+                <template is="dom-repeat" items="[[ sheetData.itemsList ]]" as="item">
+                    <paper-card class="status-card" heading="[[ item.name ]]" elevation="2">
+                        <div class="card-content">
+                            <div class="item-description">
+                                [[ item.description ]]
+                            </div>
+                            <div class="item-effects">
+
+                            </div>
+                        </div>
+                    </paper-card>
+                </template>
+
+                <template is="dom-if" if="[[ !sheetData.itemsList ]]">
+                    <div>
+                        You don't have any item :( 
+                    </div>
+                </template>
+            </section>
+
+            <!-- Notes Page -->
+            <section class="notes-page">
+                <template is="dom-repeat" items="[[ sheetData.notesList ]]" as="note" index-as="noteIndex">
+                    <paper-card class="status-card" heading="[[ note.name ]]" elevation="2">
+                        <div class="card-content note-text">
+                            <p>
+                                [[ note.text ]]
+                            </p>
+                        </div>
+                        <div class="card-actions">
+                            <paper-button class="red-paper-button" on-tap="_deleteNote" data-note-index$="[[ noteIndex ]]">
+                                Delete
+                            </paper-button>
+                            <paper-button class="secondary-paper-button" on-tap="_editNote" data-note-index$="[[ noteIndex ]]" data-note-name$="[[ note.name ]]" data-note-text$="[[ note.text ]]" autofocus="">
+                                Edit
+                            </paper-button>
+                        </div>
+                    </paper-card>
+                </template>
+                <template is="dom-if" if="[[ !sheetData.notesList ]]">
+                    <div>
+                        You don't have any note :( 
+                    </div>
+                </template>
+                <paper-fab icon="add" elevation="4" on-tap="_addNote">
+                </paper-fab>
+                <paper-dialog id="noteDialog" no-cancel-on-esc-key="" no-cancel-on-outside-click="">
+                    <div class="content">
+                        <paper-input id="noteDialogName" always-float-label="" type="text" label="Name">
+                        </paper-input>
+                        <paper-textarea id="noteDialogText" always-float-label="" type="text" label="Text" rows="5" max-rows="5">
+                        </paper-textarea>
+                    </div>
+                    <div class="buttons">
+                        <paper-button id="noteDialogCancel" class="red-paper-button" on-tap="_cancel">
+                            Cancel
+                        </paper-button>
+                        <paper-button id="noteDialogConfirm" class="secondary-paper-button" on-tap="_confirm" autofocus="">
+                            Confirm
+                        </paper-button>
+                    </div>
+                </paper-dialog>
+            </section>
+
+            <!-- Dices Page -->
+            <section class="dices-page">
+                <div>
+                    Under development :) 
+                </div>
+            </section>
+        </iron-pages>
 
     </template>
 
@@ -36,25 +455,286 @@
 
             static get properties() {
                 return {
+                    tabSelected: {
+                        type: Number,
+                        value: 0
+                    },
                     sheetData: {
                         type: Object
+                    },
+
+                    affectValue: {
+                        type: Number
                     }
                 };
             }
 
             static get observers() {
-                return [ ];
+                return [
+                    '_affectValueChanged(affectValue)'
+                ];
             }
 
             /*
              *  Observers
              */
-            _sheetDataChanged(sheetData){
-                console.log(sheetData);
+            _affectValueChanged(affectValue) {
+                affectValue = parseFloat(this._numberTypeCheck(affectValue));
+                if (!affectValue || affectValue === 0) this.$.affectDialogConfirm.disabled = true;
+                else this.$.affectDialogConfirm.disabled = false;
             }
             /*
              */
+
+            /*
+             *  Calculated Value Functions
+             */
+            _affectChipName(value, name, locationPath) {
+                let location = "";
+                if (locationPath == "statusList") location = "Status";
+                else if (locationPath == "resourcesList") location = "Resources";
+                else if (locationPath == "defensesList") location = "Defenses";
+                else  location = "Skills";
+                if (value > 0) return "+" + value + " " + name + " on " + location;
+                else return value + " " + name + " on " + location;
+            }
+
+            _affectItemStringify(location, name) {
+                return JSON.stringify({ location: location, name: name });
+            }
+            /*
+             */
+
+            /*
+             *  Effects/Affects Functions
+             */
+            _addEffect() {
+                let element = this;
+                this.$.ironPages.classList.add("dialog-overlay");
+                this.$.effectDialogName.value = "";
+                this.$.effectDialogDescription.value = "";
+                this._cancel = tapEvent => {
+                    element.$.effectDialogName.value = "";
+                    element.$.effectDialogDescription.value = "";
+                    element.$.ironPages.classList.remove("dialog-overlay");
+                    element.$.effectDialog.close();
+                }
+                this._confirm = tapEvent => {
+                    let name = element.$.effectDialogName.value,
+                        description = element.$.effectDialogDescription.value;
+                    element.push("sheetData.effectsList", new Effect(name, description, []));
+                    element.$.effectDialogName.value = "";
+                    element.$.effectDialogDescription.value = "";
+                    element.$.ironPages.classList.remove("dialog-overlay");
+                    element.$.effectDialog.close();
+                }
+                this.$.effectDialog.open();
+                return;
+            }
+
+            _editEffect() {
+                let element = this,
+                    effectIndex = event.target.dataset.effectIndex,
+                    effectName = this.sheetData.effectsList[effectIndex].name,
+                    effectDescription = this.sheetData.effectsList[effectIndex].description,
+                    affectsList = this.sheetData.effectsList[effectIndex].affectsList,
+                    path = "sheetData.effectsList." + effectIndex;
+                this.$.ironPages.classList.add("dialog-overlay");
+                this.$.effectDialogName.value = effectName;
+                this.$.effectDialogDescription.value = effectDescription;
+                this._cancel = tapEvent => {
+                    element.$.effectDialogName.value = "";
+                    element.$.effectDialogDescription.value = "";
+                    element.$.ironPages.classList.remove("dialog-overlay");
+                    element.$.effectDialog.close();
+                }
+                this._confirm = tapEvent => {
+                    let name = element.$.effectDialogName.value,
+                        description = element.$.effectDialogDescription.value;
+                    element.set(path, new Effect(name, description, affectsList));
+                    element.$.effectDialogName.value = "";
+                    element.$.effectDialogDescription.value = "";
+                    element.$.ironPages.classList.remove("dialog-overlay");
+                    element.$.effectDialog.close();
+                }
+                this.$.effectDialog.open();
+                return;
+            }
+
+            _deleteEffect() {
+                let effectIndex = event.target.dataset.effectIndex;
+                this.splice("sheetData.effectsList", effectIndex, 1);
+            }
+
+            _addAffect() {
+                let element = this,
+                    effectIndex = event.target.dataset.effectIndex,
+                    path = "sheetData.effectsList." + effectIndex + ".affectsList";
+                this.$.ironPages.classList.add("dialog-overlay");
+                this.$.affectDialogStatus.selected = element._affectItemStringify("statusList", element.sheetData.statusList[0].name);
+                this.$.affectDialogValue.value = 0;
+                this._cancel = tapEvent => {
+                    element.$.affectDialogStatus.selected = element._affectItemStringify("statusList", element.sheetData.statusList[0].name);
+                    element.$.affectDialogValue.value = 0;
+                    element.$.ironPages.classList.remove("dialog-overlay");
+                    element.$.affectDialog.close();
+                }
+                this._confirm = tapEvent => {
+                    let affectItem = JSON.parse(element.$.affectDialogStatus.selected),
+                        affectValue = parseFloat(this._numberTypeCheck(element.$.affectDialogValue.value));
+                    if (!element.sheetData.effectsList[effectIndex].affectsList) element.set(path, []);
+                    element.push(path, new Affect(affectItem.location, affectItem.name, affectValue));
+                    element.$.affectDialogStatus.selected = element._affectItemStringify("statusList", element.sheetData.statusList[0].name);
+                    element.$.affectDialogValue.value = 0;
+                    element.$.ironPages.classList.remove("dialog-overlay");
+                    element.$.affectDialog.close();
+                }
+                this.$.affectDialog.open();
+                return;
+            }
+
+            _editAffect() {
+                let element = this,
+                    effectIndex = event.target.dataset.effectIndex,
+                    affectIndex = event.target.dataset.affectIndex,
+                    affectLocation = this.sheetData.effectsList[effectIndex].affectsList[affectIndex].location,
+                    affectName = this.sheetData.effectsList[effectIndex].affectsList[affectIndex].name,
+                    affectValue = this.sheetData.effectsList[effectIndex].affectsList[affectIndex].value,
+                    path = "sheetData.effectsList." + effectIndex + ".affectsList." + affectIndex;
+                this.$.ironPages.classList.add("dialog-overlay");
+                this.$.affectDialogStatus.selected = element._affectItemStringify(affectLocation, affectName);
+                this.$.affectDialogValue.value = affectValue;
+                this._cancel = tapEvent => {
+                    element.$.affectDialogStatus.selected = element._affectItemStringify("statusList", element.sheetData.statusList[0].name);
+                    element.$.affectDialogValue.value = 0;
+                    element.$.ironPages.classList.remove("dialog-overlay");
+                    element.$.affectDialog.close();
+                }
+                this._confirm = tapEvent => {
+                    let affectItem = JSON.parse(element.$.affectDialogStatus.selected),
+                        affectValue = parseFloat(this._numberTypeCheck(element.$.affectDialogValue.value));
+                    element.set(path, new Affect(affectItem.location, affectItem.name, affectValue));
+                    element.$.affectDialogStatus.selected = element._affectItemStringify("statusList", element.sheetData.statusList[0].name);
+                    element.$.affectDialogValue.value = 0;
+                    element.$.ironPages.classList.remove("dialog-overlay");
+                    element.$.affectDialog.close();
+                }
+                this.$.affectDialog.open();
+                return;
+            }
+
+            _deleteAffect() {
+                let element = this,
+                    affectIndex = event.target.dataset.affectIndex,
+                    effectIndex = event.target.dataset.effectIndex,
+                    path = "sheetData.effectsList." + effectIndex + ".affectsList";
+                this.splice(path, affectIndex, 1);
+            }
+            /*
+             */
+
+            /*
+             *  Notes Functions
+             */
+            _addNote(event) {
+                let element = this;
+                this.$.ironPages.classList.add("dialog-overlay");
+                this._cancel = tapEvent => {
+                    element.$.noteDialogName.value = "";
+                    element.$.noteDialogText.value = "";
+                    element.$.noteDialog.close();
+                    element.$.ironPages.classList.remove("dialog-overlay");
+                }
+                this._confirm = tapEvent => {
+                    let name = element.$.noteDialogName.value,
+                        text = element.$.noteDialogText.value;
+                    if (!element.sheetData.notesList) element.set("sheetData.notesList", []);
+                    element.push("sheetData.notesList", new Note(name, text));
+                    element.$.noteDialog.close();
+                    element.$.ironPages.classList.remove("dialog-overlay");
+                }
+                this.$.noteDialog.open();
+                return;
+            }
+
+            _editNote(event) {
+                let element = this,
+                    path = "sheetData.notesList." + event.target.dataset.noteIndex,
+                    name = event.target.dataset.noteName,
+                    text = event.target.dataset.noteText;
+                this.$.ironPages.classList.add("dialog-overlay");
+                this.$.noteDialogName.value = name;
+                this.$.noteDialogText.value = text;
+                this._cancel = tapEvent => {
+                    element.$.noteDialogName.value = "";
+                    element.$.noteDialogText.value = "";
+                    element.$.noteDialog.close();
+                    element.$.ironPages.classList.remove("dialog-overlay");
+                }
+                this._confirm = tapEvent => {
+                    let name = element.$.noteDialogName.value,
+                        text = element.$.noteDialogText.value;
+                    element.set(path, new Note(name, text));
+                    element.$.noteDialog.close();
+                    element.$.ironPages.classList.remove("dialog-overlay");
+                }
+                this.$.noteDialog.open();
+                return;
+            }
+
+            _deleteNote(event) {
+                let noteIndex = event.target.dataset.noteIndex;
+                this.splice("sheetData.notesList", noteIndex, 1);
+            }
+            /*
+             */
+
+            /*
+             *  Dices Functions
+             */
+            /*
+             */
+
+            _numberTypeCheck(number) {
+                number = number.toString().replace(',', '.');
+                if (isNaN(parseInt(number))) return "0";
+                else return number;
+            }
+
         }
+
+        class Note {
+            constructor(name, text) {
+                this.name = name;
+                this.text = text;
+            }
+        };
+
+        class Item {
+            constructor() {
+                this.name = "";
+                this.description = "";
+                this.equippable = true;
+                this.charges = 0;
+                this.effectsList = [];
+            }
+        };
+
+        class Effect {
+            constructor(name, description, affectsList) {
+                this.name = name;
+                this.description = description;
+                this.affectsList = affectsList || [];
+            }
+        };
+
+        class Affect {
+            constructor(location, name, value) {
+                this.location = location;
+                this.name = name;
+                this.value = value;
+            }
+        };
 
         window.customElements.define(SndSheet.is, SndSheet);
     </script>

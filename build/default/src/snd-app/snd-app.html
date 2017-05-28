@@ -59,9 +59,6 @@
                 background-color: var(--primary-color);
                 color: #FFF;
             }
-            iron-pages {
-                height: calc(100% - 64px);
-            }
             #signInOverlay {
                 display: flex;
                 flex-direction: column;
@@ -111,8 +108,8 @@
         <firebase-document path="/users/[[ user.uid ]]/sheetList/{{ sheetKey }}" data="{{ sheetData }}">
         </firebase-document>
 
-        <app-header-layout has-scrolling-region="" fullbleed="">
-            <app-header slot="header" fixed="" effects="waterfall">
+        <app-header-layout has-scrolling-region="" fullbleed="" scroll-target="ironPages">
+            <app-header id="appHeader" slot="header" fixed="" effects="waterfall">
                 <app-toolbar>
                     <div main-title="">
                         Sheets 'n Dices
@@ -129,7 +126,7 @@
             </div>
 
 
-            <iron-pages role="main" selected="[[ page ]]" attr-for-selected="name" fallback-selection="error">
+            <iron-pages id="ironPages" role="main" selected="[[ page ]]" attr-for-selected="name" fallback-selection="error">
                 <snd-list name="Sheet-List" sheet-list="{{ liveData }}">
                 </snd-list>
 
@@ -193,6 +190,7 @@
             }
 
             _routePageChanged(page) {
+                this.$.appHeader.scroll(0, 0);
                 if (!page) {
                     return window.location.hash = window.location.hash || '/Sheet-List';
                 }  else if (page == "Sheet" && !this.sheetKey) {

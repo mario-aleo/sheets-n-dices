@@ -40,10 +40,6 @@
                 background-color: var(--primary-color);
                 color: #FFF;
             }
-            iron-pages{
-                height: calc(100% - 48px);
-                overflow-y: auto;
-            }
             paper-card {
                 margin-top: 16px;
                 width: 100%;
@@ -65,6 +61,12 @@
             paper-input,
             paper-dropdown-menu {
                 width: 100%;
+            }
+            paper-dialog .buttons {
+                padding: 8px;
+            }
+            snd-chip {
+                margin: 4px 0;
             }
             .paper-card-row {
                 display: flex;
@@ -91,7 +93,7 @@
             .dependency-section {
                 padding: 12px 0 8px 0;
             }
-            .dependency-overlay::after {
+            .dependency-overlay:after {
                 content:"&nbsp;";
                 display: block;
                 position: fixed;
@@ -137,7 +139,7 @@
             }
         </style>
 
-        <paper-tabs noink="" scrollable="" hide-scroll-buttons="" fit-container="" selected="{{ tabSelected }}">
+        <paper-tabs scrollable="" hide-scroll-buttons="" fit-container="" selected="{{ tabSelected }}">
             <paper-tab>
                 Basic
             </paper-tab>
@@ -327,7 +329,7 @@
 
         <!-- Dependency Dialog -->
         <paper-dialog id="dependencyDialog" opened="{{ dependencyDialogOpened }}">
-            <div>
+            <div class="content">
                 <paper-dropdown-menu label="Location">
                     <paper-listbox class="dropdown-content" slot="dropdown-content" attr-for-selected="location" selected="{{ dependencyLocation }}">
                         <paper-item location="statusList">
@@ -512,22 +514,25 @@
                     location = event.target.dataset.statusLocation,
                     path = 'newSheet.' + location + '.' + index + '.dependencyList',
                     element = this;
-                this.requestStatusDependencyLocation = location;
-                this.requestStatusDependencyName = this.newSheet.statusList[index].name;
+                this.set('dependencyLocation', 'statusList');
+                this.set('dependencyName', '');
+                this.set('dependencyValue', 0);
+                this.set('requestStatusDependencyLocation', location);
+                this.set('requestStatusDependencyName', this.newSheet.statusList[index].name);
                 this._dependencyValueDisabled();
                 this._dependencyAddDisabled();
                 this._cancel = tapEvent => {
-                    this.set('dependencyLocation', 'statusList');
-                    this.set('dependencyName', '');
-                    this.set('dependencyValue', 0);
-                    this.$.dependencyDialog.close();
+                    element.set('dependencyLocation', 'statusList');
+                    element.set('dependencyName', '');
+                    element.set('dependencyValue', 0);
+                    element.$.dependencyDialog.close();
                 }
                 this._confirm = tapEvent => {
-                    this.push(path, new Dependency(element.dependencyLocation, element.dependencyName, element.dependencyValue));
-                    this.set('dependencyLocation', 'statusList');
-                    this.set('dependencyName', '');
-                    this.set('dependencyValue', 0);
-                    this.$.dependencyDialog.close();
+                    element.push(path, new Dependency(element.dependencyLocation, element.dependencyName, element.dependencyValue));
+                    element.set('dependencyLocation', 'statusList');
+                    element.set('dependencyName', '');
+                    element.set('dependencyValue', 0);
+                    element.$.dependencyDialog.close();
                 }
                 this.$.dependencyDialog.open();
                 return;
@@ -540,20 +545,20 @@
                     depencencyStatus = this.newSheet[statusLocation][statusIndex].dependencyList[dependencyIndex],
                     path = 'newSheet.' + statusLocation + '.' + statusIndex + '.dependencyList.' + dependencyIndex,
                     element = this;
-                this.requestStatusDependencyLocation = statusLocation;
-                this.requestStatusDependencyName = this.newSheet.statusList[statusIndex].name;
                 this.set('dependencyLocation', depencencyStatus.location);
                 this.set('dependencyName', depencencyStatus.name);
                 this.set('dependencyValue', depencencyStatus.modifier);
+                this.set('requestStatusDependencyLocation', statusLocation);
+                this.set('requestStatusDependencyName', this.newSheet.statusList[statusIndex].name);
                 this._cancel = tapEvent => {
-                    this.set('dependencyLocation', statusLocation);
-                    this.set('dependencyName', '');
-                    this.set('dependencyValue', 0);
-                    this.$.dependencyDialog.close();
+                    element.set('dependencyLocation', statusLocation);
+                    element.set('dependencyName', '');
+                    element.set('dependencyValue', 0);
+                    element.$.dependencyDialog.close();
                 }
                 this._confirm = tapEvent => {
-                    this.set(path, new Dependency(element.dependencyLocation, element.dependencyName, element.dependencyValue));
-                    this.$.dependencyDialog.close();
+                    element.set(path, new Dependency(element.dependencyLocation, element.dependencyName, element.dependencyValue));
+                    element.$.dependencyDialog.close();
                 }
                 this.$.dependencyDialog.open();
                 return;
@@ -576,125 +581,107 @@
                 }
                 // Each Status, Resource, Defense and Skill and SUM
                 const element = this;
-                this.dependencyChain = [];
+                this.set("dependencyChain", []);
                 parseInt(element._numberTypeCheck(element.newSheet.level));
                 // SUM Status = baseValue + (levelModifier * level)
-                this.newSheet.statusList.forEach(
-                    function (status) {
-                        if (status.value === 0) {
-                            element.dependencyChain.push(status);
-                            element._objectCalculation(status);
-                            element.dependencyChain = [];
-                        }
+                this.newSheet.statusList.forEach(function (status) {
+                    if (status.value === 0) {
+                        element.push("dependencyChain", {
+                            location: "statusList",
+                            status: status
+                        });
+                        element._objectCalculation(status);
+                        element.dependencyChain = [];
                     }
-                );
+                });
                 // SUM Resource = baseValue + (statusBase.value * statusBaseModifier) + (levelModifier * level)
                 // or if statusBase == None => SUM Resource = baseValue + (levelModifier * level)
-                this.newSheet.resourcesList.forEach(
-                    function (resource) {
-                        if (resource.value === 0) {
-                            element.dependencyChain.push(resource);
-                            element._objectCalculation(resource);
-                            element.dependencyChain = [];
-                        }
+                this.newSheet.resourcesList.forEach(function (resource) {
+                    if (resource.value === 0) {
+                        element.push("dependencyChain", {
+                            location: "resourcesList",
+                            status: resource
+                        });
+                        element._objectCalculation(resource);
+                        element.dependencyChain = [];
                     }
-                );
+                });
                 // SUM Defense = baseValue + (statusBase.value * statusBaseModifier) + (levelModifier * level)
                 // or if statusBase == None => SUM Defense = baseValue + (levelModifier * level)
-                this.newSheet.defensesList.forEach(
-                    function (defense) {
-                        if (defense.value === 0) {
-                            element.dependencyChain.push(defense);
-                            element._objectCalculation(defense);
-                            element.dependencyChain = [];
-                        }
+                this.newSheet.defensesList.forEach(function (defense) {
+                    if (defense.value === 0) {
+                        element.push("dependencyChain", {
+                            location: "defensesList",
+                            status: defense
+                        });
+                        element._objectCalculation(defense);
+                        element.dependencyChain = [];
                     }
-                );
+                });
                 // SUM Skill = baseValue + (statusBase.value * statusBaseModifier) + (levelModifier * level)
                 // or if statusBase == None => SUM Skill = baseValue + (levelModifier * level)
-                this.newSheet.skillsList.forEach(
-                    function (skill) {
-                        if (skill.value === 0) {
-                            element.dependencyChain.push(skill);
-                            element._objectCalculation(skill);
-                            element.dependencyChain = [];
-                        }
+                this.newSheet.skillsList.forEach(function (skill) {
+                    if (skill.value === 0) {
+                        element.push("dependencyChain", {
+                            location: "skillsList",
+                            status: skill
+                        });
+                        element._objectCalculation(skill);
+                        element.dependencyChain = [];
                     }
-                );
+                });
                 console.log(this.newSheet);
-                this.dispatchEvent(new CustomEvent('addNewSheet', {detail: {sheetData: this.newSheet}, composed: true}));
+                this.dispatchEvent(new CustomEvent('addNewSheet', {detail: {sheetData: element.newSheet}, composed: true}));
+                this.set("tabSelected", 0);
                 this.set("newSheet", new Sheet());
                 return;
             }
 
-            _objectCalculation(obj) {
+            _objectCalculation(statusItem) {
                 // Encapsulation
                 const element = this;
-                let dependencyElements = [];
-                // Verify if the Element have Dependency
-                if (obj.dependencyList.length > 0) {
-                    // Start Value Calculation
-                    // Populate dependencyElements Array
-                    obj.dependencyList.forEach(function (dependencyItem) {
-                        Object.keys(element.newSheet).forEach(function (key) {
-                            if (key == dependencyItem.location) {
-                                element.newSheet[key].forEach(function (obj) {
-                                    if (obj.name == dependencyItem.name) dependencyElements.push(obj);
+                // Init statusItem Value
+                statusItem.value = parseInt(parseInt(element._numberTypeCheck(statusItem.baseValue)) + parseInt(element._numberTypeCheck(element.newSheet.level)) * parseFloat(element._numberTypeCheck(statusItem.levelModifier)));
+                console.log("Initial " + statusItem.name + " Value: " + statusItem.value);
+                // Verify statusItem Dependency
+                if (statusItem.dependencyList.length > 0) {
+                    // Start statusItem Value Calculation
+                    element.dependencyChain.forEach(function (dependencyChainItem) {
+                        statusItem.dependencyList.forEach(function (statusItemDependencyItem) {
+                            // Verify Deadlock
+                            if (statusItemDependencyItem.location == dependencyChainItem.location && statusItemDependencyItem.name == dependencyChainItem.status.name) {
+                                element.$.sndNewToast.text = "Please, very all dependencies.";
+                                element.$.sndNewToast.opened = true;
+                                throw "Deadlock";
+                            } else {
+                                // Localize Dependency Object
+                                element.newSheet[statusItemDependencyItem.location].forEach(function (statusItemDependencyItemStatusItem) {
+                                    if (statusItemDependencyItemStatusItem.name == statusItemDependencyItem.name) {
+                                        // Verify Dependency Object
+                                        if (statusItemDependencyItemStatusItem.value === 0) {
+                                            // Calculate Dependency Object
+                                            element.push("dependencyChain", {
+                                                location: statusItemDependencyItem.location,
+                                                status: statusItemDependencyItemStatusItem
+                                            });
+                                            element._objectCalculation(statusItemDependencyItemStatusItem);
+                                        }
+                                        // Update statusItem Value
+                                        if (statusItemDependencyItem.location == "statusList") {
+                                            if (element.newSheet.hasMinimumStatusModifierValue) statusItem.value = parseInt( parseInt(element._numberTypeCheck(statusItem.value)) + element._returnStatusModifier(parseInt(element._numberTypeCheck(statusItemDependencyItemStatusItem.value)), parseFloat(element.newSheet.minimumStatusModifierValue)));
+                                            else statusItem.value = parseInt( parseInt(element._numberTypeCheck(statusItem.value)) + parseInt(element._numberTypeCheck(statusItemDependencyItemStatusItem.value)) * parseFloat(element._numberTypeCheck(statusItemDependencyItem.modifier)) );
+                                        } else {
+                                            statusItem.value = parseInt( parseInt(element._numberTypeCheck(statusItem.value)) + parseInt(element._numberTypeCheck(statusItemDependencyItemStatusItem.value)) * parseFloat(element._numberTypeCheck(statusItemDependencyItem.modifier)) );
+                                        }
+                                        console.log("Update " + statusItem.name + " Value with " + statusItemDependencyItemStatusItem.name +  " Value: " + statusItem.value);
+                                    }
                                 });
                             }
                         });
                     });
-                    dependencyElements.forEach(function (nullDependencyElement) {
-                        if (nullDependencyElement.value === 0) {
-                            dependencyElements.forEach(function (dependencyElement) {
-                                if (dependencyElement.name == nullDependencyElement.name) {
-                                    element.dependencyChain.push(nullDependencyElement);
-                                    console.log(element.dependencyChain);
-                                    element.$.sndNewToast.text = "Please, very all dependencies.";
-                                    element.$.sndNewToast.opened = true;
-                                    throw "Deadlock Warlord";
-                                }
-                            });
-                            element.dependencyChain.push(nullDependencyElement);
-                            element._objectCalculation(nullDependencyElement);
-                        }
-                    });
-                    // Reset dependencyElements Array
-                    dependencyElements = [];
-                    obj.dependencyList.forEach(function (dependencyItem) {
-                        Object.keys(element.newSheet).forEach(function (key) {
-                            if (key == dependencyItem.location) {
-                                element.newSheet[key].forEach(function (obj) {
-                                    if (obj.name == dependencyItem.name) dependencyElements.push(obj);
-                                });
-                            }
-                        });
-                    });
-                    // Init the Element Value
-                    obj.value = parseInt( parseInt(element._numberTypeCheck(obj.baseValue)) + parseInt(element._numberTypeCheck(element.newSheet.level)) * parseFloat(element._numberTypeCheck(obj.levelModifier)) );
-                    console.log("Initial " + obj.name + " Value: " + obj.value);
-                    // Update the Element Value with the dependencyElements Values
-                    obj.dependencyList.forEach(function (dependencyItem) {
-                        dependencyElements.forEach(function (dependencyElement){
-                            if (dependencyElement.name == dependencyItem.name) {
-                                if (dependencyItem.location == "statusList") {
-                                    if (element.newSheet.hasMinimumStatusModifierValue) obj.value = parseInt( parseInt(element._numberTypeCheck(obj.value)) + element._returnStatusModifier(parseInt(element._numberTypeCheck(dependencyElement.value)), parseFloat(element.newSheet.minimumStatusModifierValue)));
-                                    else obj.value = parseInt( parseInt(element._numberTypeCheck(obj.value)) + parseInt(element._numberTypeCheck(dependencyElement.value)) * parseFloat(element._numberTypeCheck(dependencyItem.modifier)) );
-                                } else {
-                                    obj.value = parseInt( parseInt(element._numberTypeCheck(obj.value)) + parseInt(element._numberTypeCheck(dependencyElement.value)) * parseFloat(element._numberTypeCheck(dependencyItem.modifier)) );
-                                }
-                                console.log("Update " + obj.name + " Value with " + dependencyElement.name +  " Value: " + obj.value);
-                            }
-                        });
-                    });
-                    // End Value Calculation
-                    dependencyElements = [];
-                    console.log("End " + obj.name + " Value Calculation: " + obj.value);
-                } else {
-                    obj.value = parseInt( parseInt(element._numberTypeCheck(obj.baseValue)) + parseInt(element._numberTypeCheck(element.newSheet.level)) * parseFloat(element._numberTypeCheck(obj.levelModifier)) );
-                    console.log("Init " + obj.name + " Value: " + obj.value);
-                    console.log("End " + obj.name + " Value Calculation: " + obj.value);
                 }
+                // End statusItem Value Calculation
+                console.log("End " + statusItem.name + " Value Calculation: " + statusItem.value);
                 return;
             }
 
