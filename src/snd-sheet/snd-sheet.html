@@ -627,8 +627,9 @@
             }
 
             _affectValueChanged(affectValue) {
-                if (affectValue !== 0) this.$.affectDialogConfirm.disabled = false;
-                else this.$.affectDialogConfirm.disabled = true;
+                affectValue = parseFloat(this._numberTypeCheck(affectValue));
+                if (!affectValue || affectValue === 0) this.$.affectDialogConfirm.disabled = true;
+                else this.$.affectDialogConfirm.disabled = false;
             }
             /*
              */
@@ -727,10 +728,10 @@
                     element.$.affectDialog.close();
                 }
                 this._confirm = tapEvent => {
-                    let affectStatusItem = JSON.parse(element.$.affectDialogStatus.selected),
-                        affectStatusValue = element.$.affectDialogValue.value;
+                    let affectItem = JSON.parse(element.$.affectDialogStatus.selected),
+                        affectValue = parseFloat(this._numberTypeCheck(element.$.affectDialogValue.value));
                     if (!element.sheetData.effectsList[effectIndex].affectsList) element.set(path, []);
-                    element.push(path, new Affect(affectStatusItem.location, affectStatusItem.name, affectStatusValue));
+                    element.push(path, new Affect(affectItem.location, affectItem.name, affectValue));
                     element.$.affectDialogStatus.selected = element._affectItemStringify("statusList", element.sheetData.statusList[0].name);
                     element.$.affectDialogValue.value = 0;
                     element.$.ironPages.classList.remove("dialog-overlay");
@@ -758,9 +759,9 @@
                     element.$.affectDialog.close();
                 }
                 this._confirm = tapEvent => {
-                    let affectStatusItem = JSON.parse(element.$.affectDialogStatus.selected),
-                        affectStatusValue = element.$.affectDialogValue.value;
-                    element.set(path, new Affect(affectStatusItem.location, affectStatusItem.name, affectStatusValue));
+                    let affectItem = JSON.parse(element.$.affectDialogStatus.selected),
+                        affectValue = parseFloat(this._numberTypeCheck(element.$.affectDialogValue.value));
+                    element.set(path, new Affect(affectItem.location, affectItem.name, affectValue));
                     element.$.affectDialogStatus.selected = element._affectItemStringify("statusList", element.sheetData.statusList[0].name);
                     element.$.affectDialogValue.value = 0;
                     element.$.ironPages.classList.remove("dialog-overlay");
@@ -844,6 +845,13 @@
             }
             /*
              */
+
+            _numberTypeCheck(number) {
+                number = number.toString().replace(',', '.');
+                if (isNaN(parseInt(number))) return "0";
+                else return number;
+            }
+
         }
 
         class Note {
