@@ -88,6 +88,12 @@
             #signInOverlay span {
                 margin-left: 8px;
             }
+            #logOutButton {
+                opacity: 0;
+                pointer-events: none;
+                transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+                will-change: opacity;
+            }
         </style>
 
         <app-location
@@ -137,12 +143,10 @@
                     <div main-title>
                         Sheets 'n Dices
                     </div>
-                    <template is="dom-if" if="[[ user ]]">
-                        <paper-icon-button
-                            icon="exit-to-app"
-                            on-tap="_logOut">
-                        </paper-icon-button>
-                    </template>
+                    <paper-icon-button  id="logOutButton"
+                        icon="exit-to-app"
+                        on-tap="_logOut">
+                    </paper-icon-button>
                 </app-toolbar>
             </app-header>
 
@@ -154,7 +158,6 @@
                     <span>Sign In</span>
                 </paper-button>
             </div>
-
 
             <iron-pages id="ironPages" role="main" selected="[[ page ]]" attr-for-selected="name" fallback-selection="error">
                 <snd-list
@@ -218,9 +221,13 @@
                 if (!user) {
                     this.$.signInOverlay.style.opacity = 1;
                     this.$.signInOverlay.style.pointerEvents = 'auto';
+                    this.$.logOutButton.style.opacity = 0;
+                    this.$.logOutButton.style.pointerEvents = 'none';
                 } else {
                     this.$.signInOverlay.style.opacity = 0;
                     this.$.signInOverlay.style.pointerEvents = 'none';
+                    this.$.logOutButton.style.opacity = 1;
+                    this.$.logOutButton.style.pointerEvents = 'auto';
                 }
             }
 
