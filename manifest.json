@@ -1,6 +1,6 @@
 {
-    "name": "Sheet's N Dices",
-    "short_name": "Sheet's N Dices",
+    "name": "Sheet's 'n Dices",
+    "short_name": "Sheet's 'n Dices",
     "description": "RPG Sheet Manager",
     "start_url": "/",
     "display": "standalone",

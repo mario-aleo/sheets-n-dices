@@ -34,7 +34,7 @@
                 --paper-fab-keyboard-focus-background: var(--focus-color);
 
                 --paper-input-container-input:{
-                    max-height: 120px;
+                    max-height: 96px;
                 }
             }
             paper-tabs {
@@ -298,6 +298,12 @@
 
             <!-- Effects Tab -->
             <section class="effects-page">
+                <template is="dom-if" if="[[ !sheetData.effectsList ]]">
+                    <div>
+                        <p>You don't have any effect</p>
+                        <p>Brightside, you don't have any negative effect :)</p>
+                    </div>
+                </template>
                 <template
                     is="dom-repeat"
                     items="[[ sheetData.effectsList ]]"
@@ -358,152 +364,94 @@
                         </div>
                     </paper-card>
                 </template>
-
-                <template is="dom-if" if="[[ !sheetData.effectsList ]]">
-                    <div>
-                        <p>You don't have any effect</p>
-                        <p>Brightside, you don't have any negative effect :)</p>
-                    </div>
-                </template>
-
                 <paper-fab
                     icon="add"
                     elevation="4"
                     on-tap="_addEffect">
                 </paper-fab>
-
-                <paper-dialog id="effectDialog"
-                    no-cancel-on-esc-key
-                    no-cancel-on-outside-click>
-                    <div class="content">
-                        <paper-input id="effectDialogName"
-                            always-float-label
-                            type="text"
-                            label="Name">
-                        </paper-input>
-                        <paper-textarea id="effectDialogDescription"
-                            always-float-label
-                            type="text"
-                            label="Description"
-                            rows="5"
-                            max-rows="5">
-                        </paper-textarea>
-                    </div>
-                    <div class="buttons">
-                        <paper-button id="effectDialogCancel"
-                            class="red-paper-button"
-                            on-tap="_cancel">
-                            Cancel
-                        </paper-button>
-                        <paper-button id="effectDialogConfirm"
-                            class="secondary-paper-button"
-                            on-tap="_confirm"
-                            autofocus>
-                            Confirm
-                        </paper-button>
-                    </div>
-                </paper-dialog>
-
-                <paper-dialog id="affectDialog"
-                    no-cancel-on-esc-key
-                    no-cancel-on-outside-click>
-                    <div class="content">
-                        <paper-dropdown-menu
-                            label="Affect">
-                            <paper-listbox id="affectDialogStatus"
-                                slot="dropdown-content"
-                                attr-for-selected="affectItem">
-                                <template
-                                    is="dom-repeat"
-                                    items="[[ sheetData.statusList ]]"
-                                    as="status">
-                                    </paper-item>
-                                    <paper-item 
-                                        affect-item="[[ _affectItemStringify('statusList', status.name) ]]">
-                                        [[ status.name ]] on Status
-                                    </paper-item>
-                                </template>
-                                <template
-                                    is="dom-repeat"
-                                    items="[[ sheetData.resourcesList ]]"
-                                    as="status">
-                                    <paper-item 
-                                        affect-item="[[ _affectItemStringify('resourcesList', status.name) ]]">
-                                        [[ status.name ]] on Resources
-                                    </paper-item>
-                                </template>
-                                <template
-                                    is="dom-repeat"
-                                    items="[[ sheetData.defensesList ]]"
-                                    as="status">
-                                    <paper-item 
-                                        affect-item="[[ _affectItemStringify('defensesList', status.name) ]]">
-                                        [[ status.name ]] on Defenses
-                                    </paper-item>
-                                </template>
-                                <template
-                                    is="dom-repeat"
-                                    items="[[ sheetData.skillsList ]]"
-                                    as="status">
-                                    <paper-item 
-                                        affect-item="[[ _affectItemStringify('skillsList', status.name) ]]">
-                                        [[ status.name ]] on Skills
-                                    </paper-item>
-                                </template>
-                            </paper-listbox>
-                        </paper-dropdown-menu>
-                        <paper-input id="affectDialogValue"
-                            always-float-label
-                            type="number"
-                            label="Value"
-                            value="{{ affectValue }}">
-                        </paper-input>
-                    </div>
-                    <div class="buttons">
-                        <paper-button id="affectDialogCancel"
-                            class="red-paper-button"
-                            on-tap="_cancel">
-                            Cancel
-                        </paper-button>
-                        <paper-button id="affectDialogConfirm"
-                            class="secondary-paper-button"
-                            on-tap="_confirm"
-                            autofocus>
-                            Confirm
-                        </paper-button>
-                    </div>
-                </paper-dialog>
             </section>
 
             <!-- Inventory Tab -->
             <section class="inventory-page">
+                <template is="dom-if" if="[[ !sheetData.itemsList ]]">
+                    <div>
+                        <p>You don't have any item ):</p>
+                    </div>
+                </template>
                 <template
                     is="dom-repeat"
                     items="[[ sheetData.itemsList ]]"
-                    as="item">
-                    <paper-card class="status-card"
+                    as="item"
+                    index-as="itemIndex">
+                    <paper-card class="item-card"
                         heading="[[ item.name ]]"
                         elevation="2">
-                        <div class="card-content">
-                            <div class="item-description">
+                        <template is="dom-if" if="[[ item.description ]]">
+                            <div class="card-content item-description">
                                 [[ item.description ]]
                             </div>
-                            <div class="item-effects">
-
-                            </div>
+                        </template>
+                        <div class="card-content affects-list">
+                            <template
+                                is="dom-repeat"
+                                items="[[ item.affectsList ]]"
+                                as="affect"
+                                index-as="affectIndex">
+                                <snd-chip>
+                                    <div
+                                        on-click="_editAffect"
+                                        data-item-index$="[[ itemIndex ]]"
+                                        data-affect-index$="[[ affectIndex ]]">
+                                        [[ _affectChipName(affect.value, affect.name, affect.location) ]]
+                                    </div>
+                                    <iron-icon
+                                        icon="clear"
+                                        on-click="_deleteAffect"
+                                        data-item-index$="[[ itemIndex ]]"
+                                        data-affect-index$="[[ affectIndex ]]">
+                                    </iron-icon>
+                                </snd-chip>
+                            </template>
+                        </div>
+                        <div class="card-content">
+                            <paper-button
+                                class="secondary-paper-button"
+                                on-tap="_addAffect"
+                                data-item-index$="[[ itemIndex ]]">
+                                Add Item Bonus
+                            </paper-button>
+                        </div>
+                        <div class="card-actions">
+                            <paper-button
+                                class="red-paper-button"
+                                on-tap="_deleteItem"
+                                data-item-index$="[[ itemIndex ]]">
+                                Delete
+                            </paper-button>
+                            <paper-button
+                                class="secondary-paper-button"
+                                on-tap="_editItem"
+                                data-item-index$="[[ itemIndex ]]"
+                                autofocus>
+                                Edit
+                            </paper-button>
                         </div>
                     </paper-card>
                 </template>
-
-                <template is="dom-if" if="[[ !sheetData.itemsList ]]">
-                    <div>
-                        You don't have any item :( 
-                    </div>
-                </template>
+                <paper-fab
+                    icon="add"
+                    elevation="4"
+                    on-tap="_addItem">
+                </paper-fab>
             </section>
 
             <!-- Notes Page -->
             <section class="notes-page">
+                <template is="dom-if" if="[[ !sheetData.notesList ]]">
+                    <div>
+                        You don't have any note :( 
+                    </div>
+                </template>
                 <template
                     is="dom-repeat"
                     items="[[ sheetData.notesList ]]"
@@ -536,47 +484,11 @@
                         </div>
                     </paper-card>
                 </template>
-                <template is="dom-if" if="[[ !sheetData.notesList ]]">
-                    <div>
-                        You don't have any note :( 
-                    </div>
-                </template>
                 <paper-fab
                     icon="add"
                     elevation="4"
                     on-tap="_addNote">
                 </paper-fab>
-                <paper-dialog id="noteDialog"
-                    no-cancel-on-esc-key
-                    no-cancel-on-outside-click>
-                    <div class="content">
-                        <paper-input id="noteDialogName"
-                            always-float-label
-                            type="text"
-                            label="Name">
-                        </paper-input>
-                        <paper-textarea id="noteDialogText"
-                            always-float-label
-                            type="text"
-                            label="Text"
-                            rows="5"
-                            max-rows="5">
-                        </paper-textarea>
-                    </div>
-                    <div class="buttons">
-                        <paper-button id="noteDialogCancel"
-                            class="red-paper-button"
-                            on-tap="_cancel">
-                            Cancel
-                        </paper-button>
-                        <paper-button id="noteDialogConfirm"
-                            class="secondary-paper-button"
-                            on-tap="_confirm"
-                            autofocus>
-                            Confirm
-                        </paper-button>
-                    </div>
-                </paper-dialog>
             </section>
 
             <!-- Dices Page -->
@@ -587,6 +499,171 @@
             </section>
         </iron-pages>
 
+        <paper-dialog id="effectDialog"
+            no-cancel-on-esc-key
+            no-cancel-on-outside-click>
+            <div class="content">
+                <paper-input id="effectDialogName"
+                    always-float-label
+                    type="text"
+                    label="Name">
+                </paper-input>
+                <paper-textarea id="effectDialogDescription"
+                    always-float-label
+                    type="text"
+                    label="Description"
+                    rows="5"
+                    max-rows="4">
+                </paper-textarea>
+            </div>
+            <div class="buttons">
+                <paper-button id="effectDialogCancel"
+                    class="red-paper-button"
+                    on-tap="_cancel">
+                    Cancel
+                </paper-button>
+                <paper-button id="effectDialogConfirm"
+                    class="secondary-paper-button"
+                    on-tap="_confirm"
+                    autofocus>
+                    Confirm
+                </paper-button>
+            </div>
+        </paper-dialog>
+
+        <paper-dialog id="itemDialog"
+            no-cancel-on-esc-key
+            no-cancel-on-outside-click>
+            <div class="content">
+                <paper-input id="itemDialogName"
+                    always-float-label
+                    type="text"
+                    label="Name">
+                </paper-input>
+                <paper-textarea id="itemDialogDescription"
+                    always-float-label
+                    type="text"
+                    label="Description"
+                    rows="5"
+                    max-rows="4">
+                </paper-textarea>
+            </div>
+            <div class="buttons">
+                <paper-button id="itemDialogCancel"
+                    class="red-paper-button"
+                    on-tap="_cancel">
+                    Cancel
+                </paper-button>
+                <paper-button id="itemDialogConfirm"
+                    class="secondary-paper-button"
+                    on-tap="_confirm"
+                    autofocus>
+                    Confirm
+                </paper-button>
+            </div>
+        </paper-dialog>
+
+        <paper-dialog id="noteDialog"
+            no-cancel-on-esc-key
+            no-cancel-on-outside-click>
+            <div class="content">
+                <paper-input id="noteDialogName"
+                    always-float-label
+                    type="text"
+                    label="Name">
+                </paper-input>
+                <paper-textarea id="noteDialogText"
+                    always-float-label
+                    type="text"
+                    label="Text"
+                    rows="5"
+                    max-rows="4">
+                </paper-textarea>
+            </div>
+            <div class="buttons">
+                <paper-button id="noteDialogCancel"
+                    class="red-paper-button"
+                    on-tap="_cancel">
+                    Cancel
+                </paper-button>
+                <paper-button id="noteDialogConfirm"
+                    class="secondary-paper-button"
+                    on-tap="_confirm"
+                    autofocus>
+                    Confirm
+                </paper-button>
+            </div>
+        </paper-dialog>
+
+        <paper-dialog id="affectDialog"
+            no-cancel-on-esc-key
+            no-cancel-on-outside-click>
+            <div class="content">
+                <paper-dropdown-menu
+                    label="Affect">
+                    <paper-listbox id="affectDialogStatus"
+                        slot="dropdown-content"
+                        attr-for-selected="affectItem">
+                        <template
+                            is="dom-repeat"
+                            items="[[ sheetData.statusList ]]"
+                            as="status">
+                            </paper-item>
+                            <paper-item 
+                                affect-item="[[ _affectItemStringify('statusList', status.name) ]]">
+                                [[ status.name ]] on Status
+                            </paper-item>
+                        </template>
+                        <template
+                            is="dom-repeat"
+                            items="[[ sheetData.resourcesList ]]"
+                            as="status">
+                            <paper-item 
+                                affect-item="[[ _affectItemStringify('resourcesList', status.name) ]]">
+                                [[ status.name ]] on Resources
+                            </paper-item>
+                        </template>
+                        <template
+                            is="dom-repeat"
+                            items="[[ sheetData.defensesList ]]"
+                            as="status">
+                            <paper-item 
+                                affect-item="[[ _affectItemStringify('defensesList', status.name) ]]">
+                                [[ status.name ]] on Defenses
+                            </paper-item>
+                        </template>
+                        <template
+                            is="dom-repeat"
+                            items="[[ sheetData.skillsList ]]"
+                            as="status">
+                            <paper-item 
+                                affect-item="[[ _affectItemStringify('skillsList', status.name) ]]">
+                                [[ status.name ]] on Skills
+                            </paper-item>
+                        </template>
+                    </paper-listbox>
+                </paper-dropdown-menu>
+                <paper-input id="affectDialogValue"
+                    always-float-label
+                    type="number"
+                    label="Value"
+                    value="{{ affectValue }}">
+                </paper-input>
+            </div>
+            <div class="buttons">
+                <paper-button id="affectDialogCancel"
+                    class="red-paper-button"
+                    on-tap="_cancel">
+                    Cancel
+                </paper-button>
+                <paper-button id="affectDialogConfirm"
+                    class="secondary-paper-button"
+                    on-tap="_confirm"
+                    autofocus>
+                    Confirm
+                </paper-button>
+            </div>
+        </paper-dialog>
     </template>
 
     <script>
@@ -646,7 +723,7 @@
              */
 
             /*
-             *  Effects/Affects Functions
+             *  Effects Functions
              */
             _addEffect() {
                 let element = this;
@@ -705,70 +782,86 @@
                 let effectIndex = event.target.dataset.effectIndex;
                 this.splice("sheetData.effectsList", effectIndex, 1);
             }
+            /*
+             */
 
-            _addAffect() {
-                let element = this,
-                    effectIndex = event.target.dataset.effectIndex,
-                    path = "sheetData.effectsList." + effectIndex + ".affectsList";
+            /*
+             *  Inventory Functions
+             */
+            _addItem() {
+                let element = this;
                 this.$.ironPages.classList.add("dialog-overlay");
-                this.$.affectDialogStatus.selected = element._affectItemStringify("statusList", element.sheetData.statusList[0].name);
-                this.$.affectDialogValue.value = 0;
+                this.$.itemDialogName.value = "";
+                this.$.itemDialogDescription.value = "";
+                this.$.itemDialogEquippable.value = true;
+                this.$.itemDialogCharges.value = 0;
                 this._cancel = tapEvent => {
-                    element.$.affectDialogStatus.selected = element._affectItemStringify("statusList", element.sheetData.statusList[0].name);
-                    element.$.affectDialogValue.value = 0;
+                    element.$.itemDialogName.value = "";
+                    element.$.itemDialogDescription.value = "";
+                    element.$.itemDialogEquippable.value = true;
+                    element.$.itemDialogCharges.value = 0;
                     element.$.ironPages.classList.remove("dialog-overlay");
-                    element.$.affectDialog.close();
+                    element.$.itemDialog.close();
                 }
                 this._confirm = tapEvent => {
-                    let affectItem = JSON.parse(element.$.affectDialogStatus.selected),
-                        affectValue = parseFloat(this._numberTypeCheck(element.$.affectDialogValue.value));
-                    if (!element.sheetData.effectsList[effectIndex].affectsList) element.set(path, []);
-                    element.push(path, new Affect(affectItem.location, affectItem.name, affectValue));
-                    element.$.affectDialogStatus.selected = element._affectItemStringify("statusList", element.sheetData.statusList[0].name);
-                    element.$.affectDialogValue.value = 0;
+                    let name = element.$.itemDialogName.value,
+                        description = element.$.itemDialogDescription.value,
+                        equippable = element.$.itemDialogEquippable.value,
+                        charges = element.$.itemDialogCharges.value;
+                    element.push("sheetData.itemList", new Item(name, description, equippable, charges, false, []));
+                    element.$.itemDialogName.value = "";
+                    element.$.itemDialogDescription.value = "";
+                    element.$.itemDialogEquippable.value = true;
+                    element.$.itemDialogCharges.value = 0;
                     element.$.ironPages.classList.remove("dialog-overlay");
-                    element.$.affectDialog.close();
+                    element.$.itemDialog.close();
                 }
-                this.$.affectDialog.open();
+                this.$.itemDialog.open();
                 return;
             }
 
-            _editAffect() {
+            _editItem() {
                 let element = this,
-                    effectIndex = event.target.dataset.effectIndex,
-                    affectIndex = event.target.dataset.affectIndex,
-                    affectLocation = this.sheetData.effectsList[effectIndex].affectsList[affectIndex].location,
-                    affectName = this.sheetData.effectsList[effectIndex].affectsList[affectIndex].name,
-                    affectValue = this.sheetData.effectsList[effectIndex].affectsList[affectIndex].value,
-                    path = "sheetData.effectsList." + effectIndex + ".affectsList." + affectIndex;
+                    itemIndex = event.target.dataset.itemIndex,
+                    itemName = this.sheetData.itemsList[itemIndex].name,
+                    itemDescription = this.sheetData.itemsList[itemIndex].description,
+                    itemEquippable = this.sheetData.itemsList[itemIndex].equippable,
+                    itemCharges = this.sheetData.itemsList[itemIndex].charges,
+                    itemActive = this.sheetData.itemsList[itemIndex].active,
+                    affectsList = this.sheetData.itemsList[itemIndex].affectsList;
                 this.$.ironPages.classList.add("dialog-overlay");
-                this.$.affectDialogStatus.selected = element._affectItemStringify(affectLocation, affectName);
-                this.$.affectDialogValue.value = affectValue;
+                this.$.itemDialogName.value = itemName;
+                this.$.itemDialogDescription.value = itemDescription;
+                this.$.itemDialogEquippable.value = itemEquippable;
+                this.$.itemDialogCharges.value = itemCharges;
                 this._cancel = tapEvent => {
-                    element.$.affectDialogStatus.selected = element._affectItemStringify("statusList", element.sheetData.statusList[0].name);
-                    element.$.affectDialogValue.value = 0;
+                    element.$.itemDialogName.value = "";
+                    element.$.itemDialogDescription.value = "";
+                    element.$.itemDialogEquippable.value = true;
+                    element.$.itemDialogCharges.value = 0;
                     element.$.ironPages.classList.remove("dialog-overlay");
-                    element.$.affectDialog.close();
+                    element.$.itemDialog.close();
                 }
                 this._confirm = tapEvent => {
-                    let affectItem = JSON.parse(element.$.affectDialogStatus.selected),
-                        affectValue = parseFloat(this._numberTypeCheck(element.$.affectDialogValue.value));
-                    element.set(path, new Affect(affectItem.location, affectItem.name, affectValue));
-                    element.$.affectDialogStatus.selected = element._affectItemStringify("statusList", element.sheetData.statusList[0].name);
-                    element.$.affectDialogValue.value = 0;
+                    let name = element.$.itemDialogName.value,
+                        description = element.$.itemDialogDescription.value,
+                        equippable = element.$.itemDialogEquippable.value,
+                        charges = element.$.itemDialogCharges.value;
+                    element.push("sheetData.itemList", new Item(name, description, equippable, charges, itemActive, affectsList));
+                    element.$.itemDialogName.value = "";
+                    element.$.itemDialogDescription.value = "";
+                    element.$.itemDialogEquippable.value = true;
+                    element.$.itemDialogCharges.value = 0;
                     element.$.ironPages.classList.remove("dialog-overlay");
-                    element.$.affectDialog.close();
+                    element.$.itemDialog.close();
                 }
-                this.$.affectDialog.open();
+                this.$.itemDialog.open();
                 return;
             }
 
-            _deleteAffect() {
-                let element = this,
-                    affectIndex = event.target.dataset.affectIndex,
-                    effectIndex = event.target.dataset.effectIndex,
-                    path = "sheetData.effectsList." + effectIndex + ".affectsList";
-                this.splice(path, affectIndex, 1);
+            _deleteItem() {
+                let itemIndex = event.target.dataset.itemIndex;
+                this.splice("sheetData.itemsList", itemIndex, 1);
             }
             /*
              */
@@ -835,6 +928,80 @@
             /*
              */
 
+            /*
+             *  Affects Functions
+             */
+            _addAffect() {
+                let element = this,
+                    effectIndex = event.target.dataset.effectIndex,
+                    itemIndex = event.target.dataset.itemIndex,
+                    path = (effectIndex ? "sheetData.effectsList." + effectIndex + ".affectsList" : "sheetData.itemsList." + itemIndex + ".affectsList");
+                this.$.ironPages.classList.add("dialog-overlay");
+                this.$.affectDialogStatus.selected = element._affectItemStringify("statusList", element.sheetData.statusList[0].name);
+                this.$.affectDialogValue.value = 0;
+                this._cancel = tapEvent => {
+                    element.$.affectDialogStatus.selected = element._affectItemStringify("statusList", element.sheetData.statusList[0].name);
+                    element.$.affectDialogValue.value = 0;
+                    element.$.ironPages.classList.remove("dialog-overlay");
+                    element.$.affectDialog.close();
+                }
+                this._confirm = tapEvent => {
+                    let affectItem = JSON.parse(element.$.affectDialogStatus.selected),
+                        affectValue = parseFloat(this._numberTypeCheck(element.$.affectDialogValue.value));
+                    if(effectIndex && !this.sheetData.effectsList[effectIndex].affectsList) this.set(path, []);
+                    else if (itemIndex && !this.sheetData.itemsList[itemIndex].affectsList) this.set(path, []);
+                    element.push(path, new Affect(affectItem.location, affectItem.name, affectValue));
+                    element.$.affectDialogStatus.selected = element._affectItemStringify("statusList", element.sheetData.statusList[0].name);
+                    element.$.affectDialogValue.value = 0;
+                    element.$.ironPages.classList.remove("dialog-overlay");
+                    element.$.affectDialog.close();
+                }
+                this.$.affectDialog.open();
+                return;
+            }
+
+            _editAffect() {
+                let element = this,
+                    effectIndex = event.target.dataset.effectIndex,
+                    itemIndex = event.target.dataset.itemIndex,
+                    affectIndex = event.target.dataset.affectIndex,
+                    affectLocation = this.sheetData.effectsList[effectIndex].affectsList[affectIndex].location,
+                    affectName = this.sheetData.effectsList[effectIndex].affectsList[affectIndex].name,
+                    affectValue = this.sheetData.effectsList[effectIndex].affectsList[affectIndex].value,
+                    path = (effectIndex ? "sheetData.effectsList." + effectIndex + ".affectsList." + affectIndex : "sheetData.itemsList." + itemIndex + ".affectsList." + affectIndex);
+                this.$.ironPages.classList.add("dialog-overlay");
+                this.$.affectDialogStatus.selected = element._affectItemStringify(affectLocation, affectName);
+                this.$.affectDialogValue.value = affectValue;
+                this._cancel = tapEvent => {
+                    element.$.affectDialogStatus.selected = element._affectItemStringify("statusList", element.sheetData.statusList[0].name);
+                    element.$.affectDialogValue.value = 0;
+                    element.$.ironPages.classList.remove("dialog-overlay");
+                    element.$.affectDialog.close();
+                }
+                this._confirm = tapEvent => {
+                    let affectItem = JSON.parse(element.$.affectDialogStatus.selected),
+                        affectValue = parseFloat(this._numberTypeCheck(element.$.affectDialogValue.value));
+                    element.set(path, new Affect(affectItem.location, affectItem.name, affectValue));
+                    element.$.affectDialogStatus.selected = element._affectItemStringify("statusList", element.sheetData.statusList[0].name);
+                    element.$.affectDialogValue.value = 0;
+                    element.$.ironPages.classList.remove("dialog-overlay");
+                    element.$.affectDialog.close();
+                }
+                this.$.affectDialog.open();
+                return;
+            }
+
+            _deleteAffect() {
+                let element = this,
+                    affectIndex = event.target.dataset.affectIndex,
+                    effectIndex = event.target.dataset.effectIndex,
+                    itemIndex = event.target.dataset.itemIndex,
+                    path = (effectIndex ? "sheetData.effectsList." + effectIndex + ".affectsList" : "sheetData.itemsList." + itemIndex + ".affectsList");
+                this.splice(path, affectIndex, 1);
+            }
+            /*
+             */
+
             _numberTypeCheck(number) {
                 number = number.toString().replace(',', '.');
                 if (isNaN(parseInt(number))) return "0";
@@ -851,12 +1018,13 @@
         };
 
         class Item {
-            constructor() {
-                this.name = "";
-                this.description = "";
-                this.equippable = true;
-                this.charges = 0;
-                this.effectsList = [];
+            constructor(name, description, equippable, charges, active, affectsList) {
+                this.name = name;
+                this.description = description;
+                this.equippable = equippable;
+                this.charges = charges;
+                this.active = active;
+                this.effectsList = affectsList || [];
             }
         };
 
