@@ -23,6 +23,7 @@
 <link rel="import" href="../../bower_components/paper-fab/paper-fab.html">
 <link rel="import" href="../../bower_components/paper-card/paper-card.html">
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
 
 <link rel="import" href="../snd-new/snd-new.html">
 <link rel="import" href="../snd-list/snd-list.html">
@@ -136,6 +137,12 @@
                     <div main-title>
                         Sheets 'n Dices
                     </div>
+                    <template is="dom-if" if="[[ user ]]">
+                        <paper-icon-button
+                            icon="exit-to-app"
+                            on-tap="_logOut">
+                        </paper-icon-button>
+                    </template>
                 </app-toolbar>
             </app-header>
 
