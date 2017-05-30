@@ -19,6 +19,7 @@
 <link rel="import" href="../../bower_components/paper-checkbox/paper-checkbox.html">
 
 <link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower_components/paper-toast/paper-toast.html">
 
 <link rel="import" href="../snd-chip/snd-chip.html">
 
@@ -67,8 +68,18 @@
             paper-dropdown-menu {
                 width: 100%;
             }
+            .dices-page {
+                display: flex;
+                flex-direction: row;
+                flex-wrap: wrap;
+            }
+            .dices-page paper-button {
+                width: 124px;
+                height: 48px;
+                margin: calc(100%/6 - 48px/3) calc(100%/4 - 124px/2);
+            }
             .status-card:last-child {
-                margin-bottom: 32px;
+                margin-bottom: 80px;
             }
             .effect-card:last-child {
                 margin-bottom: 32px;
@@ -127,6 +138,10 @@
             }
             .red-paper-button {
                 color: #FF5252
+            }
+            .left-paper-fab {
+                left: 32px;
+                right: 0;
             }
             @media (min-width: 426px) {
                 paper-dialog {
@@ -507,12 +522,46 @@
 
             <!-- Dices Page -->
             <section class="dices-page">
-                <div>
-                    Under development :) 
-                </div>
+                <paper-button
+                    class="primary-paper-button"
+                    on-tap="_rollDice"
+                    data-dice-number="20">
+                    Roll d20
+                </paper-button>
+                <paper-button
+                    class="primary-paper-button"
+                    on-tap="_rollDice"
+                    data-dice-number="12">
+                    Roll d12
+                </paper-button>
+                <paper-button
+                    class="primary-paper-button"
+                    on-tap="_rollDice"
+                    data-dice-number="10">
+                    Roll d10
+                </paper-button>
+                <paper-button
+                    class="primary-paper-button"
+                    on-tap="_rollDice"
+                    data-dice-number="8">
+                    Roll d8
+                </paper-button>
+                <paper-button
+                    class="primary-paper-button"
+                    on-tap="_rollDice"
+                    data-dice-number="6">
+                    Roll d6
+                </paper-button>
+                <paper-button
+                    class="primary-paper-button"
+                    on-tap="_rollDice"
+                    data-dice-number="4">
+                    Roll d4
+                </paper-button>
             </section>
         </iron-pages>
 
+        <!-- Effect Dialog -->
         <paper-dialog id="effectDialog"
             no-cancel-on-esc-key
             no-cancel-on-outside-click>
@@ -545,6 +594,7 @@
             </div>
         </paper-dialog>
 
+        <!-- Item Dialog -->
         <paper-dialog id="itemDialog"
             no-cancel-on-esc-key
             no-cancel-on-outside-click>
@@ -587,6 +637,7 @@
             </div>
         </paper-dialog>
 
+        <!-- Note Dialog -->
         <paper-dialog id="noteDialog"
             no-cancel-on-esc-key
             no-cancel-on-outside-click>
@@ -619,6 +670,7 @@
             </div>
         </paper-dialog>
 
+        <!-- Affect Dialog -->
         <paper-dialog id="affectDialog"
             no-cancel-on-esc-key
             no-cancel-on-outside-click>
@@ -688,6 +740,11 @@
                 </paper-button>
             </div>
         </paper-dialog>
+
+        <!-- Toast -->
+        <paper-toast id="sndSheetToast"
+            duration="2000">
+        </paper-toast>
     </template>
 
     <script>
@@ -992,6 +1049,13 @@
             /*
              *  Dices Functions
              */
+            _rollDice() {
+                let diceNumber = event.target.dataset.diceNumber;
+                this.$.sndSheetToast.close();
+                diceNumber = Math.floor(parseInt(diceNumber));
+                this.$.sndSheetToast.text = "D" + diceNumber + " roll: " + (Math.floor(Math.random() * (diceNumber - 1)) + 1);
+                this.$.sndSheetToast.open();
+            }
             /*
              */
 
