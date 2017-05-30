@@ -23,10 +23,11 @@
 <link rel="import" href="../../bower_components/paper-fab/paper-fab.html">
 <link rel="import" href="../../bower_components/paper-card/paper-card.html">
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
 
-<link rel="import" href="../snd-new/snd-new.html">
-<link rel="import" href="../snd-list/snd-list.html">
-<link rel="import" href="../snd-sheet/snd-sheet.html">
+<link async="" rel="import" href="../snd-new/snd-new.html">
+<link async="" rel="import" href="../snd-list/snd-list.html">
+<link async="" rel="import" href="../snd-sheet/snd-sheet.html">
 
 <dom-module id="snd-app">
     <template>
@@ -87,6 +88,12 @@
             #signInOverlay span {
                 margin-left: 8px;
             }
+            #logOutButton {
+                opacity: 0;
+                pointer-events: none;
+                transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+                will-change: opacity;
+            }
         </style>
 
         <app-location route="{{ route }}" use-hash-as-path="">
@@ -114,6 +121,8 @@
                     <div main-title="">
                         Sheets 'n Dices
                     </div>
+                    <paper-icon-button id="logOutButton" icon="exit-to-app" on-tap="_logOut">
+                    </paper-icon-button>
                 </app-toolbar>
             </app-header>
 
@@ -124,7 +133,6 @@
                     <span>Sign In</span>
                 </paper-button>
             </div>
-
 
             <iron-pages id="ironPages" role="main" selected="[[ page ]]" attr-for-selected="name" fallback-selection="error">
                 <snd-list name="Sheet-List" sheet-list="{{ liveData }}">
@@ -183,9 +191,13 @@
                 if (!user) {
                     this.$.signInOverlay.style.opacity = 1;
                     this.$.signInOverlay.style.pointerEvents = 'auto';
+                    this.$.logOutButton.style.opacity = 0;
+                    this.$.logOutButton.style.pointerEvents = 'none';
                 } else {
                     this.$.signInOverlay.style.opacity = 0;
                     this.$.signInOverlay.style.pointerEvents = 'none';
+                    this.$.logOutButton.style.opacity = 1;
+                    this.$.logOutButton.style.pointerEvents = 'auto';
                 }
             }
 
