@@ -1,26 +1,26 @@
 {
   "entrypoint": "index.html",
-  "shell": "src/snd-app/snd-app.html",
+  "shell": "src\\snd-app\\snd-app.html",
   "fragments": [
-    "src/snd-list/snd-list.html",
-    "src/snd-new/snd-new.html",
-    "src/snd-sheet/snd-sheet.html"
+    "src\\snd-list\\snd-list.html",
+    "src\\snd-new\\snd-new.html",
+    "src\\snd-sheet\\snd-sheet.html"
   ],
   "sources": [
-    "src/**/*",
-    "images/**/*",
+    "src\\**\\*",
+    "images\\**\\*",
     "bower.json",
     "index.html",
-    "src/snd-app/snd-app.html",
-    "src/snd-list/snd-list.html",
-    "src/snd-new/snd-new.html",
-    "src/snd-sheet/snd-sheet.html"
+    "src\\snd-app\\snd-app.html",
+    "src\\snd-list\\snd-list.html",
+    "src\\snd-new\\snd-new.html",
+    "src\\snd-sheet\\snd-sheet.html"
   ],
   "extraDependencies": [
     "manifest.json",
-    "bower_components/webcomponentsjs/webcomponents-lite.js",
-    "bower_components/web-animations-js/web-animations-next-lite.min.js",
-    "bower_components/webcomponentsjs/*.js"
+    "bower_components\\webcomponentsjs\\webcomponents-lite.js",
+    "bower_components\\web-animations-js\\web-animations-next-lite.min.js",
+    "bower_components\\webcomponentsjs\\*.js"
   ],
   "builds": [
     {
