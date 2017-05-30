@@ -1,0 +1,66 @@
+{
+  "entrypoint": "index.html",
+  "shell": "src/snd-app/snd-app.html",
+  "fragments": [
+    "src/snd-list/snd-list.html",
+    "src/snd-new/snd-new.html",
+    "src/snd-sheet/snd-sheet.html"
+  ],
+  "sources": [
+    "src/**/*",
+    "images/**/*",
+    "bower.json",
+    "index.html",
+    "src/snd-app/snd-app.html",
+    "src/snd-list/snd-list.html",
+    "src/snd-new/snd-new.html",
+    "src/snd-sheet/snd-sheet.html"
+  ],
+  "extraDependencies": [
+    "manifest.json",
+    "bower_components/webcomponentsjs/webcomponents-lite.js",
+    "bower_components/web-animations-js/web-animations-next-lite.min.js",
+    "bower_components/webcomponentsjs/*.js"
+  ],
+  "builds": [
+    {
+      "name": "bundled",
+      "js": {
+        "minify": true,
+        "compile": false
+      },
+      "css": {
+        "minify": true
+      },
+      "html": {
+        "minify": true
+      },
+      "bundle": true,
+      "addServiceWorker": true,
+      "addPushManifest": true,
+      "insertPrefetchLinks": true
+    },
+    {
+      "name": "unbundled",
+      "js": {
+        "minify": true,
+        "compile": false
+      },
+      "css": {
+        "minify": true
+      },
+      "html": {
+        "minify": true
+      },
+      "bundle": false,
+      "addServiceWorker": true,
+      "addPushManifest": true,
+      "insertPrefetchLinks": true
+    }
+  ],
+  "lint": {
+    "rules": [
+      "polymer-2"
+    ]
+  }
+}

@@ -20,27 +20,47 @@
 
         <link rel="shortcut icon" sizes="72x72" href="src/img/icon_72.png">
 
-        <script src="/bower_components/webcomponentsjs/webcomponents-loader.js"></script>
-        
-        <script src="/bower_components/web-animations-js/web-animations-next-lite.min.js"></script>
-
         <link rel="import" href="/src/snd-app/snd-app.html">
 
         <title>Sheets 'n Dices</title>
         
         <meta name="description" content="RPG Sheet Manager">
-
+    </head>
+    <body>
         <style>
             body {
                 position: relative;
                 height: 100vh;
                 width: 100vw;
                 margin: 0;
-                font-family: sans-serif
+                font-family: sans-serif;
+                user-select: none;              /* prevent copy paste, to allow, change 'none' to 'text' */
+                -webkit-user-select: none;      /* prevent copy paste, to allow, change 'none' to 'text' */
+                -webkit-touch-callout: none;    /* prevent callout to copy image, etc when tap to hold */
+                -webkit-text-size-adjust: none; /* prevent webkit from resizing text to fit */
             }
         </style>
-    </head>
-    <body>
+
         <snd-app></snd-app>
+
+        <script>
+            // Load Web Components when not supported
+            let webComponentsSupported = ("registerElement" in document
+                && 'import' in document.createElement("link")
+                && 'content' in document.createElement("template"));
+            if (!webComponentsSupported) {
+                let script = document.createElement("script");
+                script.src = "/bower_components/webcomponentsjs/webcomponents-lite.js";
+                document.head.appendChild(script);
+                console.log("WebComponents Loaded");
+            }
+            // Register Service Worker
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('/service-worker.js');
+                console.log("ServiceWorker Registred");
+            }
+        </script>
+        
+        <script src="/bower_components/web-animations-js/web-animations-next-lite.min.js"></script>
     </body>
 </html>
