@@ -26,6 +26,7 @@
                 display: block;
                 height: 100%;
                 width: 100%;
+                background-color: #673AB7;
                 --primary-color: #673AB7;
                 --darker-primary-color: #512DA8;
                 --light-primary-color: #D1C4E9;
@@ -227,11 +228,13 @@
              */
             _userChanged(user) {
                 if (!user) {
+                    this.style.backgroundColor = '#673AB7';
                     this.$.signInOverlay.style.opacity = 1;
                     this.$.signInOverlay.style.pointerEvents = 'auto';
                     this.$.logOutButton.style.opacity = 0;
                     this.$.logOutButton.style.pointerEvents = 'none';
                 } else {
+                    this.style.backgroundColor = '#FFF';
                     this.$.signInOverlay.style.opacity = 0;
                     this.$.signInOverlay.style.pointerEvents = 'none';
                     this.$.logOutButton.style.opacity = 1;

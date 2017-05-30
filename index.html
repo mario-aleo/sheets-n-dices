@@ -20,8 +20,6 @@
 
         <link rel="shortcut icon" sizes="72x72" href="src/img/icon_72.png">
 
-        <link rel="import" href="/src/snd-app/snd-app.html">
-
         <title>Sheets 'n Dices</title>
         
         <meta name="description" content="RPG Sheet Manager">
@@ -39,25 +37,27 @@
                 -webkit-text-size-adjust: none; /* prevent webkit from resizing text to fit */
             }
             snd-app[unresolved] {
-                display: block;
+                display: flex;
+                justify-content: flex-start;
+                align-items: flex-start;
+                padding: 21px 16px;
                 height: 100vh;
-                line-height: 68px;
-                text-align: center;
-                font-size: 16px;
-                font-weight: 600;
-                letter-spacing: 0.3em;
+                font-size: 20px;
+                letter-spacing: 1px;
                 color: #FFF;
                 background-color: #673AB7;
-                padding: 0 16px;
-                overflow: visible;
+                transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+                will-change: opacity;
             }
         </style>
     </head>
     <body>
 
-        <snd-app unresolved>Sheet's n Dices</snd-app>
+        <snd-app unresolved>Sheets 'n Dices</snd-app>
 
         <script src="/bower_components/webcomponentsjs/webcomponents-loader.js"></script>
         <script src="/bower_components/web-animations-js/web-animations-next-lite.min.js"></script>
+
+        <link rel="import" href="/src/snd-app/snd-app.html">
     </body>
 </html>
