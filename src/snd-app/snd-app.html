@@ -200,13 +200,20 @@
 
             ready() {
                 super.ready();
+                // Custom elements polyfill safe way to indicate an element has been upgraded.
+                this.removeAttribute('unresolved');
+                // Add Event Listeners
                 this.addEventListener('addNewSheet', e => this._addNewSheet(e.detail.sheetData));
                 this.addEventListener('openSheet', e => this._openSheet(e.detail.sheetKey));
             }
 
             connectedCallback() {
                 super.connectedCallback();
-                //  Lazy import snd app components 
+                // Register Service Worker
+                if ('serviceWorker' in navigator) {
+                    navigator.serviceWorker.register('service-worker.js', {scope: '/'});
+                }
+                // Lazy import snd app components 
                 Polymer.importHref(
                     this.resolveUrl('../snd-list/snd-list.html'), null, null, true);
                 Polymer.importHref(

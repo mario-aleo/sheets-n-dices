@@ -25,8 +25,7 @@
         <title>Sheets 'n Dices</title>
         
         <meta name="description" content="RPG Sheet Manager">
-    </head>
-    <body>
+
         <style>
             body {
                 position: relative;
@@ -39,28 +38,26 @@
                 -webkit-touch-callout: none;    /* prevent callout to copy image, etc when tap to hold */
                 -webkit-text-size-adjust: none; /* prevent webkit from resizing text to fit */
             }
+            snd-app[unresolved] {
+                display: block;
+                height: 100vh;
+                line-height: 68px;
+                text-align: center;
+                font-size: 16px;
+                font-weight: 600;
+                letter-spacing: 0.3em;
+                color: #FFF;
+                background-color: #673AB7;
+                padding: 0 16px;
+                overflow: visible;
+            }
         </style>
+    </head>
+    <body>
 
-        <snd-app></snd-app>
+        <snd-app unresolved>Sheet's n Dices</snd-app>
 
-        <script>
-            // Load Web Components when not supported
-            let webComponentsSupported = ("registerElement" in document
-                && 'import' in document.createElement("link")
-                && 'content' in document.createElement("template"));
-            if (!webComponentsSupported) {
-                let script = document.createElement("script");
-                script.src = "/bower_components/webcomponentsjs/webcomponents-lite.js";
-                document.head.appendChild(script);
-                console.log("WebComponents Loaded");
-            }
-            // Register Service Worker
-            if ('serviceWorker' in navigator) {
-                navigator.serviceWorker.register('/service-worker.js');
-                console.log("ServiceWorker Registred");
-            }
-        </script>
-        
+        <script src="/bower_components/webcomponentsjs/webcomponents-loader.js"></script>
         <script src="/bower_components/web-animations-js/web-animations-next-lite.min.js"></script>
     </body>
 </html>
