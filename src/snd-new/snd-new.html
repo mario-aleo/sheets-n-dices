@@ -778,7 +778,7 @@
                     },
                     newSheet: {
                         type: Object,
-                        value: new Sheet(),
+                        value: new Sheet([new Status("Vitality", 0, 0, [])], [new Resource("HP", 0, 0, [], true, 0)], [new Status("Armor", 0, 0, [])], [new Status("Diplomacy", 0, 0, [])]),
                         notify: true
                     },
 
@@ -1065,7 +1065,7 @@
                 console.log(this.newSheet);
                 this.dispatchEvent(new CustomEvent('addNewSheet', {detail: {sheetData: element.newSheet}, composed: true}));
                 this.set("tabSelected", 0);
-                this.set("newSheet", new Sheet());
+                this.set("newSheet", new Sheet([new Status("Vitality", 0, 0, [])], [new Resource("HP", 0, 0, [], true, 0)], [new Status("Armor", 0, 0, [])], [new Status("Diplomacy", 0, 0, [])]));
                 return;
             }
 

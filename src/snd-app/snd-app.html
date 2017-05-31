@@ -213,6 +213,7 @@
                 this.addEventListener('addNewSheet', e => this._addNewSheet(e.detail.sheetData));
                 this.addEventListener('openSheet', e => this._openSheet(e.detail.sheetKey));
                 this.addEventListener('editSheet', e => this._editSheet(e.detail));
+                this.addEventListener('backToSheet', e => this._backToSheet(e.detail));
             }
 
             connectedCallback() {
@@ -281,6 +282,11 @@
                 return;
             }
 
+            _backToSheet(eventDetail) {
+                window.location.hash = '/Sheet/' + this.sheetKey;
+                return;
+            }
+
             /*
              *  Login Methods
              */
@@ -314,7 +320,7 @@
          *  Sheet Object Definitions
          */
         class Sheet {
-            constructor() {
+            constructor(statusList, resourcesList, defensesList, skillsList) {
                 this.name = "";
                 this.job = "";
                 this.race = "";
@@ -322,10 +328,10 @@
                 this.system = "";
                 this.hasMinimumStatusModifierValue = false;
                 this.minimumStatusModifierValue = 10;
-                this.statusList = [ new Status("Vitality", 0, 0, []) ];
-                this.resourcesList = [ new Resource("HP", 0, 0, [], true, 0) ];
-                this.defensesList = [ new Status("Armor", 0, 0, []) ];
-                this.skillsList = [ new Status("Diplomacy", 0, 0, []) ];
+                this.statusList = statusList || [];
+                this.resourcesList = resourcesList || [];
+                this.defensesList = defensesList || [];
+                this.skillsList = skillsList || [];
                 this.effectsList = [];
                 this.itemsList = [];
                 this.notesList = [];

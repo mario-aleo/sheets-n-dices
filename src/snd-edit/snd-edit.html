@@ -755,7 +755,7 @@
 
         <!-- Save Fab Button -->
         <paper-fab class="left-paper-fab"
-            on-tap="_newSheet"
+            on-tap="_saveSheet"
             icon="save"
             elevation="4">
         </paper-fab>
@@ -999,7 +999,7 @@
             /*
              *  Sheet Object Functions
              */
-            _newSheet(event) {
+            _saveSheet(event) {
                 if (!this.sheetData.name
                     || !this.sheetData.job
                     || !this.sheetData.race
@@ -1060,8 +1060,38 @@
                         element.dependencyChain = [];
                     }
                 });
-                console.log(this.sheetData);
-                this.dispatchEvent(new CustomEvent('addNewSheet', {detail: {sheetData: element.sheetData}, composed: true}));
+                // SUM AnyWithEffect = value + affectValue;
+                let effectPath = '';
+                if (!this.sheetData.effectsList) this.set('sheetData.effectsList', []);
+                this.sheetData.effectsList.forEach(function (effect, index) {
+                    effectPath = 'sheetData.effectsList.' + index;
+                    if (!effect.affectsList) this.set(effectPath, []);
+                    effect.affectsList.forEach(function (affect) {
+                        this.sheetData[affect.location].forEach(function (statusItem) {
+                            if (statusItem.name == affect.name) {
+                                statusItem.value = statusItem.value + parseInt(element._numberTypeCheck(affect.value));
+                                console.log("Update " + statusItem.name + " Value with " + effect.name +  " Value: " + affect.value);
+                            }
+                        });
+                    });
+                });
+                // SUM AnyWithItem = value + affectValue;
+                let itemPath = '';
+                if (!this.sheetData.itemsList) this.set('sheetData.itemsList', []);
+                this.sheetData.itemsList.forEach(function (item, index) {
+                    itemPath = 'sheetData.itemsList.' + index;
+                    if (!item.affectsList) this.set(itemPath, []);
+                    item.affectsList.forEach(function (affect) {
+                        this.sheetData[affect.location].forEach(function (statusItem) {
+                            if (statusItem.name == affect.name) {
+                                statusItem.value = statusItem.value + parseInt(element._numberTypeCheck(affect.value));
+                                console.log("Update " + statusItem.name + " Value with " + item.name +  " Value: " + affect.value);
+                            }
+                        });
+                    });
+                });
+                this.set('sheetData', this.sheetData);
+                this.dispatchEvent(new CustomEvent('backToSheet', {detail: {}, composed: true}));
                 this.set("tabSelected", 0);
                 this.set("sheetData", new Sheet());
                 return;
