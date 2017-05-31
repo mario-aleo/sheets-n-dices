@@ -134,6 +134,11 @@
                 z-index: 102;
                 background-color: rgba(0,0,0,0.7)
             }
+            .empty-text {
+                text-align: center;
+                font-size: 20px;
+                color: rgba(51,51,51,0.4);
+            }
             @media (min-width: 426px) {
                 .basic-page {
                     width: calc(100% - 16px);
@@ -246,6 +251,13 @@
 
             <!-- Status Tab -->
             <section class="status-page">
+                <template is="dom-if" if="[[ !newSheet.statusList ]]">
+                    <div>
+                        <p class="empty-text">
+                            You don't have any Status :(
+                        </p>
+                    </div>
+                </template>
                 <template
                     is="dom-repeat"
                     items="[[ newSheet.statusList ]]"
@@ -335,6 +347,13 @@
 
             <!-- Resources Tab -->
             <section class="status-page">
+                <template is="dom-if" if="[[ !newSheet.resourcesList ]]">
+                    <div>
+                        <p class="empty-text">
+                            You don't have any Resource :(
+                        </p>
+                    </div>
+                </template>
                 <template
                     is="dom-repeat"
                     items="[[ newSheet.resourcesList ]]"
@@ -429,6 +448,13 @@
 
             <!-- Defenses Tab -->
             <section class="status-page">
+                <template is="dom-if" if="[[ !newSheet.defensesList ]]">
+                    <div>
+                        <p class="empty-text">
+                            You don't have any Defense :(
+                        </p>
+                    </div>
+                </template>
                 <template
                     is="dom-repeat"
                     items="[[ newSheet.defensesList ]]"
@@ -517,8 +543,14 @@
             </section>
 
             <!-- Skills Tab -->
-            <section
-                class="status-page">
+            <section class="status-page">
+                <template is="dom-if" if="[[ !newSheet.skillsList ]]">
+                    <div>
+                        <p class="empty-text">
+                            You don't have any Skill :(
+                        </p>
+                    </div>
+                </template>
                 <template
                     is="dom-repeat"
                     items="[[ newSheet.skillsList ]]"
@@ -847,6 +879,7 @@
                         this.$.sndNewToast.opened = true;
                         return;
                     }
+                    if (!this.sheetData[statusLocation]) this.set(path, []);
                     if (statusLocation == "resourcesList") element.push(path, new Resource(name, baseValue, levelModifier, [], hasActualValue, 0));
                     else element.push(path, new Status(name, baseValue, levelModifier, []));
                     element.$.ironPages.classList.remove('dialog-overlay');
@@ -895,6 +928,7 @@
                     statusLocation = event.target.dataset.statusLocation,
                     path = 'newSheet.' + statusLocation;
                 this.splice(path, statusIndex, 1);
+                if (this.newSheet[statusLocation].length == 0) this.set(path, null);
                 return;
             }
 
