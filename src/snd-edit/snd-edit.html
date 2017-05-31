@@ -776,6 +776,9 @@
                         type: Number,
                         value: 0
                     },
+                    sheetKey: {
+                        type: String
+                    },
                     sheetData: {
                         type: Object
                     },
@@ -1009,8 +1012,28 @@
                     this.$.sndNewToast.opened = true;
                     return;
                 }
+
                 // Each Status, Resource, Defense and Skill and SUM
                 const element = this;
+
+                // Reset Values
+                if (!this.sheetData.statusList) this.sheetData.statusList = [];
+                this.sheetData.statusList.forEach(function (status, index) {
+                    status.value = 0;
+                });
+                if (!this.sheetData.resourcesList) this.sheetData.resourcesList = [];
+                this.sheetData.resourcesList.forEach(function (resource) {
+                    resource.value = 0;
+                });
+                if (!this.sheetData.defensesList) this.sheetData.defensesList = [];
+                this.sheetData.defensesList.forEach(function (defense) {
+                    defense.value = 0;
+                });
+                if (!this.sheetData.skillsList) this.sheetData.skillsList = [];
+                this.sheetData.skillsList.forEach(function (skill) {
+                    skill.value = 0;
+                });
+
                 this.set("dependencyChain", []);
                 parseInt(element._numberTypeCheck(element.sheetData.level));
                 // SUM Status = baseValue + (levelModifier * level)
@@ -1061,11 +1084,10 @@
                     }
                 });
                 // SUM AnyWithEffect = value + affectValue;
-                let effectPath = '';
-                if (!this.sheetData.effectsList) this.set('sheetData.effectsList', []);
+                if (!this.sheetData.effectsList) this.sheetData.effectsList = [];
                 this.sheetData.effectsList.forEach(function (effect, index) {
-                    effectPath = 'sheetData.effectsList.' + index;
-                    if (!effect.affectsList) this.set(effectPath, []);
+                    affectsPath = 'sheetData.effectsList.' + index + '.affectsList';
+                    if (!effect.affectsList) this.set(affectsPath, []);
                     effect.affectsList.forEach(function (affect) {
                         this.sheetData[affect.location].forEach(function (statusItem) {
                             if (statusItem.name == affect.name) {
@@ -1076,8 +1098,7 @@
                     });
                 });
                 // SUM AnyWithItem = value + affectValue;
-                let itemPath = '';
-                if (!this.sheetData.itemsList) this.set('sheetData.itemsList', []);
+                if (!this.sheetData.itemsList) this.sheetData.itemsList = [];
                 this.sheetData.itemsList.forEach(function (item, index) {
                     itemPath = 'sheetData.itemsList.' + index;
                     if (!item.affectsList) this.set(itemPath, []);
@@ -1090,10 +1111,9 @@
                         });
                     });
                 });
-                this.set('sheetData', this.sheetData);
+                this.dispatchEvent(new CustomEvent('updateSheet', {detail: { sheetKey: element.sheetKey, sheetData: element.sheetData}, composed: true}));
                 this.dispatchEvent(new CustomEvent('backToSheet', {detail: {}, composed: true}));
                 this.set("tabSelected", 0);
-                this.set("sheetData", new Sheet());
                 return;
             }
 
@@ -1104,6 +1124,7 @@
                 statusItem.value = parseInt(parseInt(element._numberTypeCheck(statusItem.baseValue)) + parseInt(element._numberTypeCheck(element.sheetData.level)) * parseFloat(element._numberTypeCheck(statusItem.levelModifier)));
                 console.log("Initial " + statusItem.name + " Value: " + statusItem.value);
                 // Verify statusItem Dependency
+                if (!statusItem.dependencyList) statusItem.dependencyList = [];
                 if (statusItem.dependencyList.length > 0) {
                     // Start statusItem Value Calculation
                     element.dependencyChain.forEach(function (dependencyChainItem) {
