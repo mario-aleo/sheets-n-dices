@@ -9,6 +9,7 @@
 <link rel="import" href="../../bower_components/paper-card/paper-card.html">
 <link rel="import" href="../../bower_components/paper-fab/paper-fab.html">
 
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../../bower_components/paper-input/paper-textarea.html">
@@ -46,6 +47,14 @@
             paper-card {
                 width: 100%;
                 margin-top: 16px;
+            }
+            paper-card:last-of-type {
+                margin-bottom: 96px;
+            }
+            paper-icon-button {
+                width: 34px;
+                height: 34px;
+                margin-right: 8px;
             }
             paper-fab {
                 position: fixed;
@@ -230,7 +239,6 @@
                         </div>
                     </div>
                 </paper-card>
-
                 <paper-card class="status-card"
                     heading="Status"
                     elevation="2">
@@ -250,7 +258,6 @@
                         </template>
                     </div>
                 </paper-card>
-
                 <paper-card class="status-card"
                     heading="Resources"
                     elevation="2">
@@ -258,19 +265,40 @@
                         <template
                             is="dom-repeat"
                             items="[[ sheetData.resourcesList ]]"
-                            as="resources">
+                            as="resource"
+                            index-as="resourceIndex">
                             <div class="sheet-detail">
                                 <span class="sheet-detail-name">
-                                    [[ resources.name ]]
+                                    [[ resource.name ]]
                                 </span>
-                                <span class="sheet-detail-value">
-                                    [[ resources.value ]]
+                                <span>
+                                    <template is="dom-if" if="[[ resource.hasActualValue ]]">
+                                        <paper-icon-button class="red-paper-button"
+                                            on-tap="_changeResourceActualValue"
+                                            data-resource-index$="[[ resourceIndex ]]"
+                                            data-resource-change="-1"
+                                            icon="remove">
+                                        </paper-icon-button>
+                                        <paper-icon-button class="secondary-paper-button"
+                                            on-tap="_changeResourceActualValue"
+                                            data-resource-index$="[[ resourceIndex ]]"
+                                            data-resource-change="1"
+                                            icon="add">
+                                        </paper-icon-button>
+                                        <span class="sheet-detail-value">
+                                            [[ resource.actualValue ]] of [[ resource.value ]]
+                                        </span>
+                                    </template>
+                                    <template is="dom-if" if="[[ !resource.hasActualValue ]]">
+                                        <span class="sheet-detail-value">
+                                            [[ resource.value ]]
+                                        </span>
+                                    </template>
                                 </span>
                             </div>
                         </template>
                     </div>
                 </paper-card>
-
                 <paper-card class="status-card"
                     heading="Defenses"
                     elevation="2">
@@ -290,7 +318,6 @@
                         </template>
                     </div>
                 </paper-card>
-
                 <paper-card class="status-card"
                     heading="Skills"
                     elevation="2">
@@ -310,6 +337,11 @@
                         </template>
                     </div>
                 </paper-card>
+                <paper-fab
+                    icon="create"
+                    elevation="4"
+                    on-tap="_editSheet">
+                </paper-fab>
             </section>
 
             <!-- Effects Tab -->
@@ -824,27 +856,47 @@
              */
 
             /*
+             *  Sheet Functions
+             */
+            _changeResourceActualValue() {
+                let resourceIndex = event.target.dataset.resourceIndex,
+                    resourceChange = event.target.dataset.resourceChange,
+                    resourceObject = this.sheetData.resourcesList[resourceIndex],
+                    path = 'sheetData.resourcesList.' + resourceIndex + '.actualValue';
+                resourceChange = resourceObject.actualValue + parseInt(resourceChange);
+                if (resourceChange >= 0 && resourceChange <= resourceObject.value) {
+                    this.set(path, resourceChange);
+                }
+            }
+
+            _editSheet() {
+                this.dispatchEvent(new CustomEvent('editSheet', {detail: {}, composed: true}));
+            }
+            /*
+             */
+
+            /*
              *  Effects Functions
              */
             _addEffect() {
                 let element = this;
-                this.$.ironPages.classList.add("dialog-overlay");
-                this.$.effectDialogName.value = "";
-                this.$.effectDialogDescription.value = "";
+                this.$.ironPages.classList.add('dialog-overlay');
+                this.$.effectDialogName.value = '';
+                this.$.effectDialogDescription.value = '';
                 this._cancel = tapEvent => {
-                    element.$.effectDialogName.value = "";
-                    element.$.effectDialogDescription.value = "";
-                    element.$.ironPages.classList.remove("dialog-overlay");
+                    element.$.effectDialogName.value = '';
+                    element.$.effectDialogDescription.value = '';
+                    element.$.ironPages.classList.remove('dialog-overlay');
                     element.$.effectDialog.close();
                 }
                 this._confirm = tapEvent => {
                     let name = element.$.effectDialogName.value,
                         description = element.$.effectDialogDescription.value;
-                    if (!this.sheetData.effectsList) this.set("sheetData.effectsList", []);
-                    element.push("sheetData.effectsList", new Effect(name, description, []));
-                    element.$.effectDialogName.value = "";
-                    element.$.effectDialogDescription.value = "";
-                    element.$.ironPages.classList.remove("dialog-overlay");
+                    if (!this.sheetData.effectsList) this.set('sheetData.effectsList', []);
+                    element.push('sheetData.effectsList', new Effect(name, description, []));
+                    element.$.effectDialogName.value = '';
+                    element.$.effectDialogDescription.value = '';
+                    element.$.ironPages.classList.remove('dialog-overlay');
                     element.$.effectDialog.close();
                 }
                 this.$.effectDialog.open();
@@ -857,23 +909,23 @@
                     effectName = this.sheetData.effectsList[effectIndex].name,
                     effectDescription = this.sheetData.effectsList[effectIndex].description,
                     affectsList = this.sheetData.effectsList[effectIndex].affectsList,
-                    path = "sheetData.effectsList." + effectIndex;
-                this.$.ironPages.classList.add("dialog-overlay");
+                    path = 'sheetData.effectsList.' + effectIndex;
+                this.$.ironPages.classList.add('dialog-overlay');
                 this.$.effectDialogName.value = effectName;
                 this.$.effectDialogDescription.value = effectDescription;
                 this._cancel = tapEvent => {
-                    element.$.effectDialogName.value = "";
-                    element.$.effectDialogDescription.value = "";
-                    element.$.ironPages.classList.remove("dialog-overlay");
+                    element.$.effectDialogName.value = '';
+                    element.$.effectDialogDescription.value = '';
+                    element.$.ironPages.classList.remove('dialog-overlay');
                     element.$.effectDialog.close();
                 }
                 this._confirm = tapEvent => {
                     let name = element.$.effectDialogName.value,
                         description = element.$.effectDialogDescription.value;
                     element.set(path, new Effect(name, description, affectsList));
-                    element.$.effectDialogName.value = "";
-                    element.$.effectDialogDescription.value = "";
-                    element.$.ironPages.classList.remove("dialog-overlay");
+                    element.$.effectDialogName.value = '';
+                    element.$.effectDialogDescription.value = '';
+                    element.$.ironPages.classList.remove('dialog-overlay');
                     element.$.effectDialog.close();
                 }
                 this.$.effectDialog.open();
@@ -882,7 +934,7 @@
 
             _deleteEffect() {
                 let effectIndex = event.target.dataset.effectIndex;
-                this.splice("sheetData.effectsList", effectIndex, 1);
+                this.splice('sheetData.effectsList', effectIndex, 1);
             }
             /*
              */
@@ -892,17 +944,17 @@
              */
             _addItem() {
                 let element = this;
-                this.$.ironPages.classList.add("dialog-overlay");
-                this.$.itemDialogName.value = "";
-                this.$.itemDialogDescription.value = "";
+                this.$.ironPages.classList.add('dialog-overlay');
+                this.$.itemDialogName.value = '';
+                this.$.itemDialogDescription.value = '';
                 this.$.itemDialogEquippable.checked = true;
                 this.$.itemDialogCharges.value = 0;
                 this._cancel = tapEvent => {
-                    element.$.itemDialogName.value = "";
-                    element.$.itemDialogDescription.value = "";
+                    element.$.itemDialogName.value = '';
+                    element.$.itemDialogDescription.value = '';
                     element.$.itemDialogEquippable.checked = true;
                     element.$.itemDialogCharges.value = 0;
-                    element.$.ironPages.classList.remove("dialog-overlay");
+                    element.$.ironPages.classList.remove('dialog-overlay');
                     element.$.itemDialog.close();
                 }
                 this._confirm = tapEvent => {
@@ -910,13 +962,13 @@
                         description = element.$.itemDialogDescription.value,
                         equippable = element.$.itemDialogEquippable.checked,
                         charges = element.$.itemDialogCharges.value;
-                    if (!this.sheetData.itemsList) this.set("sheetData.itemsList", []);
-                    element.push("sheetData.itemsList", new Item(name, description, equippable, charges, false, []));
-                    element.$.itemDialogName.value = "";
-                    element.$.itemDialogDescription.value = "";
+                    if (!this.sheetData.itemsList) this.set('sheetData.itemsList', []);
+                    element.push('sheetData.itemsList', new Item(name, description, equippable, charges, false, []));
+                    element.$.itemDialogName.value = '';
+                    element.$.itemDialogDescription.value = '';
                     element.$.itemDialogEquippable.checked = true;
                     element.$.itemDialogCharges.value = 0;
-                    element.$.ironPages.classList.remove("dialog-overlay");
+                    element.$.ironPages.classList.remove('dialog-overlay');
                     element.$.itemDialog.close();
                 }
                 this.$.itemDialog.open();
@@ -932,18 +984,18 @@
                     itemCharges = this.sheetData.itemsList[itemIndex].charges,
                     itemActive = this.sheetData.itemsList[itemIndex].active,
                     affectsList = this.sheetData.itemsList[itemIndex].affectsList,
-                    path = "sheetData.itemsList." + itemIndex;
-                this.$.ironPages.classList.add("dialog-overlay");
+                    path = 'sheetData.itemsList.' + itemIndex;
+                this.$.ironPages.classList.add('dialog-overlay');
                 this.$.itemDialogName.value = itemName;
                 this.$.itemDialogDescription.value = itemDescription;
                 this.$.itemDialogEquippable.checked = itemEquippable;
                 this.$.itemDialogCharges.value = itemCharges;
                 this._cancel = tapEvent => {
-                    element.$.itemDialogName.value = "";
-                    element.$.itemDialogDescription.value = "";
+                    element.$.itemDialogName.value = '';
+                    element.$.itemDialogDescription.value = '';
                     element.$.itemDialogEquippable.checked = true;
                     element.$.itemDialogCharges.value = 0;
-                    element.$.ironPages.classList.remove("dialog-overlay");
+                    element.$.ironPages.classList.remove('dialog-overlay');
                     element.$.itemDialog.close();
                 }
                 this._confirm = tapEvent => {
@@ -952,11 +1004,11 @@
                         equippable = element.$.itemDialogEquippable.checked,
                         charges = element.$.itemDialogCharges.value;
                     element.set(path, new Item(name, description, equippable, charges, itemActive, affectsList));
-                    element.$.itemDialogName.value = "";
-                    element.$.itemDialogDescription.value = "";
+                    element.$.itemDialogName.value = '';
+                    element.$.itemDialogDescription.value = '';
                     element.$.itemDialogEquippable.checked = true;
                     element.$.itemDialogCharges.value = 0;
-                    element.$.ironPages.classList.remove("dialog-overlay");
+                    element.$.ironPages.classList.remove('dialog-overlay');
                     element.$.itemDialog.close();
                 }
                 this.$.itemDialog.open();
@@ -965,15 +1017,15 @@
 
             _deleteItem() {
                 let itemIndex = event.target.dataset.itemIndex;
-                this.splice("sheetData.itemsList", itemIndex, 1);
+                this.splice('sheetData.itemsList', itemIndex, 1);
             }
 
             _activeItem() {
                 let element = this,
                     itemIndex = event.target.dataset.itemIndex,
                     itemActive = !event.target.__data.checked,
-                    listPath = "sheetData.itemsList",
-                    itemPath = "sheetData.itemsList." + itemIndex,
+                    listPath = 'sheetData.itemsList',
+                    itemPath = 'sheetData.itemsList.' + itemIndex,
                     itemObject = this.sheetData.itemsList[itemIndex];
                 itemObject.charges = parseInt(itemObject.charges);
                 if (!itemObject.equippable) {
@@ -995,20 +1047,20 @@
              */
             _addNote(event) {
                 let element = this;
-                this.$.ironPages.classList.add("dialog-overlay");
+                this.$.ironPages.classList.add('dialog-overlay');
                 this._cancel = tapEvent => {
-                    element.$.noteDialogName.value = "";
-                    element.$.noteDialogText.value = "";
+                    element.$.noteDialogName.value = '';
+                    element.$.noteDialogText.value = '';
                     element.$.noteDialog.close();
-                    element.$.ironPages.classList.remove("dialog-overlay");
+                    element.$.ironPages.classList.remove('dialog-overlay');
                 }
                 this._confirm = tapEvent => {
                     let name = element.$.noteDialogName.value,
                         text = element.$.noteDialogText.value;
-                    if (!element.sheetData.notesList) element.set("sheetData.notesList", []);
-                    element.push("sheetData.notesList", new Note(name, text));
+                    if (!element.sheetData.notesList) element.set('sheetData.notesList', []);
+                    element.push('sheetData.notesList', new Note(name, text));
                     element.$.noteDialog.close();
-                    element.$.ironPages.classList.remove("dialog-overlay");
+                    element.$.ironPages.classList.remove('dialog-overlay');
                 }
                 this.$.noteDialog.open();
                 return;
@@ -1018,22 +1070,22 @@
                 let element = this,
                     name = event.target.dataset.noteName,
                     text = event.target.dataset.noteText,
-                    path = "sheetData.notesList." + event.target.dataset.noteIndex;
-                this.$.ironPages.classList.add("dialog-overlay");
+                    path = 'sheetData.notesList.' + event.target.dataset.noteIndex;
+                this.$.ironPages.classList.add('dialog-overlay');
                 this.$.noteDialogName.value = name;
                 this.$.noteDialogText.value = text;
                 this._cancel = tapEvent => {
-                    element.$.noteDialogName.value = "";
-                    element.$.noteDialogText.value = "";
+                    element.$.noteDialogName.value = '';
+                    element.$.noteDialogText.value = '';
                     element.$.noteDialog.close();
-                    element.$.ironPages.classList.remove("dialog-overlay");
+                    element.$.ironPages.classList.remove('dialog-overlay');
                 }
                 this._confirm = tapEvent => {
                     let name = element.$.noteDialogName.value,
                         text = element.$.noteDialogText.value;
                     element.set(path, new Note(name, text));
                     element.$.noteDialog.close();
-                    element.$.ironPages.classList.remove("dialog-overlay");
+                    element.$.ironPages.classList.remove('dialog-overlay');
                 }
                 this.$.noteDialog.open();
                 return;
@@ -1041,7 +1093,7 @@
 
             _deleteNote(event) {
                 let noteIndex = event.target.dataset.noteIndex;
-                this.splice("sheetData.notesList", noteIndex, 1);
+                this.splice('sheetData.notesList', noteIndex, 1);
             }
             /*
              */
@@ -1053,7 +1105,7 @@
                 let diceNumber = event.target.dataset.diceNumber;
                 this.$.sndSheetToast.close();
                 diceNumber = Math.floor(parseInt(diceNumber));
-                this.$.sndSheetToast.text = "D" + diceNumber + " roll: " + (Math.floor(Math.random() * (diceNumber - 1)) + 1);
+                this.$.sndSheetToast.text = 'D' + diceNumber + ' roll: ' + (Math.floor(Math.random() * (diceNumber - 1)) + 1);
                 this.$.sndSheetToast.open();
             }
             /*
@@ -1066,14 +1118,14 @@
                 let element = this,
                     effectIndex = event.target.dataset.effectIndex,
                     itemIndex = event.target.dataset.itemIndex,
-                    path = (effectIndex ? "sheetData.effectsList." + effectIndex + ".affectsList" : "sheetData.itemsList." + itemIndex + ".affectsList");
-                this.$.ironPages.classList.add("dialog-overlay");
-                this.$.affectDialogStatus.selected = element._affectItemStringify("statusList", element.sheetData.statusList[0].name);
+                    path = (effectIndex ? 'sheetData.effectsList.' + effectIndex + '.affectsList' : 'sheetData.itemsList.' + itemIndex + '.affectsList');
+                this.$.ironPages.classList.add('dialog-overlay');
+                this.$.affectDialogStatus.selected = element._affectItemStringify('statusList', element.sheetData.statusList[0].name);
                 this.$.affectDialogValue.value = 0;
                 this._cancel = tapEvent => {
-                    element.$.affectDialogStatus.selected = element._affectItemStringify("statusList", element.sheetData.statusList[0].name);
+                    element.$.affectDialogStatus.selected = element._affectItemStringify('statusList', element.sheetData.statusList[0].name);
                     element.$.affectDialogValue.value = 0;
-                    element.$.ironPages.classList.remove("dialog-overlay");
+                    element.$.ironPages.classList.remove('dialog-overlay');
                     element.$.affectDialog.close();
                 }
                 this._confirm = tapEvent => {
@@ -1082,9 +1134,9 @@
                     if(effectIndex && !this.sheetData.effectsList[effectIndex].affectsList) this.set(path, []);
                     else if (itemIndex && !this.sheetData.itemsList[itemIndex].affectsList) this.set(path, []);
                     element.push(path, new Affect(affectItem.location, affectItem.name, affectValue));
-                    element.$.affectDialogStatus.selected = element._affectItemStringify("statusList", element.sheetData.statusList[0].name);
+                    element.$.affectDialogStatus.selected = element._affectItemStringify('statusList', element.sheetData.statusList[0].name);
                     element.$.affectDialogValue.value = 0;
-                    element.$.ironPages.classList.remove("dialog-overlay");
+                    element.$.ironPages.classList.remove('dialog-overlay');
                     element.$.affectDialog.close();
                 }
                 this.$.affectDialog.open();
@@ -1099,23 +1151,23 @@
                     affectLocation = (effectIndex ? this.sheetData.effectsList[effectIndex].affectsList[affectIndex].location : this.sheetData.itemsList[itemIndex].affectsList[affectIndex].location),
                     affectName = (effectIndex ? this.sheetData.effectsList[effectIndex].affectsList[affectIndex].name : this.sheetData.itemsList[itemIndex].affectsList[affectIndex].name),
                     affectValue = (effectIndex ? this.sheetData.effectsList[effectIndex].affectsList[affectIndex].value : this.sheetData.itemsList[itemIndex].affectsList[affectIndex].value),
-                    path = (effectIndex ? "sheetData.effectsList." + effectIndex + ".affectsList." + affectIndex : "sheetData.itemsList." + itemIndex + ".affectsList." + affectIndex);
-                this.$.ironPages.classList.add("dialog-overlay");
+                    path = (effectIndex ? 'sheetData.effectsList.' + effectIndex + '.affectsList.' + affectIndex : 'sheetData.itemsList.' + itemIndex + '.affectsList.' + affectIndex);
+                this.$.ironPages.classList.add('dialog-overlay');
                 this.$.affectDialogStatus.selected = element._affectItemStringify(affectLocation, affectName);
                 this.$.affectDialogValue.value = affectValue;
                 this._cancel = tapEvent => {
-                    element.$.affectDialogStatus.selected = element._affectItemStringify("statusList", element.sheetData.statusList[0].name);
+                    element.$.affectDialogStatus.selected = element._affectItemStringify('statusList', element.sheetData.statusList[0].name);
                     element.$.affectDialogValue.value = 0;
-                    element.$.ironPages.classList.remove("dialog-overlay");
+                    element.$.ironPages.classList.remove('dialog-overlay');
                     element.$.affectDialog.close();
                 }
                 this._confirm = tapEvent => {
                     let affectItem = JSON.parse(element.$.affectDialogStatus.selected),
                         affectValue = parseFloat(this._numberTypeCheck(element.$.affectDialogValue.value));
                     element.set(path, new Affect(affectItem.location, affectItem.name, affectValue));
-                    element.$.affectDialogStatus.selected = element._affectItemStringify("statusList", element.sheetData.statusList[0].name);
+                    element.$.affectDialogStatus.selected = element._affectItemStringify('statusList', element.sheetData.statusList[0].name);
                     element.$.affectDialogValue.value = 0;
-                    element.$.ironPages.classList.remove("dialog-overlay");
+                    element.$.ironPages.classList.remove('dialog-overlay');
                     element.$.affectDialog.close();
                 }
                 this.$.affectDialog.open();
@@ -1127,7 +1179,7 @@
                     affectIndex = event.target.dataset.affectIndex,
                     effectIndex = event.target.dataset.effectIndex,
                     itemIndex = event.target.dataset.itemIndex,
-                    path = (effectIndex ? "sheetData.effectsList." + effectIndex + ".affectsList" : "sheetData.itemsList." + itemIndex + ".affectsList");
+                    path = (effectIndex ? 'sheetData.effectsList.' + effectIndex + '.affectsList' : 'sheetData.itemsList.' + itemIndex + '.affectsList');
                 this.splice(path, affectIndex, 1);
             }
             /*
@@ -1135,7 +1187,7 @@
 
             _numberTypeCheck(number) {
                 number = number.toString().replace(',', '.');
-                if (isNaN(parseInt(number))) return "0";
+                if (isNaN(parseInt(number))) return '0';
                 else return number;
             }
 

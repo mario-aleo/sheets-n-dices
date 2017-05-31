@@ -166,6 +166,11 @@
                     sheet-data="{{ sheetData }}">
                 </snd-sheet>
 
+                <snd-edit
+                    name="Edit-Sheet"
+                    sheet-data="{{ sheetData }}">
+                </snd-edit>
+
                 <div name="error">
                     Ops, page not found D:
                 </div>
@@ -207,6 +212,7 @@
                 // Add Event Listeners
                 this.addEventListener('addNewSheet', e => this._addNewSheet(e.detail.sheetData));
                 this.addEventListener('openSheet', e => this._openSheet(e.detail.sheetKey));
+                this.addEventListener('editSheet', e => this._editSheet(e.detail));
             }
 
             connectedCallback() {
@@ -247,7 +253,7 @@
                 this.$.appHeader.scroll(0, 0);
                 if (!page) {
                     return window.location.hash = window.location.hash || '/Sheet-List';
-                }  else if (page == "Sheet" && !this.sheetKey) {
+                }  else if ((page == "Sheet" || page == "Edit-Sheet") && !this.sheetKey) {
                     return  window.location.hash = '/Sheet-List';
                 } else {
                     return this.set('page', page);
@@ -265,6 +271,11 @@
             _openSheet(sheetKey) {
                 this.set('sheetKey', sheetKey);
                 window.location.hash = '/Sheet/' + sheetKey;
+                return;
+            }
+
+            _editSheet(eventDetail) {
+                window.location.hash = '/Edit-Sheet/' + this.sheetKey;
                 return;
             }
 

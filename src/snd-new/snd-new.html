@@ -701,8 +701,10 @@
              *  Generic Functions
              */
             _addStatus(event) {
-                let path = 'newSheet.' + event.target.dataset.statusLocation;
-                this.push(path, new Status());
+                let location = event.target.dataset.statusLocation,
+                    path = 'newSheet.' + location;
+                if (location == 'resourcesList') this.push(path, new Resource());
+                else this.push(path, new Status());
                 return;
             }
 
@@ -924,24 +926,29 @@
                 this.resourcesList = [ new Status("HP") ];
                 this.defensesList = [ new Status("Armor") ];
                 this.skillsList = [ new Status("Diplomacy") ];
-                this.persistBonusList = [];
-                this.volatileBonusList = [];
-                this.notesList = [];
+                this.effectsList = [];
                 this.itemsList = [];
+                this.notesList = [];
             }
-        };
+        }
         
         class Status {
-            constructor(name) {
+            constructor(name, baseValue, levelModifier, ) {
                 this.name = name;
                 this.value = 0;
                 this.baseValue = 0;
                 this.levelModifier = 0;
-                this.persistBonus = 0;
-                this.volatileBonus = 0;
                 this.dependencyList = [ ];
             }
-        };
+        }
+
+        class Resource extends Status {
+            constructor(name) {
+                super(name);
+                this.hasActualValue = false;
+                this.actualValue = 0;
+            }
+        }
 
         class Dependency {
             constructor(location, name, value) {
@@ -949,7 +956,7 @@
                 this.name = name;
                 this.modifier = value;
             }
-        };
+        }
         /*
          */
 
