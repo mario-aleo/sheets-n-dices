@@ -71,6 +71,11 @@
             snd-chip {
                 margin: 4px 0;
             }
+            snd-chip iron-icon {
+                --iron-icon-width: 18px;
+                --iron-icon-height: 18px;
+                margin-left: 8px;
+            }
             .paper-card-row {
                 display: flex;
                 flex-direction: row;
@@ -96,7 +101,7 @@
             .dependency-section {
                 padding: 12px 0 8px 0;
             }
-            .dependency-overlay:after {
+            .dialog-overlay:after {
                 content:"&nbsp;";
                 display: block;
                 position: fixed;
@@ -250,17 +255,26 @@
                                     items="[[ status.dependencyList ]]"
                                     as="dependency"
                                     index-as="dependencyIndex">
-                                    <snd-chip
-                                        on-click="_editStatusDependency"
-                                        data-status-index$="[[ statusIndex ]]"
-                                        data-status-location="statusList"
-                                        data-dependency-index$="[[ dependencyIndex ]]">
-                                        [[ _dependencyChipName(dependency.name, dependency.location) ]]
+                                    <snd-chip>
+                                        <div
+                                            on-click="_editDependency"
+                                            data-status-index$="[[ statusIndex ]]"
+                                            data-status-location="statusList"
+                                            data-dependency-index$="[[ dependencyIndex ]]">
+                                            [[ _dependencyChipName(dependency.name, dependency.location) ]]
+                                        </div>
+                                        <iron-icon
+                                            icon="clear"
+                                            on-click="_deleteDependency"
+                                            data-status-index$="[[ statusIndex ]]"
+                                            data-status-location="statusList"
+                                            data-dependency-index$="[[ dependencyIndex ]]">
+                                        </iron-icon>
                                     </snd-chip>
                                 </template>
                             </section>
                             <paper-button class="secondary-paper-button"
-                                on-tap="_addStatusDependency"
+                                on-tap="_addDependency"
                                 data-status-index$="[[ statusIndex ]]"
                                 data-status-location="statusList">
                                 Add Dependency
@@ -319,17 +333,26 @@
                                     items="[[ resouces.dependencyList ]]"
                                     as="dependency"
                                     index-as="dependencyIndex">
-                                    <snd-chip
-                                        on-click="_editStatusDependency"
-                                        data-status-index$="[[ resourcesIndex ]]"
-                                        data-status-location="resourcesList"
-                                        data-dependency-index$="[[ dependencyIndex ]]">
-                                        [[ _dependencyChipName(dependency.name, dependency.location) ]]
+                                    <snd-chip>
+                                        <div
+                                            on-click="_editDependency"
+                                            data-status-index$="[[ resourcesIndex ]]"
+                                            data-status-location="resourcesList"
+                                            data-dependency-index$="[[ dependencyIndex ]]">
+                                            [[ _dependencyChipName(dependency.name, dependency.location) ]]
+                                        </div>
+                                        <iron-icon
+                                            icon="clear"
+                                            on-click="_deleteDependency"
+                                            data-status-index$="[[ resourcesIndex ]]"
+                                            data-status-location="resourcesList"
+                                            data-dependency-index$="[[ dependencyIndex ]]">
+                                        </iron-icon>
                                     </snd-chip>
                                 </template>
                             </section>
                             <paper-button class="secondary-paper-button"
-                                on-tap="_addStatusDependency"
+                                on-tap="_addDependency"
                                 data-status-index$="[[ resourcesIndex ]]"
                                 data-status-location="resourcesList">
                                 Add Dependency
@@ -388,17 +411,26 @@
                                     items="[[ defenses.dependencyList ]]"
                                     as="dependency"
                                     index-as="dependencyIndex">
-                                    <snd-chip
-                                        on-click="_editStatusDependency"
-                                        data-status-index$="[[ defensesIndex ]]"
-                                        data-status-location="defensesList"
-                                        data-dependency-index$="[[ dependencyIndex ]]">
-                                        [[ _dependencyChipName(dependency.name, dependency.location) ]]
+                                    <snd-chip>
+                                        <div
+                                            on-click="_editDependency"
+                                            data-status-index$="[[ defensesIndex ]]"
+                                            data-status-location="defensesList"
+                                            data-dependency-index$="[[ dependencyIndex ]]">
+                                            [[ _dependencyChipName(dependency.name, dependency.location) ]]
+                                        </div>
+                                        <iron-icon
+                                            icon="clear"
+                                            on-click="_deleteDependency"
+                                            data-status-index$="[[ defensesIndex ]]"
+                                            data-status-location="defensesList"
+                                            data-dependency-index$="[[ dependencyIndex ]]">
+                                        </iron-icon>
                                     </snd-chip>
                                 </template>
                             </section>
                             <paper-button class="secondary-paper-button"
-                                on-tap="_addStatusDependency"
+                                on-tap="_addDependency"
                                 data-status-index$="[[ defensesIndex ]]"
                                 data-status-location="defensesList">
                                 Add Dependency
@@ -458,17 +490,26 @@
                                     items="[[ skills.dependencyList ]]"
                                     as="dependency"
                                     index-as="dependencyIndex">
-                                    <snd-chip
-                                        on-click="_editStatusDependency"
-                                        data-status-index$="[[ skillsIndex ]]"
-                                        data-status-location="skillsList"
-                                        data-dependency-index$="[[ dependencyIndex ]]">
-                                        [[ _dependencyChipName(dependency.name, dependency.location) ]]
+                                    <snd-chip>
+                                        <div
+                                            on-click="_editDependency"
+                                            data-status-index$="[[ skillsIndex ]]"
+                                            data-status-location="skillsList"
+                                            data-dependency-index$="[[ dependencyIndex ]]">
+                                            [[ _dependencyChipName(dependency.name, dependency.location) ]]
+                                        </div>
+                                        <iron-icon
+                                            icon="clear"
+                                            on-click="_deleteDependency"
+                                            data-status-index$="[[ skillsIndex ]]"
+                                            data-status-location="skillsList"
+                                            data-dependency-index$="[[ dependencyIndex ]]">
+                                        </iron-icon>
                                     </snd-chip>
                                 </template>
                             </section>
                             <paper-button class="secondary-paper-button"
-                                on-tap="_addStatusDependency"
+                                on-tap="_addDependency"
                                 data-status-index$="[[ skillsIndex ]]"
                                 data-status-location="skillsList">
                                 Add Dependency
@@ -504,47 +545,50 @@
 
         <!-- Dependency Dialog -->
         <paper-dialog id="dependencyDialog"
-            opened="{{ dependencyDialogOpened }}">
+            no-cancel-on-esc-key
+            no-cancel-on-outside-click>
             <div class="content">
                 <paper-dropdown-menu
-                    label="Location">
-                    <paper-listbox class="dropdown-content"
-                        slot="dropdown-content"
-                        attr-for-selected="location"
-                        selected="{{ dependencyLocation }}">
-                        <paper-item
-                            location="statusList">
-                            Status
-                        </paper-item>
-                        <paper-item
-                            location="resourcesList">
-                            Resources
-                        </paper-item>
-                        <paper-item
-                            location="defensesList">
-                            Defenses
-                        </paper-item>
-                        <paper-item
-                            location="skillsList">
-                            Skills
-                        </paper-item>
-                    </paper-listbox>
-                </paper-dropdown-menu>
-                <paper-dropdown-menu
                     label="Dependency">
-                    <paper-listbox id="dependencyList"
-                        class="dropdown-content"
+                    <paper-listbox id="dependencyDialogStatus"
                         slot="dropdown-content"
-                        attr-for-selected="name"
-                        selected="{{ dependencyName }}">
-                        <template id="dependencyListOptions"
+                        attr-for-selected="dependencyItem"
+                        selected="{{ dependencyItemString }}">
+                        <template
                             is="dom-repeat"
                             items="[[ newSheet.statusList ]]"
-                            as="attr"
-                            mutable-data>
+                            as="status">
+                            </paper-item>
                             <paper-item 
-                                name="[[ attr.name ]]">
-                                [[ attr.name ]]
+                                dependency-item="[[ _dependencyItemStringify('statusList', status.name) ]]">
+                                [[ status.name ]] on Status
+                            </paper-item>
+                        </template>
+                        <template
+                            is="dom-repeat"
+                            items="[[ newSheet.resourcesList ]]"
+                            as="status">
+                            <paper-item 
+                                dependency-item="[[ _dependencyItemStringify('resourcesList', status.name) ]]">
+                                [[ status.name ]] on Resources
+                            </paper-item>
+                        </template>
+                        <template
+                            is="dom-repeat"
+                            items="[[ newSheet.defensesList ]]"
+                            as="status">
+                            <paper-item 
+                                dependency-item="[[ _dependencyItemStringify('defensesList', status.name) ]]">
+                                [[ status.name ]] on Defenses
+                            </paper-item>
+                        </template>
+                        <template
+                            is="dom-repeat"
+                            items="[[ newSheet.skillsList ]]"
+                            as="status">
+                            <paper-item 
+                                dependency-item="[[ _dependencyItemStringify('skillsList', status.name) ]]">
+                                [[ status.name ]] on Skills
                             </paper-item>
                         </template>
                     </paper-listbox>
@@ -552,7 +596,7 @@
                 <paper-input id="dependencyDialogValue"
                     always-float-label
                     type="number"
-                    label="Value"
+                    label="Value per deppendency value"
                     value="{{ dependencyValue }}">
                 </paper-input>
             </div>
@@ -592,6 +636,7 @@
                         value: new Sheet(),
                         notify: true
                     },
+
                     dependencyChain: {
                         type: Array
                     },
@@ -601,17 +646,8 @@
                     },
                     requestStatusDependencyName: {
                         type: String
-                    },
-
-                    dependencyDialogOpened: {
-                        type: Boolean,
-                        value: false
-                    },
-                    dependencyLocation: {
-                        type: String,
-                        value: "statusList"
-                    },
-                    dependencyName: {
+                    },                    
+                    dependencyItemString: {
                         type: String
                     },
                     dependencyValue: {
@@ -622,9 +658,7 @@
 
             static get observers() {
                 return [
-                    '_dependencyDialogOpenedChanged(dependencyDialogOpened)',
-                    '_dependencyLocationChanged(dependencyLocation)',
-                    '_dependencyNameChanged(dependencyName)',
+                    '_dependencyItemChanged(dependencyItemString)',
                     '_dependencyValueChanged(dependencyValue)'
                 ];
             }
@@ -632,67 +666,45 @@
             /*
              *  Observers
              */
-            _dependencyDialogOpenedChanged(dependencyDialogOpened) {
-                if (dependencyDialogOpened) this.$.ironPages.classList.add("dependency-overlay");
-                else this.$.ironPages.classList.remove("dependency-overlay");
-                this.$.dependencyListOptions.render();
+            _dependencyItemChanged(dependencyItemString) {
+                this._verifyDependencyInformations();
                 return;
-            }
+            } 
 
-            _dependencyLocationChanged(dependencyLocation) {
-                this.$.dependencyListOptions.items = this.newSheet[dependencyLocation];
-                this.$.dependencyListOptions.render();
-                this.set('dependencyName', '');
-                this._dependencyValueDisabled();
-                return;
-            }
-
-            _dependencyNameChanged() {
-                this._dependencyAddDisabled();
-                this._dependencyValueDisabled();
-                return;
-            }
-
-            _dependencyValueChanged() {
-                this._dependencyAddDisabled();
-                this._dependencyValueDisabled();
+            _dependencyValueChanged(dependencyValue) {
+                this._verifyDependencyInformations();
                 return;
             }
             /*
              */
+
+            _verifyDependencyInformations() {
+                let dependencyValue = parseFloat(this.dependencyValue),
+                    dependencyItemString = JSON.parse(this.dependencyItemString);
+                if ((dependencyItemString.location == this.requestStatusDependencyLocation
+                    && dependencyItemString.name == this.requestStatusDependencyName)
+                    || (dependencyItemString.location == 'statusList'
+                        && this.newSheet.hasMinimumStatusModifierValue)
+                    || !dependencyValue
+                    || dependencyValue == 0) this.$.dependencyDialogConfirm.disabled = true;
+                else this.$.dependencyDialogConfirm.disabled = false;
+                return;
+            }
 
             /*
              *  Calculate Value Functions
              */
-            _dependencyChipName(dependencyName, dependencyLocation) {
-                let dependencyChip = dependencyName;
-                if (dependencyLocation == 'statusList') dependencyChip = dependencyChip + " on Status";
-                else if (dependencyLocation == 'resourcesList') dependencyChip = dependencyChip + " on Resources";
-                else if (dependencyLocation == 'defensesList') dependencyChip = dependencyChip + " on Defenses";
-                else dependencyChip = dependencyChip + " on Skills";
-                return dependencyChip;
+            _dependencyChipName(name, locationPath) {
+                let location = "";
+                if (locationPath == "statusList") location = "Status";
+                else if (locationPath == "resourcesList") location = "Resources";
+                else if (locationPath == "defensesList") location = "Defenses";
+                else  location = "Skills";
+                return name + " on " + location;
             }
 
-            _dependencyValueDisabled() {
-                if (this.dependencyLocation == 'statusList' && this.newSheet.hasMinimumStatusModifierValue) {
-                    this.$.dependencyDialogValue.disabled = true;
-                } else {
-                    this.$.dependencyDialogValue.disabled = false;
-                };
-                return;
-            }
-
-            _dependencyAddDisabled() {
-                if (this.dependencyLocation == this.requestStatusDependencyLocation && this.dependencyName == this.requestStatusDependencyName) {
-                    this.$.dependencyDialogConfirm.disabled = true;
-                } else if (!this.dependencyName) {
-                    this.$.dependencyDialogConfirm.disabled = true;
-                } else if (!this.dependencyValue && !this.newSheet.hasMinimumStatusModifierValue) {
-                    this.$.dependencyDialogConfirm.disabled = true;
-                } else {
-                    this.$.dependencyDialogConfirm.disabled = false;
-                }
-                return;
+            _dependencyItemStringify(location, name) {
+                return JSON.stringify({ location: location, name: name });
             }
             /*
              */
@@ -701,11 +713,15 @@
              *  Generic Functions
              */
             _addStatus(event) {
-                let location = event.target.dataset.statusLocation,
-                    path = 'newSheet.' + location;
-                if (location == 'resourcesList') this.push(path, new Resource());
-                else this.push(path, new Status());
-                return;
+                // let location = event.target.dataset.statusLocation,
+                //     path = 'newSheet.' + location;
+                // if (location == 'resourcesList') this.push(path, new Resource());
+                // else this.push(path, new Status());
+                // return;
+            }
+
+            _editStatus(event) {
+
             }
 
             _deleteStatus(event) {
@@ -715,58 +731,80 @@
                 return;
             }
 
-            _addStatusDependency(event) {
-                let index = event.target.dataset.statusIndex,
-                    location = event.target.dataset.statusLocation,
-                    path = 'newSheet.' + location + '.' + index + '.dependencyList',
-                    element = this;
-                this.set('dependencyLocation', 'statusList');
-                this.set('dependencyName', '');
+            _addDependency(event) {
+                let element = this,
+                    statusLocation = event.target.dataset.statusLocation,
+                    statusIndex = event.target.dataset.statusIndex,
+                    path = 'newSheet.' + statusLocation + '.' + statusIndex + '.dependencyList';
+                this.$.ironPages.classList.add('dialog-overlay');
+                this.set('requestStatusDependencyLocation', statusLocation);
+                this.set('requestStatusDependencyName', this.newSheet.statusList[statusIndex].name);
+                this.set('dependencyItemString', element._dependencyItemStringify('statusList', element.newSheet.statusList[0].name || ''));
                 this.set('dependencyValue', 0);
-                this.set('requestStatusDependencyLocation', location);
-                this.set('requestStatusDependencyName', this.newSheet.statusList[index].name);
-                this._dependencyValueDisabled();
-                this._dependencyAddDisabled();
                 this._cancel = tapEvent => {
-                    element.set('dependencyLocation', 'statusList');
-                    element.set('dependencyName', '');
+                    element.set('requestStatusDependencyLocation', 'statusList');
+                    element.set('requestStatusDependencyName', element.newSheet.statusList[0].name || '');
+                    element.set('dependencyItemString', element._dependencyItemStringify('statusList', element.newSheet.statusList[0].name || ''));
                     element.set('dependencyValue', 0);
+                    element.$.ironPages.classList.remove('dialog-overlay');
                     element.$.dependencyDialog.close();
                 }
                 this._confirm = tapEvent => {
-                    element.push(path, new Dependency(element.dependencyLocation, element.dependencyName, element.dependencyValue));
-                    element.set('dependencyLocation', 'statusList');
-                    element.set('dependencyName', '');
+                    let dependencyItem = JSON.parse(element.$.dependencyDialogStatus.selected),
+                        dependencyValue = parseFloat(this._numberTypeCheck(element.$.dependencyDialogValue.value));
+                    element.push(path, new Dependency(dependencyItem.location, dependencyItem.name, dependencyValue));
+                    element.set('requestStatusDependencyLocation', 'statusList');
+                    element.set('requestStatusDependencyName', element.newSheet.statusList[0].name || '');
+                    element.set('dependencyItemString', element._dependencyItemStringify('statusList', element.newSheet.statusList[0].name || ''));
                     element.set('dependencyValue', 0);
+                    element.$.ironPages.classList.remove('dialog-overlay');
                     element.$.dependencyDialog.close();
                 }
                 this.$.dependencyDialog.open();
                 return;
             }
 
-            _editStatusDependency(event) {
-                let statusIndex = event.target.dataset.statusIndex,
+            _editDependency(event) {
+                let element = this,
+                    statusIndex = event.target.dataset.statusIndex,
                     statusLocation = event.target.dataset.statusLocation,
                     dependencyIndex = event.target.dataset.dependencyIndex,
                     depencencyStatus = this.newSheet[statusLocation][statusIndex].dependencyList[dependencyIndex],
-                    path = 'newSheet.' + statusLocation + '.' + statusIndex + '.dependencyList.' + dependencyIndex,
-                    element = this;
-                this.set('dependencyLocation', depencencyStatus.location);
-                this.set('dependencyName', depencencyStatus.name);
-                this.set('dependencyValue', depencencyStatus.modifier);
+                    path = 'newSheet.' + statusLocation + '.' + statusIndex + '.dependencyList.' + dependencyIndex;
+                element.$.ironPages.classList.add('dialog-overlay');
                 this.set('requestStatusDependencyLocation', statusLocation);
                 this.set('requestStatusDependencyName', this.newSheet.statusList[statusIndex].name);
+                this.set('dependencyItemString', element._dependencyItemStringify(depencencyStatus.location, depencencyStatus.name));
+                this.set('dependencyValue', depencencyStatus.modifier);
                 this._cancel = tapEvent => {
-                    element.set('dependencyLocation', statusLocation);
-                    element.set('dependencyName', '');
+                    element.set('requestStatusDependencyLocation', 'statusList');
+                    element.set('requestStatusDependencyName', element.newSheet.statusList[0].name || '');
+                    element.set('dependencyItemString', element._dependencyItemStringify('statusList', element.newSheet.statusList[0].name || ''));
                     element.set('dependencyValue', 0);
+                    element.$.ironPages.classList.remove('dialog-overlay');
                     element.$.dependencyDialog.close();
                 }
                 this._confirm = tapEvent => {
-                    element.set(path, new Dependency(element.dependencyLocation, element.dependencyName, element.dependencyValue));
+                    let dependencyItem = JSON.parse(element.$.dependencyDialogStatus.selected),
+                        dependencyValue = parseFloat(element._numberTypeCheck(element.$.dependencyDialogValue.value));
+                    element.set(path, new Dependency(dependencyItem.location, dependencyItem.name, dependencyValue));
+                    element.set('requestStatusDependencyLocation', 'statusList');
+                    element.set('requestStatusDependencyName', element.newSheet.statusList[0].name || '');
+                    element.set('dependencyItemString', element._dependencyItemStringify('statusList', element.newSheet.statusList[0].name || ''));
+                    element.set('dependencyValue', 0);
+                    element.$.ironPages.classList.remove('dialog-overlay');
                     element.$.dependencyDialog.close();
                 }
                 this.$.dependencyDialog.open();
+                return;
+            }
+
+            _deleteDependency(event) {
+                let statusIndex = event.target.dataset.statusIndex,
+                    statusLocation = event.target.dataset.statusLocation,
+                    dependencyIndex = event.target.dataset.dependencyIndex,
+                    path = 'newSheet.' + statusLocation + '.' + statusIndex + '.dependencyList';
+                this.splice(path, dependencyIndex, 1);
                 return;
             }
             /*
