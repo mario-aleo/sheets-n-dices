@@ -1,0 +1,1139 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/polymer/lib/elements/dom-if.html">
+<link rel="import" href="../../bower_components/polymer/lib/elements/dom-repeat.html">
+
+<link rel="import" href="../../bower_components/paper-tabs/paper-tab.html">
+<link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
+<link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
+
+<link rel="import" href="../../bower_components/paper-card/paper-card.html">
+
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower_components/paper-item/paper-item.html">
+
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower_components/paper-toast/paper-toast.html">
+
+<link rel="import" href="../../bower_components/paper-fab/paper-fab.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+
+<link rel="import" href="../snd-chip/snd-chip.html">
+
+
+<dom-module id="snd-edit">
+    <template>
+        <style>
+            :host {
+                display: block;
+                height: 100%;
+                width: 100%;
+                --paper-tabs-selection-bar-color: var(--secondary-color);
+                --paper-fab-background: var(--secondary-color);
+                --paper-fab-keyboard-focus-background: var(--focus-color);
+            }
+            paper-tabs {
+                background-color: var(--primary-color);
+                color: #FFF;
+            }
+            paper-card {
+                margin-top: 16px;
+                width: 100%;
+            }
+            paper-card:last-of-type {
+                margin-bottom: 96px;
+            }
+            paper-checkbox {
+                margin-top: 16px;
+                margin-right: 8px;
+            }
+            paper-button {
+                margin-top: 16px;
+                margin: auto;
+            }
+            paper-fab {
+                position: fixed;
+                bottom: 32px;
+                right: 32px;
+                box-shadow: var(--paper-material-elevation-4_-_box-shadow);
+            }
+            paper-input,
+            paper-dropdown-menu {
+                width: 100%;
+            }
+            paper-dialog {
+                width: calc(100% - 80px);
+            }
+            paper-dialog .buttons {
+                padding: 8px;
+            }
+            snd-chip {
+                margin: 4px 0;
+                padding: 8px 8px 8px 16px;
+            }
+            snd-chip iron-icon {
+                --iron-icon-width: 18px;
+                --iron-icon-height: 18px;
+                margin-left: 8px;
+            }
+            .paper-card-row {
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+            }
+            .sheet-detail {
+                display: flex;
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+                margin-top: 16px;
+            }
+            .sheet-detail:first-child {
+                margin-top: 0;
+            }
+            .sheet-detail-name {
+                font-weight: 500;
+            }
+            .affect-add-content {
+                display: flex;
+                flex-direction: row;
+            }
+            .primary-paper-button {
+                background-color: var(--primary-color);
+                color: #FFF;
+            }
+            .secondary-paper-button {
+                color: var(--secondary-color);
+            }
+            .red-paper-button {
+                color: #FF5252
+            }
+            .add-button-container {
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                width: 100%;
+                padding: 16px 0;
+            }
+            .left-paper-fab {
+                right: 0;
+                left: 32px;
+            }
+            .dependency-section {
+                padding: 12px 0 8px 0;
+            }
+            .dialog-overlay:after {
+                content:"&nbsp;";
+                display: block;
+                position: fixed;
+                width: 100%;
+                height: 100%;
+                top: 0;
+                left: 0;
+                z-index: 102;
+                background-color: rgba(0,0,0,0.7)
+            }
+            .empty-text {
+                text-align: center;
+                font-size: 20px;
+                color: rgba(51,51,51,0.4);
+            }
+            @media (min-width: 426px) {
+                .basic-page {
+                    width: calc(100% - 16px);
+                    height: calc(100% - 16px);
+                    padding: 8px;
+                }
+                .basic-card {
+                    width: 50%;
+                    margin: 8px 25%;
+                }
+                .status-page {
+                    display: flex;
+                    flex-direction: row;
+                    flex-wrap: wrap;
+                    align-content: flex-start;
+                    width: calc(100% - 16px);
+                    height: calc(100% - 16px);
+                    padding: 8px;
+                }
+                .status-card {
+                    width: calc(50% - 16px);
+                    margin: 8px;
+                }
+            }
+            @media (min-width: 769px) {
+                .status-card {
+                    width: calc((100% / 3) - 16px);
+                }
+                .basic-card {
+                    width: calc(100% / 3);
+                    margin: 8px calc(100% / 3);
+                }
+            }
+        </style>
+
+        <paper-tabs
+            scrollable
+            hide-scroll-buttons
+            fit-container
+            selected="{{ tabSelected }}">
+            <paper-tab>
+                Basic
+            </paper-tab>
+            <paper-tab>
+                Status
+            </paper-tab>
+            <paper-tab>
+                Resources
+            </paper-tab>
+            <paper-tab>
+                Defenses
+            </paper-tab>
+            <paper-tab>
+                Skills
+            </paper-tab>
+        </paper-tabs>
+
+        <iron-pages id="ironPages"
+            selected="{{ tabSelected }}">
+            <!-- Basic Tab -->
+            <section class="basic-page">
+                <paper-card class="basic-card"
+                    elevation="2">
+                    <div class="card-content">
+                        <paper-input
+                            always-float-label
+                            type="text"
+                            label="Name"
+                            value="{{ sheetData.name }}">
+                        </paper-input>
+                        <paper-input
+                            always-float-label
+                            type="text"
+                            label="Class"
+                            value="{{ sheetData.job }}">
+                        </paper-input>
+                        <paper-input
+                            always-float-label
+                            type="text"
+                            label="Race"
+                            value="{{ sheetData.race }}">
+                        </paper-input>
+                        <paper-input
+                            always-float-label
+                            type="number"
+                            label="Level"
+                            value="{{ sheetData.level }}">
+                        </paper-input>
+                        <paper-input
+                            always-float-label
+                            type="text"
+                            label="System"
+                            value="{{ sheetData.system }}">
+                        </paper-input>
+                        <div class="paper-card-row">
+                            <paper-checkbox
+                                checked="{{ sheetData.hasMinimumStatusModifierValue }}">
+                            </paper-checkbox>
+                            <paper-input
+                                always-float-label
+                                type="number"
+                                label="Minimum Status Value Modifier"
+                                value="{{ sheetData.minimumStatusModifierValue }}"
+                                disabled="{{ !sheetData.hasMinimumStatusModifierValue }}">
+                            </paper-input>
+                        </div>
+                    </div>
+                </paper-card>
+            </section>
+
+            <!-- Status Tab -->
+            <section class="status-page">
+                <template is="dom-if" if="[[ !sheetData.statusList ]]">
+                    <div>
+                        <p class="empty-text">
+                            You don't have any Status :(
+                        </p>
+                    </div>
+                </template>
+                <template
+                    is="dom-repeat"
+                    items="[[ sheetData.statusList ]]"
+                    as="status"
+                    index-as="statusIndex">
+                    <paper-card class="status-card"
+                        elevation="2">
+                        <div class="card-content">
+                            <div class="sheet-detail">
+                                <span class="sheet-detail-name">
+                                    Name:
+                                </span>
+                                <span class="sheet-detail-value">
+                                    [[ status.name ]]
+                                </span>
+                            </div>
+                            <div class="sheet-detail">
+                                <span class="sheet-detail-name">
+                                    Base Value:
+                                </span>
+                                <span class="sheet-detail-value">
+                                    [[ status.baseValue ]]
+                                </span>
+                            </div>
+                            <div class="sheet-detail">
+                                <span class="sheet-detail-name">
+                                    Level Modifier:
+                                </span>
+                                <span class="sheet-detail-value">
+                                    [[ status.levelModifier ]]
+                                </span>
+                            </div>
+                            <section class="dependency-section">
+                                <template
+                                    is="dom-repeat"
+                                    items="[[ status.dependencyList ]]"
+                                    as="dependency"
+                                    index-as="dependencyIndex">
+                                    <snd-chip>
+                                        <div
+                                            on-click="_editDependency"
+                                            data-status-index$="[[ statusIndex ]]"
+                                            data-status-location="statusList"
+                                            data-dependency-index$="[[ dependencyIndex ]]">
+                                            [[ _dependencyChipName(dependency.name, dependency.location) ]]
+                                        </div>
+                                        <iron-icon
+                                            icon="clear"
+                                            on-click="_deleteDependency"
+                                            data-status-index$="[[ statusIndex ]]"
+                                            data-status-location="statusList"
+                                            data-dependency-index$="[[ dependencyIndex ]]">
+                                        </iron-icon>
+                                    </snd-chip>
+                                </template>
+                            </section>
+                            <paper-button class="secondary-paper-button"
+                                on-tap="_addDependency"
+                                data-status-index$="[[ statusIndex ]]"
+                                data-status-location="statusList">
+                                Add Dependency
+                            </paper-button>
+                        </div>
+                        <div class="card-actions">
+                            <paper-button class="red-paper-button"
+                                on-tap="_deleteStatus"
+                                data-status-index$="[[ statusIndex ]]"
+                                data-status-location="statusList">
+                                Delete
+                            </paper-button>
+                            <paper-button class="secondary-paper-button"
+                                on-tap="_editStatus"
+                                data-status-index$="[[ statusIndex ]]"
+                                data-status-location="statusList">
+                                Edit
+                            </paper-button>
+                        </div>
+                    </paper-card>
+                </template>
+                <paper-fab
+                    on-tap="_addStatus"
+                    data-status-location="statusList"
+                    icon="add"
+                    elevation="4">
+                </paper-fab>
+            </section>
+
+            <!-- Resources Tab -->
+            <section class="status-page">
+                <template is="dom-if" if="[[ !sheetData.resourcesList ]]">
+                    <div>
+                        <p class="empty-text">
+                            You don't have any Resource :(
+                        </p>
+                    </div>
+                </template>
+                <template
+                    is="dom-repeat"
+                    items="[[ sheetData.resourcesList ]]"
+                    as="resouces"
+                    index-as="resourcesIndex">
+                    <paper-card class="status-card"
+                        elevation="2">
+                        <div class="card-content">
+                            <div class="sheet-detail">
+                                <span class="sheet-detail-name">
+                                    Name:
+                                </span>
+                                <span class="sheet-detail-value">
+                                    [[ resouces.name ]]
+                                </span>
+                            </div>
+                            <div class="sheet-detail">
+                                <span class="sheet-detail-name">
+                                    Base Value:
+                                </span>
+                                <span class="sheet-detail-value">
+                                    [[ resouces.baseValue ]]
+                                </span>
+                            </div>
+                            <div class="sheet-detail">
+                                <span class="sheet-detail-name">
+                                    Level Modifier:
+                                </span>
+                                <span class="sheet-detail-value">
+                                    [[ resouces.levelModifier ]]
+                                </span>
+                            </div>
+                            <paper-checkbox
+                                disabled
+                                checked="resouces.hasActualValue">
+                                Has Actual Value
+                            </paper-checkbox>
+                            <section class="dependency-section">
+                                <template
+                                    is="dom-repeat"
+                                    items="[[ resouces.dependencyList ]]"
+                                    as="dependency"
+                                    index-as="dependencyIndex">
+                                    <snd-chip>
+                                        <div
+                                            on-click="_editDependency"
+                                            data-status-index$="[[ resourcesIndex ]]"
+                                            data-status-location="resourcesList"
+                                            data-dependency-index$="[[ dependencyIndex ]]">
+                                            [[ _dependencyChipName(dependency.name, dependency.location) ]]
+                                        </div>
+                                        <iron-icon
+                                            icon="clear"
+                                            on-click="_deleteDependency"
+                                            data-status-index$="[[ resourcesIndex ]]"
+                                            data-status-location="resourcesList"
+                                            data-dependency-index$="[[ dependencyIndex ]]">
+                                        </iron-icon>
+                                    </snd-chip>
+                                </template>
+                            </section>
+                            <paper-button class="secondary-paper-button"
+                                on-tap="_addDependency"
+                                data-status-index$="[[ resourcesIndex ]]"
+                                data-status-location="resourcesList">
+                                Add Dependency
+                            </paper-button>
+                        </div>
+                        <div class="card-actions">
+                            <paper-button class="red-paper-button"
+                                on-tap="_deleteStatus"
+                                data-status-index$="[[ resourcesIndex ]]"
+                                data-status-location="resourcesList">
+                                Delete
+                            </paper-button>
+                            <paper-button class="secondary-paper-button"
+                                on-tap="_editStatus"
+                                data-status-index$="[[ resourcesIndex ]]"
+                                data-status-location="resourcesList">
+                                Edit
+                            </paper-button>
+                        </div>
+                    </paper-card>
+                </template>
+                <paper-fab
+                    on-tap="_addStatus"
+                    data-status-location="resourcesList"
+                    icon="add"
+                    elevation="4">
+                </paper-fab>
+            </section>
+
+            <!-- Defenses Tab -->
+            <section class="status-page">
+                <template is="dom-if" if="[[ !sheetData.defensesList ]]">
+                    <div>
+                        <p class="empty-text">
+                            You don't have any Defense :(
+                        </p>
+                    </div>
+                </template>
+                <template
+                    is="dom-repeat"
+                    items="[[ sheetData.defensesList ]]"
+                    as="defenses"
+                    index-as="defensesIndex">
+                    <paper-card class="status-card"
+                        elevation="2">
+                        <div class="card-content">
+                            <div class="sheet-detail">
+                                <span class="sheet-detail-name">
+                                    Name:
+                                </span>
+                                <span class="sheet-detail-value">
+                                    [[ defenses.name ]]
+                                </span>
+                            </div>
+                            <div class="sheet-detail">
+                                <span class="sheet-detail-name">
+                                    Base Value:
+                                </span>
+                                <span class="sheet-detail-value">
+                                    [[ defenses.baseValue ]]
+                                </span>
+                            </div>
+                            <div class="sheet-detail">
+                                <span class="sheet-detail-name">
+                                    Level Modifier:
+                                </span>
+                                <span class="sheet-detail-value">
+                                    [[ defenses.levelModifier ]]
+                                </span>
+                            </div>
+                            <section class="dependency-section">
+                                <template
+                                    is="dom-repeat"
+                                    items="[[ defenses.dependencyList ]]"
+                                    as="dependency"
+                                    index-as="dependencyIndex">
+                                    <snd-chip>
+                                        <div
+                                            on-click="_editDependency"
+                                            data-status-index$="[[ defensesIndex ]]"
+                                            data-status-location="defensesList"
+                                            data-dependency-index$="[[ dependencyIndex ]]">
+                                            [[ _dependencyChipName(dependency.name, dependency.location) ]]
+                                        </div>
+                                        <iron-icon
+                                            icon="clear"
+                                            on-click="_deleteDependency"
+                                            data-status-index$="[[ defensesIndex ]]"
+                                            data-status-location="defensesList"
+                                            data-dependency-index$="[[ dependencyIndex ]]">
+                                        </iron-icon>
+                                    </snd-chip>
+                                </template>
+                            </section>
+                            <paper-button class="secondary-paper-button"
+                                on-tap="_addDependency"
+                                data-status-index$="[[ defensesIndex ]]"
+                                data-status-location="defensesList">
+                                Add Dependency
+                            </paper-button>
+                        </div>
+                        <div class="card-actions">
+                            <paper-button class="red-paper-button"
+                                on-tap="_deleteStatus"
+                                data-status-index$="[[ defensesIndex ]]"
+                                data-status-location="defensesList">
+                                Delete
+                            </paper-button>
+                            <paper-button class="secondary-paper-button"
+                                on-tap="_editStatus"
+                                data-status-index$="[[ defensesIndex ]]"
+                                data-status-location="defensesList">
+                                Edit
+                            </paper-button>
+                        </div>
+                    </paper-card>
+                </template>
+                <paper-fab
+                    on-tap="_addStatus"
+                    data-status-location="defensesList"
+                    icon="add"
+                    elevation="4">
+                </paper-fab>
+            </section>
+
+            <!-- Skills Tab -->
+            <section class="status-page">
+                <template is="dom-if" if="[[ !sheetData.skillsList ]]">
+                    <div>
+                        <p class="empty-text">
+                            You don't have any Skill :(
+                        </p>
+                    </div>
+                </template>
+                <template
+                    is="dom-repeat"
+                    items="[[ sheetData.skillsList ]]"
+                    as="skills"
+                    index-as="skillsIndex">
+                    <paper-card class="status-card"
+                        elevation="2">
+                        <div class="card-content">
+                            <div class="sheet-detail">
+                                <span class="sheet-detail-name">
+                                    Name:
+                                </span>
+                                <span class="sheet-detail-value">
+                                    [[ skills.name ]]
+                                </span>
+                            </div>
+                            <div class="sheet-detail">
+                                <span class="sheet-detail-name">
+                                    Base Value:
+                                </span>
+                                <span class="sheet-detail-value">
+                                    [[ skills.baseValue ]]
+                                </span>
+                            </div>
+                            <div class="sheet-detail">
+                                <span class="sheet-detail-name">
+                                    Level Modifier:
+                                </span>
+                                <span class="sheet-detail-value">
+                                    [[ skills.levelModifier ]]
+                                </span>
+                            </div>
+                            <section class="dependency-section">
+                                <template
+                                    is="dom-repeat"
+                                    items="[[ skills.dependencyList ]]"
+                                    as="dependency"
+                                    index-as="dependencyIndex">
+                                    <snd-chip>
+                                        <div
+                                            on-click="_editDependency"
+                                            data-status-index$="[[ skillsIndex ]]"
+                                            data-status-location="skillsList"
+                                            data-dependency-index$="[[ dependencyIndex ]]">
+                                            [[ _dependencyChipName(dependency.name, dependency.location) ]]
+                                        </div>
+                                        <iron-icon
+                                            icon="clear"
+                                            on-click="_deleteDependency"
+                                            data-status-index$="[[ skillsIndex ]]"
+                                            data-status-location="skillsList"
+                                            data-dependency-index$="[[ dependencyIndex ]]">
+                                        </iron-icon>
+                                    </snd-chip>
+                                </template>
+                            </section>
+                            <paper-button class="secondary-paper-button"
+                                on-tap="_addDependency"
+                                data-status-index$="[[ skillsIndex ]]"
+                                data-status-location="skillsList">
+                                Add Dependency
+                            </paper-button>
+                        </div>
+                        <div class="card-actions">
+                            <paper-button class="red-paper-button"
+                                on-tap="_deleteStatus"
+                                data-status-index$="[[ skillsIndex ]]"
+                                data-status-location="skillsList">
+                                Delete
+                            </paper-button>
+                            <paper-button class="secondary-paper-button"
+                                on-tap="_editStatus"
+                                data-status-index$="[[ skillsIndex ]]"
+                                data-status-location="skillsList">
+                                Edit
+                            </paper-button>
+                        </div>
+                    </paper-card>
+                </template>
+                <paper-fab
+                    on-tap="_addStatus"
+                    data-status-location="skillsList"
+                    icon="add"
+                    elevation="4">
+                </paper-fab>
+            </section>
+        </iron-pages>
+
+        <!-- Status Dialog -->
+        <paper-dialog id="statusDialog"
+            no-cancel-on-esc-key
+            no-cancel-on-outside-click>
+            <div class="content">
+                <paper-input id="statusDialogName"
+                    always-float-label
+                    type="text"
+                    label="Name">
+                </paper-input>
+                <paper-input id="statusDialogBaseValue"
+                    always-float-label
+                    type="number"
+                    label="Base Value">
+                </paper-input>
+                <paper-input id="statusDialogLevelModifier"
+                    always-float-label
+                    type="number"
+                    label="Level Modifier">
+                </paper-input>
+                <paper-checkbox id="statusDialogHasActualValue">
+                    Has actual value
+                </paper-checkbox>
+            </div>
+            <div class="buttons">
+                <paper-button id="statusDialogCancel"
+                    class="red-paper-button"
+                    on-tap="_cancel">
+                    Cancel
+                </paper-button>
+                <paper-button id="statusDialogConfirm"
+                    class="secondary-paper-button"
+                    on-tap="_confirm"
+                    autofocus>
+                    Confirm
+                </paper-button>
+            </div>
+        </paper-dialog>            
+
+        <!-- Dependency Dialog -->
+        <paper-dialog id="dependencyDialog"
+            no-cancel-on-esc-key
+            no-cancel-on-outside-click>
+            <div class="content">
+                <paper-dropdown-menu
+                    label="Dependency">
+                    <paper-listbox id="dependencyDialogStatus"
+                        slot="dropdown-content"
+                        attr-for-selected="dependencyItem"
+                        selected="{{ dependencyItemString }}">
+                        <template
+                            is="dom-repeat"
+                            items="[[ sheetData.statusList ]]"
+                            as="status">
+                            </paper-item>
+                            <paper-item 
+                                dependency-item="[[ _dependencyItemStringify('statusList', status.name) ]]">
+                                [[ status.name ]] on Status
+                            </paper-item>
+                        </template>
+                        <template
+                            is="dom-repeat"
+                            items="[[ sheetData.resourcesList ]]"
+                            as="status">
+                            <paper-item 
+                                dependency-item="[[ _dependencyItemStringify('resourcesList', status.name) ]]">
+                                [[ status.name ]] on Resources
+                            </paper-item>
+                        </template>
+                        <template
+                            is="dom-repeat"
+                            items="[[ sheetData.defensesList ]]"
+                            as="status">
+                            <paper-item 
+                                dependency-item="[[ _dependencyItemStringify('defensesList', status.name) ]]">
+                                [[ status.name ]] on Defenses
+                            </paper-item>
+                        </template>
+                        <template
+                            is="dom-repeat"
+                            items="[[ sheetData.skillsList ]]"
+                            as="status">
+                            <paper-item 
+                                dependency-item="[[ _dependencyItemStringify('skillsList', status.name) ]]">
+                                [[ status.name ]] on Skills
+                            </paper-item>
+                        </template>
+                    </paper-listbox>
+                </paper-dropdown-menu>
+                <paper-input id="dependencyDialogValue"
+                    always-float-label
+                    type="number"
+                    label="Value per deppendency value"
+                    value="{{ dependencyValue }}">
+                </paper-input>
+            </div>
+            <div class="buttons">
+                <paper-button id="dependencyDialogCancel"
+                    class="red-paper-button"
+                    on-tap="_cancel">
+                    Cancel
+                </paper-button>
+                <paper-button id="dependencyDialogConfirm"
+                    class="secondary-paper-button"
+                    on-tap="_confirm"
+                    autofocus>
+                    Confirm
+                </paper-button>
+            </div>
+        </paper-dialog>
+
+        <!-- Save Fab Button -->
+        <paper-fab class="left-paper-fab"
+            on-tap="_newSheet"
+            icon="save"
+            elevation="4">
+        </paper-fab>
+
+        <!-- Toast -->
+        <paper-toast id="sndNewToast"
+            duration="2000">
+        </paper-toast>
+    </template>
+
+    <script>
+        class SndEdit extends Polymer.Element {
+            static get is() { return 'snd-edit'; }
+
+            static get properties() {
+                return {
+                    tabSelected: {
+                        type: Number,
+                        value: 0
+                    },
+                    sheetData: {
+                        type: Object
+                    },
+
+                    dependencyChain: {
+                        type: Array
+                    },
+
+                    requestStatusDependencyLocation: {
+                        type: String
+                    },
+                    requestStatusDependencyName: {
+                        type: String
+                    },                    
+                    dependencyItemString: {
+                        type: String
+                    },
+                    dependencyValue: {
+                        type: Number
+                    }
+                };
+            }
+
+            static get observers() {
+                return [
+                    '_dependencyItemChanged(dependencyItemString)',
+                    '_dependencyValueChanged(dependencyValue)'
+                ];
+            }
+
+            /*
+             *  Observers
+             */
+            _dependencyItemChanged(dependencyItemString) {
+                this._verifyDependencyInformations();
+                return;
+            } 
+
+            _dependencyValueChanged(dependencyValue) {
+                this._verifyDependencyInformations();
+                return;
+            }
+            /*
+             */
+
+            _verifyDependencyInformations() {
+                let dependencyValue = parseFloat(this.dependencyValue),
+                    dependencyItemString = JSON.parse(this.dependencyItemString);
+                if ((dependencyItemString.location == this.requestStatusDependencyLocation
+                    && dependencyItemString.name == this.requestStatusDependencyName)
+                    || (dependencyItemString.location == 'statusList'
+                        && this.sheetData.hasMinimumStatusModifierValue)
+                    || !dependencyValue
+                    || dependencyValue == 0) this.$.dependencyDialogConfirm.disabled = true;
+                else this.$.dependencyDialogConfirm.disabled = false;
+                return;
+            }
+
+            /*
+             *  Calculate Value Functions
+             */
+            _dependencyChipName(name, locationPath) {
+                let location = "";
+                if (locationPath == "statusList") location = "Status";
+                else if (locationPath == "resourcesList") location = "Resources";
+                else if (locationPath == "defensesList") location = "Defenses";
+                else  location = "Skills";
+                return name + " on " + location;
+            }
+
+            _dependencyItemStringify(location, name) {
+                return JSON.stringify({ location: location, name: name });
+            }
+            /*
+             */
+
+            /*
+             *  Generic Functions
+             */
+            _addStatus(event) {
+                let element = this,
+                    statusLocation = event.target.dataset.statusLocation,
+                    path = 'sheetData.' + statusLocation;
+                this.$.ironPages.classList.add('dialog-overlay');
+                this.$.statusDialogName.value = "";
+                this.$.statusDialogBaseValue.value = 0;
+                this.$.statusDialogLevelModifier.value = 0;
+                this.$.statusDialogHasActualValue.checked = false;
+                if (statusLocation == "resourcesList") this.$.statusDialogHasActualValue.style.display = "block";
+                else this.$.statusDialogHasActualValue.style.display = "none";
+                this._cancel = tapEvent => {
+                    element.$.ironPages.classList.remove('dialog-overlay');
+                    element.$.statusDialog.close();
+                }
+                this._confirm = tapEvent => {
+                    let name = element.$.statusDialogName.value,
+                        baseValue = element.$.statusDialogBaseValue.value,
+                        levelModifier = element.$.statusDialogLevelModifier.value,
+                        hasActualValue = element.$.statusDialogHasActualValue.checked;
+                    if (!name || !name.trim()) { 
+                        this.$.sndNewToast.text = "Please, insert a name.";
+                        this.$.sndNewToast.opened = true;
+                        return;
+                    }
+                    if (!this.sheetData[statusLocation]) this.set(path, []);
+                    if (statusLocation == "resourcesList") element.push(path, new Resource(name, baseValue, levelModifier, [], hasActualValue, 0));
+                    else element.push(path, new Status(name, baseValue, levelModifier, []));
+                    element.$.ironPages.classList.remove('dialog-overlay');
+                    element.$.statusDialog.close();
+                }
+                this.$.statusDialog.open();
+            }
+
+            _editStatus(event) {
+                let element = this,
+                    statusIndex = event.target.dataset.statusIndex,
+                    statusLocation = event.target.dataset.statusLocation,
+                    statusItem = this.sheetData[statusLocation][statusIndex],
+                    path = 'sheetData.' + statusLocation + "." + statusIndex;
+                this.$.ironPages.classList.add('dialog-overlay');
+                this.$.statusDialogName.value = statusItem.name;
+                this.$.statusDialogBaseValue.value = statusItem.baseValue;
+                this.$.statusDialogLevelModifier.value = statusItem.levelModifier;
+                this.$.statusDialogHasActualValue.checked = statusItem.hasActualValue || false;
+                if (statusLocation == "resourcesList") this.$.statusDialogHasActualValue.style.display = "block";
+                else this.$.statusDialogHasActualValue.style.display = "none";
+                this._cancel = tapEvent => {
+                    element.$.ironPages.classList.remove('dialog-overlay');
+                    element.$.statusDialog.close();
+                }
+                this._confirm = tapEvent => {
+                    let name = element.$.statusDialogName.value,
+                        baseValue = element.$.statusDialogBaseValue.value,
+                        levelModifier = element.$.statusDialogLevelModifier.value,
+                        hasActualValue = element.$.statusDialogHasActualValue.checked;
+                    if (!name || !name.trim()) { 
+                        this.$.sndNewToast.text = "Please, insert a name.";
+                        this.$.sndNewToast.opened = true;
+                        return;
+                    }
+                    if (statusLocation == "resourcesList") element.set(path, new Resource(name, baseValue, levelModifier, statusItem.dependencyList, hasActualValue, statusItem.actualValue));
+                    else element.set(path, new Status(name, baseValue, levelModifier, statusItem.dependencyList));
+                    element.$.ironPages.classList.remove('dialog-overlay');
+                    element.$.statusDialog.close();
+                }
+                this.$.statusDialog.open();
+            }
+
+            _deleteStatus(event) {
+                let statusIndex = event.target.dataset.statusIndex,
+                    statusLocation = event.target.dataset.statusLocation,
+                    path = 'sheetData.' + statusLocation;
+                this.splice(path, statusIndex, 1);
+                if (this.sheetData[statusLocation].length == 0) this.set(path, null);
+                return;
+            }
+
+            _addDependency(event) {
+                let element = this,
+                    statusLocation = event.target.dataset.statusLocation,
+                    statusIndex = event.target.dataset.statusIndex,
+                    path = 'sheetData.' + statusLocation + '.' + statusIndex + '.dependencyList';
+                this.$.ironPages.classList.add('dialog-overlay');
+                this.set('requestStatusDependencyLocation', statusLocation);
+                this.set('requestStatusDependencyName', this.sheetData.statusList[statusIndex].name);
+                this.set('dependencyItemString', element._dependencyItemStringify('statusList', element.sheetData.statusList[0].name || ''));
+                this.set('dependencyValue', 0);
+                this._cancel = tapEvent => {
+                    element.$.ironPages.classList.remove('dialog-overlay');
+                    element.$.dependencyDialog.close();
+                }
+                this._confirm = tapEvent => {
+                    let dependencyItem = JSON.parse(element.$.dependencyDialogStatus.selected),
+                        dependencyValue = parseFloat(this._numberTypeCheck(element.$.dependencyDialogValue.value));
+                    element.push(path, new Dependency(dependencyItem.location, dependencyItem.name, dependencyValue));
+                    element.$.ironPages.classList.remove('dialog-overlay');
+                    element.$.dependencyDialog.close();
+                }
+                this.$.dependencyDialog.open();
+                return;
+            }
+
+            _editDependency(event) {
+                let element = this,
+                    statusIndex = event.target.dataset.statusIndex,
+                    statusLocation = event.target.dataset.statusLocation,
+                    dependencyIndex = event.target.dataset.dependencyIndex,
+                    depencencyStatus = this.sheetData[statusLocation][statusIndex].dependencyList[dependencyIndex],
+                    path = 'sheetData.' + statusLocation + '.' + statusIndex + '.dependencyList.' + dependencyIndex;
+                element.$.ironPages.classList.add('dialog-overlay');
+                this.set('requestStatusDependencyLocation', statusLocation);
+                this.set('requestStatusDependencyName', this.sheetData.statusList[statusIndex].name);
+                this.set('dependencyItemString', element._dependencyItemStringify(depencencyStatus.location, depencencyStatus.name));
+                this.set('dependencyValue', depencencyStatus.modifier);
+                this._cancel = tapEvent => {
+                    element.$.ironPages.classList.remove('dialog-overlay');
+                    element.$.dependencyDialog.close();
+                }
+                this._confirm = tapEvent => {
+                    let dependencyItem = JSON.parse(element.$.dependencyDialogStatus.selected),
+                        dependencyValue = parseFloat(element._numberTypeCheck(element.$.dependencyDialogValue.value));
+                    element.set(path, new Dependency(dependencyItem.location, dependencyItem.name, dependencyValue));
+                    element.$.ironPages.classList.remove('dialog-overlay');
+                    element.$.dependencyDialog.close();
+                }
+                this.$.dependencyDialog.open();
+                return;
+            }
+
+            _deleteDependency(event) {
+                let statusIndex = event.target.dataset.statusIndex,
+                    statusLocation = event.target.dataset.statusLocation,
+                    dependencyIndex = event.target.dataset.dependencyIndex,
+                    path = 'sheetData.' + statusLocation + '.' + statusIndex + '.dependencyList';
+                this.splice(path, dependencyIndex, 1);
+                return;
+            }
+            /*
+             */
+
+            /*
+             *  Sheet Object Functions
+             */
+            _newSheet(event) {
+                if (!this.sheetData.name
+                    || !this.sheetData.job
+                    || !this.sheetData.race
+                    || !this.sheetData.level
+                    || !this.sheetData.system) {
+                    this.$.sndNewToast.text = "Please, fill the Basic tab.";
+                    this.$.sndNewToast.opened = true;
+                    return;
+                }
+                // Each Status, Resource, Defense and Skill and SUM
+                const element = this;
+                this.set("dependencyChain", []);
+                parseInt(element._numberTypeCheck(element.sheetData.level));
+                // SUM Status = baseValue + (levelModifier * level)
+                this.sheetData.statusList.forEach(function (status) {
+                    if (status.value === 0) {
+                        element.push("dependencyChain", {
+                            location: "statusList",
+                            status: status
+                        });
+                        element._objectCalculation(status);
+                        element.dependencyChain = [];
+                    }
+                });
+                // SUM Resource = baseValue + (statusBase.value * statusBaseModifier) + (levelModifier * level)
+                // or if statusBase == None => SUM Resource = baseValue + (levelModifier * level)
+                this.sheetData.resourcesList.forEach(function (resource) {
+                    if (resource.value === 0) {
+                        element.push("dependencyChain", {
+                            location: "resourcesList",
+                            status: resource
+                        });
+                        element._objectCalculation(resource);
+                        element.dependencyChain = [];
+                    }
+                });
+                // SUM Defense = baseValue + (statusBase.value * statusBaseModifier) + (levelModifier * level)
+                // or if statusBase == None => SUM Defense = baseValue + (levelModifier * level)
+                this.sheetData.defensesList.forEach(function (defense) {
+                    if (defense.value === 0) {
+                        element.push("dependencyChain", {
+                            location: "defensesList",
+                            status: defense
+                        });
+                        element._objectCalculation(defense);
+                        element.dependencyChain = [];
+                    }
+                });
+                // SUM Skill = baseValue + (statusBase.value * statusBaseModifier) + (levelModifier * level)
+                // or if statusBase == None => SUM Skill = baseValue + (levelModifier * level)
+                this.sheetData.skillsList.forEach(function (skill) {
+                    if (skill.value === 0) {
+                        element.push("dependencyChain", {
+                            location: "skillsList",
+                            status: skill
+                        });
+                        element._objectCalculation(skill);
+                        element.dependencyChain = [];
+                    }
+                });
+                console.log(this.sheetData);
+                this.dispatchEvent(new CustomEvent('addNewSheet', {detail: {sheetData: element.sheetData}, composed: true}));
+                this.set("tabSelected", 0);
+                this.set("sheetData", new Sheet());
+                return;
+            }
+
+            _objectCalculation(statusItem) {
+                // Encapsulation
+                const element = this;
+                // Init statusItem Value
+                statusItem.value = parseInt(parseInt(element._numberTypeCheck(statusItem.baseValue)) + parseInt(element._numberTypeCheck(element.sheetData.level)) * parseFloat(element._numberTypeCheck(statusItem.levelModifier)));
+                console.log("Initial " + statusItem.name + " Value: " + statusItem.value);
+                // Verify statusItem Dependency
+                if (statusItem.dependencyList.length > 0) {
+                    // Start statusItem Value Calculation
+                    element.dependencyChain.forEach(function (dependencyChainItem) {
+                        statusItem.dependencyList.forEach(function (statusItemDependencyItem) {
+                            // Verify Deadlock
+                            if (statusItemDependencyItem.location == dependencyChainItem.location && statusItemDependencyItem.name == dependencyChainItem.status.name) {
+                                element.$.sndNewToast.text = "Please, very all dependencies.";
+                                element.$.sndNewToast.opened = true;
+                                throw "Deadlock";
+                            } else {
+                                // Localize Dependency Object
+                                element.sheetData[statusItemDependencyItem.location].forEach(function (statusItemDependencyItemStatusItem) {
+                                    if (statusItemDependencyItemStatusItem.name == statusItemDependencyItem.name) {
+                                        // Verify Dependency Object
+                                        if (statusItemDependencyItemStatusItem.value === 0) {
+                                            // Calculate Dependency Object
+                                            element.push("dependencyChain", {
+                                                location: statusItemDependencyItem.location,
+                                                status: statusItemDependencyItemStatusItem
+                                            });
+                                            element._objectCalculation(statusItemDependencyItemStatusItem);
+                                        }
+                                        // Update statusItem Value
+                                        if (statusItemDependencyItem.location == "statusList") {
+                                            if (element.sheetData.hasMinimumStatusModifierValue) statusItem.value = parseInt( parseInt(element._numberTypeCheck(statusItem.value)) + element._returnStatusModifier(parseInt(element._numberTypeCheck(statusItemDependencyItemStatusItem.value)), parseFloat(element.sheetData.minimumStatusModifierValue)));
+                                            else statusItem.value = parseInt( parseInt(element._numberTypeCheck(statusItem.value)) + parseInt(element._numberTypeCheck(statusItemDependencyItemStatusItem.value)) * parseFloat(element._numberTypeCheck(statusItemDependencyItem.modifier)) );
+                                        } else {
+                                            statusItem.value = parseInt( parseInt(element._numberTypeCheck(statusItem.value)) + parseInt(element._numberTypeCheck(statusItemDependencyItemStatusItem.value)) * parseFloat(element._numberTypeCheck(statusItemDependencyItem.modifier)) );
+                                        }
+                                        console.log("Update " + statusItem.name + " Value with " + statusItemDependencyItemStatusItem.name +  " Value: " + statusItem.value);
+                                    }
+                                });
+                            }
+                        });
+                    });
+                }
+                // End statusItem Value Calculation
+                console.log("End " + statusItem.name + " Value Calculation: " + statusItem.value);
+                return;
+            }
+
+            _numberTypeCheck(number) {
+                number = number.toString().replace(',', '.');
+                if (isNaN(parseInt(number))) return "0";
+                else return number;
+            }
+
+            _returnStatusModifier(statusValue, minimumStatusModifierValue) {
+                let element = this;
+                if (parseInt(element._numberTypeCheck(statusValue)) >= parseInt(element._numberTypeCheck(minimumStatusModifierValue))) {
+                    return parseInt((parseInt(element._numberTypeCheck(statusValue)) - parseInt(element._numberTypeCheck(minimumStatusModifierValue))) / 2);
+                } 
+                else {
+                    return parseInt((parseInt(element._numberTypeCheck(statusValue)) - parseInt(element._numberTypeCheck(minimumStatusModifierValue))) / 2 - 0.5);
+                }
+            }
+            /*
+             */
+        }
+        window.customElements.define(SndEdit.is, SndEdit);
+    </script>
+</dom-module>
+

@@ -1205,41 +1205,6 @@
             }
 
         }
-
-        class Note {
-            constructor(name, text) {
-                this.name = name;
-                this.text = text;
-            }
-        };
-
-        class Item {
-            constructor(name, description, equippable, charges, active, affectsList) {
-                this.name = name;
-                this.description = description;
-                this.equippable = equippable;
-                this.charges = charges;
-                this.active = active;
-                this.affectsList = affectsList || [];
-            }
-        };
-
-        class Effect {
-            constructor(name, description, affectsList) {
-                this.name = name;
-                this.description = description;
-                this.affectsList = affectsList || [];
-            }
-        };
-
-        class Affect {
-            constructor(location, name, value) {
-                this.location = location;
-                this.name = name;
-                this.value = value;
-            }
-        };
-
         window.customElements.define(SndSheet.is, SndSheet);
     </script>
 </dom-module>

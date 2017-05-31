@@ -44,6 +44,9 @@
                 margin-top: 16px;
                 width: 100%;
             }
+            paper-card:last-of-type {
+                margin-bottom: 96px;
+            }
             paper-checkbox {
                 margin-top: 16px;
                 margin-right: 8px;
@@ -879,7 +882,7 @@
                         this.$.sndNewToast.opened = true;
                         return;
                     }
-                    if (!this.sheetData[statusLocation]) this.set(path, []);
+                    if (!this.newSheet[statusLocation]) this.set(path, []);
                     if (statusLocation == "resourcesList") element.push(path, new Resource(name, baseValue, levelModifier, [], hasActualValue, 0));
                     else element.push(path, new Status(name, baseValue, levelModifier, []));
                     element.$.ironPages.classList.remove('dialog-overlay');
@@ -1132,57 +1135,6 @@
             /*
              */
         }
-
-        /*
-         *  Sheet Object Definitions
-         */
-        class Sheet {
-            constructor() {
-                this.name = "";
-                this.job = "";
-                this.race = "";
-                this.level = 1;
-                this.system = "";
-                this.hasMinimumStatusModifierValue = false;
-                this.minimumStatusModifierValue = 10;
-                this.statusList = [ new Status("Vitality", 0, 0, []) ];
-                this.resourcesList = [ new Resource("HP", 0, 0, [], true, 0) ];
-                this.defensesList = [ new Status("Armor", 0, 0, []) ];
-                this.skillsList = [ new Status("Diplomacy", 0, 0, []) ];
-                this.effectsList = [];
-                this.itemsList = [];
-                this.notesList = [];
-            }
-        }
-        
-        class Status {
-            constructor(name, baseValue, levelModifier, dependencyList) {
-                this.name = name;
-                this.value = 0;
-                this.baseValue = baseValue;
-                this.levelModifier = levelModifier;
-                this.dependencyList = dependencyList || [];
-            }
-        }
-
-        class Resource extends Status {
-            constructor(name, baseValue, levelModifier, dependencyList, hasActualValue, actualValue) {
-                super(name, baseValue, levelModifier, dependencyList);
-                this.hasActualValue = hasActualValue;
-                this.actualValue = actualValue || 0;
-            }
-        }
-
-        class Dependency {
-            constructor(location, name, value) {
-                this.location = location;
-                this.name = name;
-                this.modifier = value;
-            }
-        }
-        /*
-         */
-
         window.customElements.define(SndNew.is, SndNew);
     </script>
 </dom-module>
