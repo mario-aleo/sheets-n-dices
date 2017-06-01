@@ -5,7 +5,6 @@
 <link rel="import" href="../../bower_components/paper-card/paper-card.html">
 <link rel="import" href="../../bower_components/paper-fab/paper-fab.html">
 
-
 <dom-module id="snd-list">
     <template>
         <style>
@@ -57,17 +56,13 @@
             @media (min-width: 426px) {
                 :host {
                     display: flex;
-                    flex-direction: row;
-                    flex-wrap: wrap;
-                    align-content: flex-start;
-                    width: calc(100% - 16px);
-                    height: calc(100% - 16px);
-                    padding: 8px;
+                    flex-direction: column;
+                    align-items: center;
                 }
                 .sheet-card-content {
-                    width: calc(50% - 16px);
-                    height: 191px;
-                    margin: 8px;
+                    width: 50%;
+                    min-width: 320px;
+                    margin: 8px 0;
                 }
                 .sheet-card {
                     width: 100%;
@@ -76,7 +71,9 @@
             }
             @media (min-width: 769px) {
                 .sheet-card-content {
-                    width: calc((100% / 3) - 16px);
+                    width: 40%;
+                    min-width: 320px;
+                    margin: 8px 0;
                 }
             }
         </style>

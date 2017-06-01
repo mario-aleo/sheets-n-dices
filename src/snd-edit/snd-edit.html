@@ -133,36 +133,32 @@
                 color: var(--secondary-text);
             }
             @media (min-width: 426px) {
-                .basic-page {
-                    width: calc(100% - 16px);
-                    height: calc(100% - 16px);
-                    padding: 8px;
+                paper-card:last-of-type {
+                    margin-bottom: 8px;
                 }
-                .basic-card {
-                    width: 50%;
-                    margin: 8px 25%;
+                paper-dialog {
+                    width: 384px;
+                    max-width: calc(100% - 80px);
                 }
+                .basic-page,
                 .status-page {
                     display: flex;
-                    flex-direction: row;
-                    flex-wrap: wrap;
-                    align-content: flex-start;
-                    width: calc(100% - 16px);
-                    height: calc(100% - 16px);
-                    padding: 8px;
+                    flex-direction: column;
+                    align-items: center;
                 }
+                .basic-card,
                 .status-card {
-                    width: calc(50% - 16px);
-                    margin: 8px;
+                    width: 50%;
+                    min-width: 320px;
+                    margin: 8px 0;
                 }
             }
             @media (min-width: 769px) {
+                .basic-card,
                 .status-card {
-                    width: calc((100% / 3) - 16px);
-                }
-                .basic-card {
-                    width: calc(100% / 3);
-                    margin: 8px calc(100% / 3);
+                    width: 40%;
+                    min-width: 320px;
+                    margin: 8px 0;
                 }
             }
         </style>
@@ -749,12 +745,12 @@
                     dependencyItemString = JSON.parse(this.dependencyItemString);
                 if (dependencyItemString.location == this.requestStatusDependencyLocation && dependencyItemString.name == this.requestStatusDependencyName) {
                     this.$.dependencyDialogConfirm.disabled = true;
-                } else if (this.newSheet.hasMinimumStatusModifierValue && dependencyItemString.location != 'statusList' && (!dependencyValue || dependencyValue == 0)) {
+                } else if (this.sheetData.hasMinimumStatusModifierValue && dependencyItemString.location != 'statusList' && (!dependencyValue || dependencyValue == 0)) {
                     this.$.dependencyDialogConfirm.disabled = true;
                 } else {
                     this.$.dependencyDialogConfirm.disabled = false;
                 }
-                if (dependencyItemString.location == 'statusList' && this.newSheet.hasMinimumStatusModifierValue) {
+                if (dependencyItemString.location == 'statusList' && this.sheetData.hasMinimumStatusModifierValue) {
                     this.$.dependencyDialogValue.disabled= true;
                 } else {
                     this.$.dependencyDialogValue.disabled= false;

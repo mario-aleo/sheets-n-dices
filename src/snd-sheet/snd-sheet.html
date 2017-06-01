@@ -150,15 +150,45 @@
                 color: var(--secondary-text);
             }
             @media (min-width: 426px) {
+                paper-card:last-of-type {
+                    margin-bottom: 8px;
+                }
                 paper-dialog {
-                    width: calc(60% - 80px);
-                    max-width: calc(60% - 80px);
+                    width: 384px;
+                    max-width: calc(100% - 80px);
+                }
+                .summary-page,
+                .effects-page,
+                .inventory-page,
+                .notes-page {
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                }
+                .dices-page paper-button {
+                    width: 124px;
+                    height: 48px;
+                    margin: calc(100%/6 - 48px) calc(100%/6 - 124px/2);
+                }
+                .basic-card,
+                .status-card,
+                .effect-card,
+                .item-card,
+                .note-card {
+                    width: 50%;
+                    min-width: 320px;
+                    margin: 8px 0;
                 }
             }
             @media (min-width: 769px) {
-                paper-dialog {
-                    width: calc(60% - 80px);
-                    max-width: calc(60% - 80px);
+                .basic-card,
+                .status-card,
+                .effect-card,
+                .item-card,
+                .note-card {
+                    width: 40%;
+                    min-width: 320px;
+                    margin: 8px 0;
                 }
             }
         </style>
@@ -474,7 +504,7 @@
                     </p>
                 </template>
                 <template is="dom-repeat" items="[[ sheetData.notesList ]]" as="note" index-as="noteIndex">
-                    <paper-card class="status-card" heading="[[ note.name ]]" elevation="2">
+                    <paper-card class="note-card" heading="[[ note.name ]]" elevation="2">
                         <div class="card-content note-text">
                             <p>
                                 [[ note.text ]]
