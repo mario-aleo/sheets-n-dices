@@ -1,6 +1,6 @@
 {
   "name": "polymerfire",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "authors": [
     "Firebase"
   ],
@@ -24,7 +24,6 @@
   },
   "devDependencies": {
     "iron-component-page": "PolymerElements/iron-component-page#1 - 2",
-    "note-app-elements": "polymerlabs/note-app-elements#1 - 2",
     "webcomponentsjs": "webcomponents/webcomponentsjs#^1.0.0",
     "web-component-tester": "Polymer/web-component-tester#^6.0.0"
   },
@@ -37,7 +36,6 @@
       },
       "devDependencies": {
         "iron-component-page": "PolymerElements/iron-component-page#^1.0",
-        "note-app-elements": "polymerlabs/note-app-elements",
         "web-component-tester": "^4.0.0",
         "webcomponentsjs": "webcomponents/webcomponentsjs#^0.7.0"
       },
@@ -49,14 +47,13 @@
   "resolutions": {
     "webcomponentsjs": "^1.0.0"
   },
-  "_release": "2.0.0",
+  "_release": "2.0.1",
   "_resolution": {
     "type": "version",
-    "tag": "v2.0.0",
-    "commit": "829e533a41ad12d6f2f9bf23019d5aa09fcb1e85"
+    "tag": "v2.0.1",
+    "commit": "945d69acdc2e78fcab4dc6ecbc71111690af5e6f"
   },
   "_source": "https://github.com/firebase/polymerfire.git",
   "_target": "^2.0.0",
-  "_originalSource": "firebase/polymerfire",
-  "_direct": true
+  "_originalSource": "firebase/polymerfire"
 }
