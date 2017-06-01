@@ -52,6 +52,12 @@
                 background-color: var(--primary-color);
                 color: #FFF;
             }
+            .erro-page {
+                width: 100%;
+                text-align: center;
+                font-size: 20px;
+                color: var(--secondary-text);
+            }
             #signInOverlay {
                 display: flex;
                 flex-direction: column;
@@ -135,7 +141,7 @@
                     <div main-title>
                         Sheets 'n Dices
                     </div>
-                    <paper-icon-button  id="logOutButton"
+                    <paper-icon-button id="logOutButton"
                         icon="exit-to-app"
                         on-tap="_logOut">
                     </paper-icon-button>
@@ -147,7 +153,9 @@
                     <iron-icon
                         icon="account-circle">
                     </iron-icon>
-                    <span>Sign In</span>
+                    <span>
+                        Sign In
+                    </span>
                 </paper-button>
             </div>
 
@@ -156,30 +164,29 @@
                     name="Sheet-List"
                     sheet-list="{{ liveData }}">
                 </snd-list>
-
                 <snd-new
                     name="New-Sheet">
                 </snd-new>
-
                 <snd-sheet
                     name="Sheet"
                     sheet-key="[[ sheetKey ]]"
                     sheet-data="{{ sheetData }}">
                 </snd-sheet>
-
                 <snd-edit
                     name="Edit-Sheet"
                     sheet-key="[[ sheetKey ]]"
                     sheet-data="[[ sheetData ]]">
                 </snd-edit>
-
                 <div name="error">
-                    Ops, page not found D:
+                    <span class="erro-page">
+                        This page don't exist :(
+                    </span>
+                    <span class="erro-page">
+                        Gandalf: I Have No Memory Of This Place
+                    </span>
                 </div>
             </iron-pages>
-           
         </app-header-layout>
-
     </template>
 
     <script>
@@ -211,11 +218,10 @@
                 super.ready();
                 // Custom elements polyfill safe way to indicate an element has been upgraded.
                 this.removeAttribute('unresolved');
-                // Add Event Listeners
+                // Add Custom Event Listeners
                 this.addEventListener('addNewSheet', e => this._addNewSheet(e.detail.sheetData));
                 this.addEventListener('openSheet', e => this._openSheet(e.detail.sheetKey));
                 this.addEventListener('editSheet', e => this._editSheet(e.detail));
-                this.addEventListener('backToSheet', e => this._backToSheet(e.detail));
                 this.addEventListener('updateSheet', e => this._updateSheet(e.detail.sheetKey, e.detail.sheetData));
             }
 
@@ -259,7 +265,7 @@
                 this.$.appHeader.scroll(0, 0);
                 if (!page) {
                     return window.location.hash = window.location.hash || '/Sheet-List';
-                }  else if ((page == "Sheet" || page == "Edit-Sheet") && !this.sheetKey) {
+                }  else if ((page == 'Sheet' || page == 'Edit-Sheet') && !this.sheetKey) {
                     return  window.location.hash = '/Sheet-List';
                 } else {
                     return this.set('page', page);
@@ -267,15 +273,19 @@
             }
             /*
              */
-             _updateSheet(sheetKey, sheetData) {
+
+            /*
+             *  Custom Event Fuctions
+             */
+            _updateSheet(sheetKey, sheetData) {
                 let path = '/users/' + this.user.uid + '/sheetList/' + sheetKey;
                 this.$.query.setStoredValue(path, sheetData);
                 return;
-             }
+            }
 
             _addNewSheet(newSheetData) {
                 this.$.query.ref.push(newSheetData);
-                window.location.hash = '/Sheet-List';
+                window.history.back();
                 return;
             }
 
@@ -289,11 +299,8 @@
                 window.location.hash = '/Edit-Sheet/' + this.sheetKey;
                 return;
             }
-
-            _backToSheet(eventDetail) {
-                window.history.back();
-                return;
-            }
+            /*
+             */
 
             /*
              *  Login Methods
@@ -350,8 +357,8 @@
             constructor(name, baseValue, levelModifier, dependencyList) {
                 this.name = name;
                 this.value = 0;
-                this.baseValue = baseValue;
-                this.levelModifier = levelModifier;
+                this.baseValue = baseValue || 0;
+                this.levelModifier = levelModifier || 0;
                 this.dependencyList = dependencyList || [];
                 this.affectsValue = 0;
             }

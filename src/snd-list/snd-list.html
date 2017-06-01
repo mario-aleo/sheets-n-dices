@@ -3,7 +3,6 @@
 <link rel="import" href="../../bower_components/polymer/lib/elements/dom-repeat.html">
 
 <link rel="import" href="../../bower_components/paper-card/paper-card.html">
-<link rel="import" href="../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../../bower_components/paper-fab/paper-fab.html">
 
 
@@ -53,7 +52,7 @@
                 margin-top: 32px;
                 text-align: center;
                 font-size: 20px;
-                color: rgba(51,51,51,0.4);
+                color: var(--secondary-text);
             }
             @media (min-width: 426px) {
                 :host {
@@ -131,7 +130,7 @@
             </div>
         </template>
 
-        <template is="dom-if" if="[[ _sheetListChanged(sheetList) ]]">
+        <template is="dom-if" if="[[ !sheetList ]]">
             <div class="empty-text">
                 You don't have any Sheet :(
             </div>
@@ -157,15 +156,7 @@
             }
 
             static get observers() {
-                return [
-                    '_sheetListChanged(sheetList)'
-                ];
-            }
-
-            _sheetListChanged(sheetList) {
-                console.log(sheetList);
-                if (!sheetList || sheetList.length === 0) return true;
-                else return false;
+                return [ ];
             }
 
             _newSheet(event) {

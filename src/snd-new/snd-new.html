@@ -98,10 +98,6 @@
             .sheet-detail-name {
                 font-weight: 500;
             }
-            .affect-add-content {
-                display: flex;
-                flex-direction: row;
-            }
             .primary-paper-button {
                 background-color: var(--primary-color);
                 color: #FFF;
@@ -111,13 +107,6 @@
             }
             .red-paper-button {
                 color: #FF5252
-            }
-            .add-button-container {
-                display: flex;
-                flex-direction: row;
-                align-items: center;
-                width: 100%;
-                padding: 16px 0;
             }
             .left-paper-fab {
                 right: 0;
@@ -141,14 +130,9 @@
                 width: 100%;
                 text-align: center;
                 font-size: 20px;
-                color: rgba(51,51,51,0.4);
+                color: var(--secondary-text);
             }
             @media (min-width: 426px) {
-                .basic-page {
-                    width: calc(100% - 16px);
-                    height: calc(100% - 16px);
-                    padding: 8px;
-                }
                 .basic-card {
                     width: 50%;
                     margin: 8px 25%;
@@ -178,11 +162,7 @@
             }
         </style>
 
-        <paper-tabs
-            scrollable
-            hide-scroll-buttons
-            fit-container
-            selected="{{ tabSelected }}">
+        <paper-tabs scrollable hide-scroll-buttons fit-container selected="{{ tabSelected }}">
             <paper-tab>
                 Basic
             </paper-tab>
@@ -200,12 +180,10 @@
             </paper-tab>
         </paper-tabs>
 
-        <iron-pages id="ironPages"
-            selected="{{ tabSelected }}">
+        <iron-pages id="ironPages" selected="{{ tabSelected }}">
             <!-- Basic Tab -->
             <section class="basic-page">
-                <paper-card class="basic-card"
-                    elevation="2">
+                <paper-card class="basic-card" elevation="2">
                     <div class="card-content">
                         <paper-input
                             always-float-label
@@ -256,19 +234,12 @@
             <!-- Status Tab -->
             <section class="status-page">
                 <template is="dom-if" if="[[ !newSheet.statusList ]]">
-                    <div>
-                        <p class="empty-text">
-                            You don't have any Status :(
-                        </p>
-                    </div>
+                    <p class="empty-text">
+                        You don't have any Status :(
+                    </p>
                 </template>
-                <template
-                    is="dom-repeat"
-                    items="[[ newSheet.statusList ]]"
-                    as="status"
-                    index-as="statusIndex">
-                    <paper-card class="status-card"
-                        elevation="2">
+                <template is="dom-repeat" items="[[ newSheet.statusList ]]" as="status" index-as="statusIndex">
+                    <paper-card class="status-card" elevation="2">
                         <div class="card-content">
                             <div class="sheet-detail">
                                 <span class="sheet-detail-name">
@@ -295,11 +266,7 @@
                                 </span>
                             </div>
                             <section class="dependency-section">
-                                <template
-                                    is="dom-repeat"
-                                    items="[[ status.dependencyList ]]"
-                                    as="dependency"
-                                    index-as="dependencyIndex">
+                                <template is="dom-repeat" items="[[ status.dependencyList ]]" as="dependency" index-as="dependencyIndex">
                                     <snd-chip>
                                         <div
                                             on-click="_editDependency"
@@ -352,19 +319,12 @@
             <!-- Resources Tab -->
             <section class="status-page">
                 <template is="dom-if" if="[[ !newSheet.resourcesList ]]">
-                    <div>
-                        <p class="empty-text">
-                            You don't have any Resource :(
-                        </p>
-                    </div>
+                    <p class="empty-text">
+                        You don't have any Resource :(
+                    </p>
                 </template>
-                <template
-                    is="dom-repeat"
-                    items="[[ newSheet.resourcesList ]]"
-                    as="resouces"
-                    index-as="resourcesIndex">
-                    <paper-card class="status-card"
-                        elevation="2">
+                <template is="dom-repeat" items="[[ newSheet.resourcesList ]]" as="resouces" index-as="resourcesIndex">
+                    <paper-card class="status-card" elevation="2">
                         <div class="card-content">
                             <div class="sheet-detail">
                                 <span class="sheet-detail-name">
@@ -396,11 +356,7 @@
                                 Has Actual Value
                             </paper-checkbox>
                             <section class="dependency-section">
-                                <template
-                                    is="dom-repeat"
-                                    items="[[ resouces.dependencyList ]]"
-                                    as="dependency"
-                                    index-as="dependencyIndex">
+                                <template is="dom-repeat" items="[[ resouces.dependencyList ]]" as="dependency" index-as="dependencyIndex">
                                     <snd-chip>
                                         <div
                                             on-click="_editDependency"
@@ -453,19 +409,12 @@
             <!-- Defenses Tab -->
             <section class="status-page">
                 <template is="dom-if" if="[[ !newSheet.defensesList ]]">
-                    <div>
-                        <p class="empty-text">
-                            You don't have any Defense :(
-                        </p>
-                    </div>
+                    <p class="empty-text">
+                        You don't have any Defense :(
+                    </p>
                 </template>
-                <template
-                    is="dom-repeat"
-                    items="[[ newSheet.defensesList ]]"
-                    as="defenses"
-                    index-as="defensesIndex">
-                    <paper-card class="status-card"
-                        elevation="2">
+                <template is="dom-repeat" items="[[ newSheet.defensesList ]]" as="defenses" index-as="defensesIndex">
+                    <paper-card class="status-card" elevation="2">
                         <div class="card-content">
                             <div class="sheet-detail">
                                 <span class="sheet-detail-name">
@@ -492,11 +441,7 @@
                                 </span>
                             </div>
                             <section class="dependency-section">
-                                <template
-                                    is="dom-repeat"
-                                    items="[[ defenses.dependencyList ]]"
-                                    as="dependency"
-                                    index-as="dependencyIndex">
+                                <template is="dom-repeat" items="[[ defenses.dependencyList ]]" as="dependency" index-as="dependencyIndex">
                                     <snd-chip>
                                         <div
                                             on-click="_editDependency"
@@ -549,19 +494,12 @@
             <!-- Skills Tab -->
             <section class="status-page">
                 <template is="dom-if" if="[[ !newSheet.skillsList ]]">
-                    <div>
-                        <p class="empty-text">
-                            You don't have any Skill :(
-                        </p>
-                    </div>
+                    <p class="empty-text">
+                        You don't have any Skill :(
+                    </p>
                 </template>
-                <template
-                    is="dom-repeat"
-                    items="[[ newSheet.skillsList ]]"
-                    as="skills"
-                    index-as="skillsIndex">
-                    <paper-card class="status-card"
-                        elevation="2">
+                <template is="dom-repeat" items="[[ newSheet.skillsList ]]" as="skills" index-as="skillsIndex">
+                    <paper-card class="status-card" elevation="2">
                         <div class="card-content">
                             <div class="sheet-detail">
                                 <span class="sheet-detail-name">
@@ -588,11 +526,7 @@
                                 </span>
                             </div>
                             <section class="dependency-section">
-                                <template
-                                    is="dom-repeat"
-                                    items="[[ skills.dependencyList ]]"
-                                    as="dependency"
-                                    index-as="dependencyIndex">
+                                <template is="dom-repeat" items="[[ skills.dependencyList ]]" as="dependency" index-as="dependencyIndex">
                                     <snd-chip>
                                         <div
                                             on-click="_editDependency"
@@ -644,9 +578,7 @@
         </iron-pages>
 
         <!-- Status Dialog -->
-        <paper-dialog id="statusDialog"
-            no-cancel-on-esc-key
-            no-cancel-on-outside-click>
+        <paper-dialog id="statusDialog" no-cancel-on-esc-key no-cancel-on-outside-click>
             <div class="content">
                 <paper-input id="statusDialogName"
                     always-float-label
@@ -683,51 +615,32 @@
         </paper-dialog>            
 
         <!-- Dependency Dialog -->
-        <paper-dialog id="dependencyDialog"
-            no-cancel-on-esc-key
-            no-cancel-on-outside-click>
+        <paper-dialog id="dependencyDialog" no-cancel-on-esc-key no-cancel-on-outside-click>
             <div class="content">
-                <paper-dropdown-menu
-                    label="Dependency">
-                    <paper-listbox id="dependencyDialogStatus"
-                        slot="dropdown-content"
-                        attr-for-selected="dependencyItem"
-                        selected="{{ dependencyItemString }}">
-                        <template
-                            is="dom-repeat"
-                            items="[[ newSheet.statusList ]]"
-                            as="status">
-                            </paper-item>
+                <paper-dropdown-menu label="Dependency">
+                    <paper-listbox id="dependencyDialogStatus" slot="dropdown-content" attr-for-selected="dependencyItem" selected="{{ dependencyItemString }}">
+                        <template is="dom-repeat" items="[[ newSheet.statusList ]]" as="status">
                             <paper-item 
                                 dependency-item="[[ _dependencyItemStringify('statusList', status.name) ]]">
                                 [[ status.name ]] on Status
                             </paper-item>
                         </template>
-                        <template
-                            is="dom-repeat"
-                            items="[[ newSheet.resourcesList ]]"
-                            as="status">
+                        <template is="dom-repeat" items="[[ newSheet.resourcesList ]]" as="resource">
                             <paper-item 
-                                dependency-item="[[ _dependencyItemStringify('resourcesList', status.name) ]]">
-                                [[ status.name ]] on Resources
+                                dependency-item="[[ _dependencyItemStringify('resourcesList', resource.name) ]]">
+                                [[ resource.name ]] on Resources
                             </paper-item>
                         </template>
-                        <template
-                            is="dom-repeat"
-                            items="[[ newSheet.defensesList ]]"
-                            as="status">
+                        <template is="dom-repeat" items="[[ newSheet.defensesList ]]" as="defense">
                             <paper-item 
-                                dependency-item="[[ _dependencyItemStringify('defensesList', status.name) ]]">
-                                [[ status.name ]] on Defenses
+                                dependency-item="[[ _dependencyItemStringify('defensesList', defense.name) ]]">
+                                [[ defense.name ]] on Defenses
                             </paper-item>
                         </template>
-                        <template
-                            is="dom-repeat"
-                            items="[[ newSheet.skillsList ]]"
-                            as="status">
+                        <template is="dom-repeat" items="[[ newSheet.skillsList ]]" as="skill">
                             <paper-item 
-                                dependency-item="[[ _dependencyItemStringify('skillsList', status.name) ]]">
-                                [[ status.name ]] on Skills
+                                dependency-item="[[ _dependencyItemStringify('skillsList', skill.name) ]]">
+                                [[ skill.name ]] on Skills
                             </paper-item>
                         </template>
                     </paper-listbox>
@@ -779,14 +692,11 @@
                     },
                     newSheet: {
                         type: Object,
-                        value: new Sheet("", "", "", 1, "", false, 10, [new Status("Vitality", 0, 0, [])], [new Resource("HP", 0, 0, [], true, 0)], [new Status("Armor", 0, 0, [])], [new Status("Diplomacy", 0, 0, [])], [], [], []),
-                        notify: true
+                        value: new Sheet('', '', '', 1, '', false, 10, [new Status('Vitality', 0, 0, [])], [new Resource('HP', 0, 0, [], true, 0)], [new Status('Armor', 0, 0, [])], [new Status('Diplomacy', 0, 0, [])], [], [], [])
                     },
-
                     dependencyChain: {
                         type: Array
                     },
-
                     requestStatusDependencyLocation: {
                         type: String
                     },
@@ -841,12 +751,12 @@
              *  Calculate Value Functions
              */
             _dependencyChipName(name, locationPath) {
-                let location = "";
-                if (locationPath == "statusList") location = "Status";
-                else if (locationPath == "resourcesList") location = "Resources";
-                else if (locationPath == "defensesList") location = "Defenses";
-                else  location = "Skills";
-                return name + " on " + location;
+                let location = '';
+                if (locationPath == 'statusList') location = 'Status';
+                else if (locationPath == 'resourcesList') location = 'Resources';
+                else if (locationPath == 'defensesList') location = 'Defenses';
+                else  location = 'Skills';
+                return name + ' on ' + location;
             }
 
             _dependencyItemStringify(location, name) {
@@ -856,19 +766,19 @@
              */
 
             /*
-             *  Generic Functions
+             *  Status Functions
              */
             _addStatus(event) {
                 let element = this,
                     statusLocation = event.target.dataset.statusLocation,
                     path = 'newSheet.' + statusLocation;
                 this.$.ironPages.classList.add('dialog-overlay');
-                this.$.statusDialogName.value = "";
+                this.$.statusDialogName.value = '';
                 this.$.statusDialogBaseValue.value = 0;
                 this.$.statusDialogLevelModifier.value = 0;
                 this.$.statusDialogHasActualValue.checked = false;
-                if (statusLocation == "resourcesList") this.$.statusDialogHasActualValue.style.display = "block";
-                else this.$.statusDialogHasActualValue.style.display = "none";
+                if (statusLocation == 'resourcesList') this.$.statusDialogHasActualValue.style.display = 'block';
+                else this.$.statusDialogHasActualValue.style.display = 'none';
                 this._cancel = tapEvent => {
                     element.$.ironPages.classList.remove('dialog-overlay');
                     element.$.statusDialog.close();
@@ -879,12 +789,12 @@
                         levelModifier = element.$.statusDialogLevelModifier.value,
                         hasActualValue = element.$.statusDialogHasActualValue.checked;
                     if (!name || !name.trim()) { 
-                        this.$.sndNewToast.text = "Please, insert a name.";
+                        this.$.sndNewToast.text = 'Please, insert a name.';
                         this.$.sndNewToast.opened = true;
                         return;
                     }
                     if (!this.newSheet[statusLocation]) this.set(path, []);
-                    if (statusLocation == "resourcesList") element.push(path, new Resource(name, baseValue, levelModifier, [], hasActualValue, 0));
+                    if (statusLocation == 'resourcesList') element.push(path, new Resource(name, baseValue, levelModifier, [], hasActualValue, 0));
                     else element.push(path, new Status(name, baseValue, levelModifier, []));
                     element.$.ironPages.classList.remove('dialog-overlay');
                     element.$.statusDialog.close();
@@ -897,14 +807,14 @@
                     statusIndex = event.target.dataset.statusIndex,
                     statusLocation = event.target.dataset.statusLocation,
                     statusItem = this.newSheet[statusLocation][statusIndex],
-                    path = 'newSheet.' + statusLocation + "." + statusIndex;
+                    path = 'newSheet.' + statusLocation + '.' + statusIndex;
                 this.$.ironPages.classList.add('dialog-overlay');
                 this.$.statusDialogName.value = statusItem.name;
                 this.$.statusDialogBaseValue.value = statusItem.baseValue;
                 this.$.statusDialogLevelModifier.value = statusItem.levelModifier;
                 this.$.statusDialogHasActualValue.checked = statusItem.hasActualValue || false;
-                if (statusLocation == "resourcesList") this.$.statusDialogHasActualValue.style.display = "block";
-                else this.$.statusDialogHasActualValue.style.display = "none";
+                if (statusLocation == 'resourcesList') this.$.statusDialogHasActualValue.style.display = 'block';
+                else this.$.statusDialogHasActualValue.style.display = 'none';
                 this._cancel = tapEvent => {
                     element.$.ironPages.classList.remove('dialog-overlay');
                     element.$.statusDialog.close();
@@ -915,11 +825,11 @@
                         levelModifier = element.$.statusDialogLevelModifier.value,
                         hasActualValue = element.$.statusDialogHasActualValue.checked;
                     if (!name || !name.trim()) { 
-                        this.$.sndNewToast.text = "Please, insert a name.";
+                        this.$.sndNewToast.text = 'Please, insert a name.';
                         this.$.sndNewToast.opened = true;
                         return;
                     }
-                    if (statusLocation == "resourcesList") element.set(path, new Resource(name, baseValue, levelModifier, statusItem.dependencyList, hasActualValue, statusItem.actualValue));
+                    if (statusLocation == 'resourcesList') element.set(path, new Resource(name, baseValue, levelModifier, statusItem.dependencyList, hasActualValue, statusItem.actualValue));
                     else element.set(path, new Status(name, baseValue, levelModifier, statusItem.dependencyList));
                     element.$.ironPages.classList.remove('dialog-overlay');
                     element.$.statusDialog.close();
@@ -935,7 +845,12 @@
                 if (this.newSheet[statusLocation].length == 0) this.set(path, null);
                 return;
             }
+            /*
+             */
 
+            /*
+             *  Dependency Functions
+             */
             _addDependency(event) {
                 let element = this,
                     statusLocation = event.target.dataset.statusLocation,
@@ -1003,24 +918,20 @@
              *  Sheet Object Functions
              */
             _newSheet(event) {
-                if (!this.newSheet.name
-                    || !this.newSheet.job
-                    || !this.newSheet.race
-                    || !this.newSheet.level
-                    || !this.newSheet.system) {
-                    this.$.sndNewToast.text = "Please, fill the Basic tab.";
+                if (!this.newSheet.name || !this.newSheet.job || !this.newSheet.race || !this.newSheet.level || !this.newSheet.system) {
+                    this.$.sndNewToast.text = 'Please, fill the Basic tab.';
                     this.$.sndNewToast.opened = true;
                     return;
                 }
                 // Each Status, Resource, Defense and Skill and SUM
                 const element = this;
-                this.set("dependencyChain", []);
+                this.set('dependencyChain', []);
                 parseInt(element._numberTypeCheck(element.newSheet.level));
                 // SUM Status = baseValue + (levelModifier * level)
                 this.newSheet.statusList.forEach(function (status) {
                     if (status.value === 0) {
-                        element.push("dependencyChain", {
-                            location: "statusList",
+                        element.push('dependencyChain', {
+                            location: 'statusList',
                             status: status
                         });
                         element._objectCalculation(status);
@@ -1031,8 +942,8 @@
                 // or if statusBase == None => SUM Resource = baseValue + (levelModifier * level)
                 this.newSheet.resourcesList.forEach(function (resource) {
                     if (resource.value === 0) {
-                        element.push("dependencyChain", {
-                            location: "resourcesList",
+                        element.push('dependencyChain', {
+                            location: 'resourcesList',
                             status: resource
                         });
                         element._objectCalculation(resource);
@@ -1043,8 +954,8 @@
                 // or if statusBase == None => SUM Defense = baseValue + (levelModifier * level)
                 this.newSheet.defensesList.forEach(function (defense) {
                     if (defense.value === 0) {
-                        element.push("dependencyChain", {
-                            location: "defensesList",
+                        element.push('dependencyChain', {
+                            location: 'defensesList',
                             status: defense
                         });
                         element._objectCalculation(defense);
@@ -1055,8 +966,8 @@
                 // or if statusBase == None => SUM Skill = baseValue + (levelModifier * level)
                 this.newSheet.skillsList.forEach(function (skill) {
                     if (skill.value === 0) {
-                        element.push("dependencyChain", {
-                            location: "skillsList",
+                        element.push('dependencyChain', {
+                            location: 'skillsList',
                             status: skill
                         });
                         element._objectCalculation(skill);
@@ -1065,8 +976,8 @@
                 });
                 console.log(this.newSheet);
                 this.dispatchEvent(new CustomEvent('addNewSheet', {detail: {sheetData: element.newSheet}, composed: true}));
-                this.set("tabSelected", 0);
-                this.set("newSheet", new Sheet([new Status("Vitality", 0, 0, [])], [new Resource("HP", 0, 0, [], true, 0)], [new Status("Armor", 0, 0, [])], [new Status("Diplomacy", 0, 0, [])]));
+                this.set('tabSelected', 0);
+                this.set('newSheet', new Sheet([new Status('Vitality', 0, 0, [])], [new Resource('HP', 0, 0, [], true, 0)], [new Status('Armor', 0, 0, [])], [new Status('Diplomacy', 0, 0, [])]));
                 return;
             }
 
@@ -1074,8 +985,8 @@
                 // Encapsulation
                 const element = this;
                 // Init statusItem Value
-                statusItem.value = parseInt(parseInt(element._numberTypeCheck(statusItem.baseValue)) + parseInt(element._numberTypeCheck(element.newSheet.level)) * parseFloat(element._numberTypeCheck(statusItem.levelModifier)));
-                console.log("Initial " + statusItem.name + " Value: " + statusItem.value);
+                statusItem.value = parseInt(element._numberTypeCheck(statusItem.baseValue)) + parseInt(parseInt(element._numberTypeCheck(element.newSheet.level)) * parseFloat(element._numberTypeCheck(statusItem.levelModifier)));
+                console.log('Initial ' + statusItem.name + ' Value: ' + statusItem.value);
                 // Verify statusItem Dependency
                 if (statusItem.dependencyList.length > 0) {
                     // Start statusItem Value Calculation
@@ -1083,9 +994,9 @@
                         statusItem.dependencyList.forEach(function (statusItemDependencyItem) {
                             // Verify Deadlock
                             if (statusItemDependencyItem.location == dependencyChainItem.location && statusItemDependencyItem.name == dependencyChainItem.status.name) {
-                                element.$.sndNewToast.text = "Please, very all dependencies.";
+                                element.$.sndNewToast.text = 'Please, very all dependencies.';
                                 element.$.sndNewToast.opened = true;
-                                throw "Deadlock";
+                                throw 'Deadlock';
                             } else {
                                 // Localize Dependency Object
                                 element.newSheet[statusItemDependencyItem.location].forEach(function (statusItemDependencyItemStatusItem) {
@@ -1093,35 +1004,36 @@
                                         // Verify Dependency Object
                                         if (statusItemDependencyItemStatusItem.value === 0) {
                                             // Calculate Dependency Object
-                                            element.push("dependencyChain", {
+                                            element.push('dependencyChain', {
                                                 location: statusItemDependencyItem.location,
                                                 status: statusItemDependencyItemStatusItem
                                             });
                                             element._objectCalculation(statusItemDependencyItemStatusItem);
                                         }
                                         // Update statusItem Value
-                                        if (statusItemDependencyItem.location == "statusList") {
-                                            if (element.newSheet.hasMinimumStatusModifierValue) statusItem.value = parseInt( parseInt(element._numberTypeCheck(statusItem.value)) + element._returnStatusModifier(parseInt(element._numberTypeCheck(statusItemDependencyItemStatusItem.value)), parseFloat(element.newSheet.minimumStatusModifierValue)));
-                                            else statusItem.value = parseInt( parseInt(element._numberTypeCheck(statusItem.value)) + parseInt(element._numberTypeCheck(statusItemDependencyItemStatusItem.value)) * parseFloat(element._numberTypeCheck(statusItemDependencyItem.modifier)) );
+                                        if (statusItemDependencyItem.location == 'statusList') {
+                                            if (element.newSheet.hasMinimumStatusModifierValue) statusItem.value = parseInt(element._numberTypeCheck(statusItem.value)) + element._returnStatusModifier(parseInt(element._numberTypeCheck(statusItemDependencyItemStatusItem.value)), parseFloat(element.newSheet.minimumStatusModifierValue));
+                                            else statusItem.value = parseInt(element._numberTypeCheck(statusItem.value)) + parseInt(parseInt(element._numberTypeCheck(statusItemDependencyItemStatusItem.value)) * parseFloat(element._numberTypeCheck(statusItemDependencyItem.modifier)));
                                         } else {
-                                            statusItem.value = parseInt( parseInt(element._numberTypeCheck(statusItem.value)) + parseInt(element._numberTypeCheck(statusItemDependencyItemStatusItem.value)) * parseFloat(element._numberTypeCheck(statusItemDependencyItem.modifier)) );
+                                            statusItem.value = parseInt(element._numberTypeCheck(statusItem.value)) + parseInt(parseInt(element._numberTypeCheck(statusItemDependencyItemStatusItem.value)) * parseFloat(element._numberTypeCheck(statusItemDependencyItem.modifier)));
                                         }
-                                        console.log("Update " + statusItem.name + " Value with " + statusItemDependencyItemStatusItem.name +  " Value: " + statusItem.value);
+                                        console.log('Update ' + statusItem.name + ' Value with ' + statusItemDependencyItemStatusItem.name +  ' Value: ' + statusItem.value);
                                     }
                                 });
                             }
                         });
                     });
                 }
+                // Setting Actual Value
                 if (statusItem.hasActualValue) statusItem.actualValue = statusItem.value;
                 // End statusItem Value Calculation
-                console.log("End " + statusItem.name + " Value Calculation: " + statusItem.value);
+                console.log('End ' + statusItem.name + ' Value Calculation: ' + statusItem.value);
                 return;
             }
 
             _numberTypeCheck(number) {
                 number = number.toString().replace(',', '.');
-                if (isNaN(parseInt(number))) return "0";
+                if (isNaN(parseInt(number))) return '0';
                 else return number;
             }
 
