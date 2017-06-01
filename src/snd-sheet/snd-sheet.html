@@ -39,6 +39,11 @@
                     max-height: 96px;
                 }
             }
+            iron-pages {
+                overflow: auto;
+                min-height: calc(100vh - 112px);
+                max-height: calc(100vh - 112px);
+            }
             paper-tabs {
                 background-color: var(--primary-color);
                 color: #FFF;
@@ -168,7 +173,7 @@
                 .dices-page paper-button {
                     width: 124px;
                     height: 48px;
-                    margin: calc(100%/6 - 48px) calc(100%/6 - 124px/2);
+                    margin: calc(100%/8 - 48px) calc(100%/6 - 124px/2);
                 }
                 .basic-card,
                 .status-card,

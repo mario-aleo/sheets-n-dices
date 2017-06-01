@@ -135,8 +135,8 @@
             data="{{ sheetData }}">
         </firebase-document>
 
-        <app-header-layout has-scrolling-region fullbleed scroll-target="ironPages">
-            <app-header id="appHeader" slot="header" fixed effects="waterfall">
+        <app-header-layout has-scrolling-region fullbleed>
+            <app-header slot="header" fixed effects="waterfall" scroll-target="ironPages">
                 <app-toolbar>
                     <div main-title>
                         Sheets 'n Dices
@@ -177,14 +177,15 @@
                     sheet-key="[[ sheetKey ]]"
                     sheet-data="[[ sheetData ]]">
                 </snd-edit>
-                <div name="error">
+                <section
+                    name="error">
                     <span class="erro-page">
                         This page don't exist :(
                     </span>
                     <span class="erro-page">
                         Gandalf: I Have No Memory Of This Place
                     </span>
-                </div>
+                </section>
             </iron-pages>
         </app-header-layout>
     </template>
