@@ -361,6 +361,7 @@
                 this.notesList = notesList || [];
             }
         }
+        class mapSheet extends Sheet { constructor() {} }
         
         class Status {
             constructor(name, baseValue, levelModifier, dependencyList) {
@@ -372,6 +373,7 @@
                 this.affectsValue = 0;
             }
         }
+        class mapStatus extends Status { constructor() {} }
 
         class Resource extends Status {
             constructor(name, baseValue, levelModifier, dependencyList, hasActualValue, actualValue) {
@@ -380,6 +382,7 @@
                 this.actualValue = actualValue || 0;
             }
         }
+        class mapResource extends Resource { constructor() {} }
 
         class Dependency {
             constructor(location, name, value) {
@@ -388,6 +391,7 @@
                 this.modifier = value;
             }
         }
+        class mapDependency extends Dependency { constructor() {} }
 
         class Note {
             constructor(name, text) {
@@ -395,6 +399,7 @@
                 this.text = text;
             }
         }
+        class mapNote extends Note { constructor() {} }
 
         class Item {
             constructor(name, description, equippable, charges, active, affectsList) {
@@ -406,6 +411,7 @@
                 this.affectsList = affectsList || [];
             }
         }
+        class mapItem extends Item { constructor() {} }
 
         class Effect {
             constructor(name, description, affectsList) {
@@ -414,6 +420,7 @@
                 this.affectsList = affectsList || [];
             }
         }
+        class mapEffect extends Effect { constructor() {} }
 
         class Affect {
             constructor(location, name, value) {
@@ -422,6 +429,7 @@
                 this.value = value;
             }
         }
+        class mapAffect extends Affect { constructor() {} }
         /*
          */
     </script>
