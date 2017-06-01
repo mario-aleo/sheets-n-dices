@@ -230,7 +230,7 @@
                 super.connectedCallback();
                 // Register Service Worker
                 if ('serviceWorker' in navigator) {
-                    navigator.serviceWorker.register('service-worker.js', {scope: '/'});
+                    navigator.serviceWorker.register('../../service-worker.js', {scope: '/'});
                 }
                 // Lazy import snd app components 
                 Polymer.importHref(
