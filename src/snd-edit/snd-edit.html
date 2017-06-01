@@ -747,13 +747,18 @@
             _verifyDependencyInformations() {
                 let dependencyValue = parseFloat(this.dependencyValue),
                     dependencyItemString = JSON.parse(this.dependencyItemString);
-                if ((dependencyItemString.location == this.requestStatusDependencyLocation
-                    && dependencyItemString.name == this.requestStatusDependencyName)
-                    || (dependencyItemString.location == 'statusList'
-                        && this.sheetData.hasMinimumStatusModifierValue)
-                    || !dependencyValue
-                    || dependencyValue == 0) this.$.dependencyDialogConfirm.disabled = true;
-                else this.$.dependencyDialogConfirm.disabled = false;
+                if (dependencyItemString.location == this.requestStatusDependencyLocation && dependencyItemString.name == this.requestStatusDependencyName) {
+                    this.$.dependencyDialogConfirm.disabled = true;
+                } else if (this.newSheet.hasMinimumStatusModifierValue && dependencyItemString.location != 'statusList' && (!dependencyValue || dependencyValue == 0)) {
+                    this.$.dependencyDialogConfirm.disabled = true;
+                } else {
+                    this.$.dependencyDialogConfirm.disabled = false;
+                }
+                if (dependencyItemString.location == 'statusList' && this.newSheet.hasMinimumStatusModifierValue) {
+                    this.$.dependencyDialogValue.disabled= true;
+                } else {
+                    this.$.dependencyDialogValue.disabled= false;
+                }
                 return;
             }
 
@@ -874,6 +879,7 @@
                 this.set('requestStatusDependencyName', this.sheetData.statusList[statusIndex].name);
                 this.set('dependencyItemString', element._dependencyItemStringify('statusList', element.sheetData.statusList[0].name || ''));
                 this.set('dependencyValue', 0);
+                this._verifyDependencyInformations();
                 this._cancel = tapEvent => {
                     element.$.ironPages.classList.remove('dialog-overlay');
                     element.$.dependencyDialog.close();
@@ -903,6 +909,7 @@
                 this.set('requestStatusDependencyName', this.sheetData.statusList[statusIndex].name);
                 this.set('dependencyItemString', element._dependencyItemStringify(depencencyStatus.location, depencencyStatus.name));
                 this.set('dependencyValue', depencencyStatus.modifier);
+                this._verifyDependencyInformations();
                 this._cancel = tapEvent => {
                     element.$.ironPages.classList.remove('dialog-overlay');
                     element.$.dependencyDialog.close();
