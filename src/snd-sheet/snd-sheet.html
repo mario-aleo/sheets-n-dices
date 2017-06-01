@@ -153,6 +153,7 @@
                 right: 0;
             }
             .empty-text {
+                width: 100%;
                 text-align: center;
                 font-size: 20px;
                 color: rgba(51,51,51,0.4);
@@ -839,14 +840,17 @@
             }
 
             _itemEquippableChanged(itemEquippable) {
+                let itemCharge = this.$.itemDialogCharges.value || 0;
                 if (itemEquippable) this.$.itemDialogCharges.disabled = true;
                 else this.$.itemDialogCharges.disabled = false;
+                this._itemChargeChanged(itemCharge);
                 return;
             }
 
             _itemChargeChanged(itemCharge) {
+                let itemEquippable = this.$.itemDialogEquippable.checked;
                 itemCharge = parseInt(this._numberTypeCheck(itemCharge));
-                if (itemCharge <= 0) this.$.itemDialogConfirm.disabled = true;
+                if (!itemEquippable && itemCharge <= 0) this.$.itemDialogConfirm.disabled = true;
                 else this.$.itemDialogConfirm.disabled = false;
             }
             /*
@@ -908,6 +912,12 @@
                 this._confirm = tapEvent => {
                     let name = element.$.effectDialogName.value,
                         description = element.$.effectDialogDescription.value;
+                    if (!name.trim()) {
+                        this.$.sndSheetToast.close();
+                        this.$.sndSheetToast.text = "Please, insert a name.";
+                        this.$.sndSheetToast.open();
+                        return;
+                    }
                     if (!this.sheetData.effectsList) this.set('sheetData.effectsList', []);
                     element.push('sheetData.effectsList', new Effect(name, description, []));
                     element.$.effectDialogName.value = '';
@@ -938,6 +948,12 @@
                 this._confirm = tapEvent => {
                     let name = element.$.effectDialogName.value,
                         description = element.$.effectDialogDescription.value;
+                    if (!name.trim()) {
+                        this.$.sndSheetToast.close();
+                        this.$.sndSheetToast.text = "Please, insert a name.";
+                        this.$.sndSheetToast.open();
+                        return;
+                    }
                     element.set(path, new Effect(name, description, affectsList));
                     element.$.effectDialogName.value = '';
                     element.$.effectDialogDescription.value = '';
@@ -979,6 +995,12 @@
                         description = element.$.itemDialogDescription.value,
                         equippable = element.$.itemDialogEquippable.checked,
                         charges = element.$.itemDialogCharges.value;
+                    if (!name.trim()) {
+                        this.$.sndSheetToast.close();
+                        this.$.sndSheetToast.text = "Please, insert a name.";
+                        this.$.sndSheetToast.open();
+                        return;
+                    }
                     if (!this.sheetData.itemsList) this.set('sheetData.itemsList', []);
                     element.push('sheetData.itemsList', new Item(name, description, equippable, charges, false, []));
                     element.$.itemDialogName.value = '';
@@ -1020,6 +1042,12 @@
                         description = element.$.itemDialogDescription.value,
                         equippable = element.$.itemDialogEquippable.checked,
                         charges = element.$.itemDialogCharges.value;
+                    if (!name.trim()) {
+                        this.$.sndSheetToast.close();
+                        this.$.sndSheetToast.text = "Please, insert a name.";
+                        this.$.sndSheetToast.open();
+                        return;
+                    }
                     element.set(path, new Item(name, description, equippable, charges, itemActive, affectsList));
                     element.$.itemDialogName.value = '';
                     element.$.itemDialogDescription.value = '';
@@ -1076,6 +1104,12 @@
                 this._confirm = tapEvent => {
                     let name = element.$.noteDialogName.value,
                         text = element.$.noteDialogText.value;
+                    if (!name.trim()) {
+                        this.$.sndSheetToast.close();
+                        this.$.sndSheetToast.text = "Please, insert a name.";
+                        this.$.sndSheetToast.open();
+                        return;
+                    }
                     if (!element.sheetData.notesList) element.set('sheetData.notesList', []);
                     element.push('sheetData.notesList', new Note(name, text));
                     element.$.noteDialog.close();
@@ -1102,6 +1136,12 @@
                 this._confirm = tapEvent => {
                     let name = element.$.noteDialogName.value,
                         text = element.$.noteDialogText.value;
+                    if (!name.trim()) {
+                        this.$.sndSheetToast.close();
+                        this.$.sndSheetToast.text = "Please, insert a name.";
+                        this.$.sndSheetToast.open();
+                        return;
+                    }
                     element.set(path, new Note(name, text));
                     element.$.noteDialog.close();
                     element.$.ironPages.classList.remove('dialog-overlay');
@@ -1179,6 +1219,7 @@
                     element.$.affectDialogStatus.selected = element._affectItemStringify('statusList', element.sheetData.statusList[0].name);
                     element.$.affectDialogValue.value = 0;
                     element.$.ironPages.classList.remove('dialog-overlay');
+                    element.$.affectDialog.close();
                 }
                 this._confirm = tapEvent => {
                     let affectItem = JSON.parse(element.$.affectDialogStatus.selected),
@@ -1210,38 +1251,61 @@
              *  Sheet Object Functions
              */
             _recalcSheet(event) {
-                if (!this.sheetData.name
-                    || !this.sheetData.job
-                    || !this.sheetData.race
-                    || !this.sheetData.level
-                    || !this.sheetData.system) {
-                    this.$.sndNewToast.text = "Please, fill the Basic tab.";
-                    this.$.sndNewToast.opened = true;
-                    return;
-                }
-
                 // Each Status, Resource, Defense and Skill and SUM
                 const element = this;
-
-                // Init newSheetData
-                this.set('newSheetData', new Sheet(this.sheetData.name, this.sheetData.job, this.sheetData.race, this.sheetData.level, this.sheetData.system, this.sheetData.hasMinimumStatusModifierValue, this.sheetData.minimumStatusModifierValue, [], [], [], [], this.sheetData.effectsList, this.sheetData.itemsList, this.sheetData.notesList));
-                this.sheetData.statusList.forEach(function (status) {
-                    element.push('newSheetData.statusList', new Status(status.name, status.baseValue, status.levelModifier, status.dependencyList));
+                // Reset Values
+                if (!this.sheetData.statusList) this.sheetData.statusList = [];
+                this.sheetData.statusList.forEach(function (status, index) {
+                    status.value = 0;
+                    status.affectsValue = 0;
                 });
+                if (!this.sheetData.resourcesList) this.sheetData.resourcesList = [];
                 this.sheetData.resourcesList.forEach(function (resource) {
-                    element.push('newSheetData.resourcesList', new Resource(resource.name, resource.baseValue, resource.levelModifier, resource.dependencyList, resource.hasActualValue, resource.actualValue));
+                    resource.value = 0;
+                    resource.affectsValue = 0;
                 });
+                if (!this.sheetData.defensesList) this.sheetData.defensesList = [];
                 this.sheetData.defensesList.forEach(function (defense) {
-                    element.push('newSheetData.defensesList', new Status(defense.name, defense.baseValue, defense.levelModifier, defense.dependencyList));
+                    defense.value = 0;
+                    defense.affectsValue = 0;
                 });
+                if (!this.sheetData.skillsList) this.sheetData.skillsList = [];
                 this.sheetData.skillsList.forEach(function (skill) {
-                    element.push('newSheetData.skillsList', new Status(skill.name, skill.baseValue, skill.levelModifier, skill.dependencyList));
+                    skill.value = 0;
+                    skill.affectsValue = 0;
                 });
-
                 this.set("dependencyChain", []);
                 parseInt(element._numberTypeCheck(element.sheetData.level));
+                // SUM AnyWithEffect = value + affectValue;
+                if (!this.sheetData.effectsList) this.sheetData.effectsList = [];
+                this.sheetData.effectsList.forEach(function (effect, index) {
+                    if (!effect.affectsList) effect.affectsList = [];
+                    effect.affectsList.forEach(function (affect) {
+                        element.sheetData[affect.location].forEach(function (statusItem) {
+                            if (statusItem.name == affect.name) {
+                                statusItem.affectsValue = parseInt(element._numberTypeCheck(statusItem.affectsValue)) + parseInt(element._numberTypeCheck(affect.value));
+                                console.log("Update " + statusItem.name + " Affects Value with " + effect.name +  " Value: " + affect.value);
+                            }
+                        });
+                    });
+                });
+                // SUM AnyWithItem = value + affectValue;
+                if (!this.sheetData.itemsList) this.sheetData.itemsList = [];
+                this.sheetData.itemsList.forEach(function (item, index) {
+                    if (item.active) {
+                        if (!item.affectsList) item.affectsList = [];
+                        item.affectsList.forEach(function (affect) {
+                            element.sheetData[affect.location].forEach(function (statusItem) {
+                                if (statusItem.name == affect.name) {
+                                    statusItem.affectsValue = parseInt(element._numberTypeCheck(statusItem.affectsValue)) + parseInt(element._numberTypeCheck(affect.value));
+                                    console.log("Update " + statusItem.name + " Affects Value with " + item.name +  " Value: " + affect.value);
+                                }
+                            });
+                        });
+                    }
+                });
                 // SUM Status = baseValue + (levelModifier * level)
-                this.newSheetData.statusList.forEach(function (status) {
+                this.sheetData.statusList.forEach(function (status) {
                     if (status.value === 0) {
                         element.push("dependencyChain", {
                             location: "statusList",
@@ -1253,7 +1317,7 @@
                 });
                 // SUM Resource = baseValue + (statusBase.value * statusBaseModifier) + (levelModifier * level)
                 // or if statusBase == None => SUM Resource = baseValue + (levelModifier * level)
-                this.newSheetData.resourcesList.forEach(function (resource) {
+                this.sheetData.resourcesList.forEach(function (resource) {
                     if (resource.value === 0) {
                         element.push("dependencyChain", {
                             location: "resourcesList",
@@ -1265,7 +1329,7 @@
                 });
                 // SUM Defense = baseValue + (statusBase.value * statusBaseModifier) + (levelModifier * level)
                 // or if statusBase == None => SUM Defense = baseValue + (levelModifier * level)
-                this.newSheetData.defensesList.forEach(function (defense) {
+                this.sheetData.defensesList.forEach(function (defense) {
                     if (defense.value === 0) {
                         element.push("dependencyChain", {
                             location: "defensesList",
@@ -1277,7 +1341,7 @@
                 });
                 // SUM Skill = baseValue + (statusBase.value * statusBaseModifier) + (levelModifier * level)
                 // or if statusBase == None => SUM Skill = baseValue + (levelModifier * level)
-                this.newSheetData.skillsList.forEach(function (skill) {
+                this.sheetData.skillsList.forEach(function (skill) {
                     if (skill.value === 0) {
                         element.push("dependencyChain", {
                             location: "skillsList",
@@ -1287,44 +1351,7 @@
                         element.dependencyChain = [];
                     }
                 });
-                // SUM AnyWithEffect = value + affectValue;
-                this.newSheetData.effectsList.forEach(function (effect, index) {
-                    affectsPath = 'newSheetData.effectsList.' + index + '.affectsList';
-                    if (!effect.affectsList) this.set(affectsPath, []);
-                    effect.affectsList.forEach(function (affect) {
-                        this.newSheetData[affect.location].forEach(function (statusItem) {
-                            if (statusItem.name == affect.name) {
-                                statusItem.value = statusItem.value + parseInt(element._numberTypeCheck(affect.value));
-                                console.log("Update " + statusItem.name + " Value with " + effect.name +  " Value: " + affect.value);
-                            }
-                        });
-                    });
-                });
-                // SUM AnyWithItem = value + affectValue;
-                this.newSheetData.itemsList.forEach(function (item, index) {
-                    itemPath = 'newSheetData.itemsList.' + index;
-                    if (!item.affectsList) this.set(itemPath, []);
-                    item.affectsList.forEach(function (affect) {
-                        this.newSheetData[affect.location].forEach(function (statusItem) {
-                            if (statusItem.name == affect.name) {
-                                statusItem.value = statusItem.value + parseInt(element._numberTypeCheck(affect.value));
-                                console.log("Update " + statusItem.name + " Value with " + item.name +  " Value: " + affect.value);
-                            }
-                        });
-                    });
-                });
-
-                console.log('--- newSheetData --------------------------------------------------');
-                console.log(this.newSheetData);
-                console.log('-------------------------------------------------------------------');
-
-                this.set('sheetData', this.newSheetData);
-                //this.dispatchEvent(new CustomEvent('backToSheet', {detail: {}, composed: true}));
-                this.set("tabSelected", 0);
-
-                console.log('--- SheetData -----------------------------------------------------');
-                console.log(this.sheetData);
-                console.log('-------------------------------------------------------------------');
+                this.dispatchEvent(new CustomEvent('updateSheet', {detail: { sheetKey: element.sheetKey, sheetData: element.sheetData}, composed: true}));
                 return;
             }
 
@@ -1332,9 +1359,10 @@
                 // Encapsulation
                 const element = this;
                 // Init statusItem Value
-                statusItem.value = parseInt(parseInt(element._numberTypeCheck(statusItem.baseValue)) + parseInt(element._numberTypeCheck(element.sheetData.level)) * parseFloat(element._numberTypeCheck(statusItem.levelModifier)));
+                statusItem.value = parseInt(element._numberTypeCheck(statusItem.affectsValue)) + parseInt(element._numberTypeCheck(statusItem.baseValue)) + parseInt(parseInt(element._numberTypeCheck(element.sheetData.level)) * parseFloat(element._numberTypeCheck(statusItem.levelModifier)));
                 console.log("Initial " + statusItem.name + " Value: " + statusItem.value);
                 // Verify statusItem Dependency
+                if (!statusItem.dependencyList) statusItem.dependencyList = [];
                 if (statusItem.dependencyList.length > 0) {
                     // Start statusItem Value Calculation
                     element.dependencyChain.forEach(function (dependencyChainItem) {
@@ -1346,7 +1374,7 @@
                                 throw "Deadlock";
                             } else {
                                 // Localize Dependency Object
-                                element.newSheetData[statusItemDependencyItem.location].forEach(function (statusItemDependencyItemStatusItem) {
+                                element.sheetData[statusItemDependencyItem.location].forEach(function (statusItemDependencyItemStatusItem) {
                                     if (statusItemDependencyItemStatusItem.name == statusItemDependencyItem.name) {
                                         // Verify Dependency Object
                                         if (statusItemDependencyItemStatusItem.value === 0) {
@@ -1359,10 +1387,10 @@
                                         }
                                         // Update statusItem Value
                                         if (statusItemDependencyItem.location == "statusList") {
-                                            if (element.newSheetData.hasMinimumStatusModifierValue) statusItem.value = parseInt( parseInt(element._numberTypeCheck(statusItem.value)) + element._returnStatusModifier(parseInt(element._numberTypeCheck(statusItemDependencyItemStatusItem.value)), parseFloat(element.newSheetData.minimumStatusModifierValue)));
-                                            else statusItem.value = parseInt( parseInt(element._numberTypeCheck(statusItem.value)) + parseInt(element._numberTypeCheck(statusItemDependencyItemStatusItem.value)) * parseFloat(element._numberTypeCheck(statusItemDependencyItem.modifier)) );
+                                            if (element.sheetData.hasMinimumStatusModifierValue) statusItem.value = parseInt(element._numberTypeCheck(statusItem.value)) + element._returnStatusModifier(parseInt(element._numberTypeCheck(statusItemDependencyItemStatusItem.value)), parseFloat(element.sheetData.minimumStatusModifierValue));
+                                            else statusItem.value = parseInt(element._numberTypeCheck(statusItem.value)) + parseInt(parseInt(element._numberTypeCheck(statusItemDependencyItemStatusItem.value)) * parseFloat(element._numberTypeCheck(statusItemDependencyItem.modifier)));
                                         } else {
-                                            statusItem.value = parseInt( parseInt(element._numberTypeCheck(statusItem.value)) + parseInt(element._numberTypeCheck(statusItemDependencyItemStatusItem.value)) * parseFloat(element._numberTypeCheck(statusItemDependencyItem.modifier)) );
+                                            statusItem.value = parseInt(element._numberTypeCheck(statusItem.value)) + parseInt(parseInt(element._numberTypeCheck(statusItemDependencyItemStatusItem.value)) * parseFloat(element._numberTypeCheck(statusItemDependencyItem.modifier)));
                                         }
                                         console.log("Update " + statusItem.name + " Value with " + statusItemDependencyItemStatusItem.name +  " Value: " + statusItem.value);
                                     }
@@ -1371,6 +1399,7 @@
                         });
                     });
                 }
+                if (statusItem.hasActualValue && statusItem.value < statusItem.actualValue) statusItem.actualValue = statusItem.value;
                 // End statusItem Value Calculation
                 console.log("End " + statusItem.name + " Value Calculation: " + statusItem.value);
                 return;

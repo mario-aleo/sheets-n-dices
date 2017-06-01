@@ -216,7 +216,6 @@
                 this.addEventListener('openSheet', e => this._openSheet(e.detail.sheetKey));
                 this.addEventListener('editSheet', e => this._editSheet(e.detail));
                 this.addEventListener('backToSheet', e => this._backToSheet(e.detail));
-
                 this.addEventListener('updateSheet', e => this._updateSheet(e.detail.sheetKey, e.detail.sheetData));
             }
 
@@ -270,7 +269,6 @@
              */
              _updateSheet(sheetKey, sheetData) {
                 let path = '/users/' + this.user.uid + '/sheetList/' + sheetKey;
-                //this.$.query.ref(path).set(sheetData);
                 this.$.query.setStoredValue(path, sheetData);
                 return;
              }
@@ -293,7 +291,7 @@
             }
 
             _backToSheet(eventDetail) {
-                window.location.hash = '/Sheet/' + this.sheetKey;
+                window.history.back();
                 return;
             }
 
@@ -355,6 +353,7 @@
                 this.baseValue = baseValue;
                 this.levelModifier = levelModifier;
                 this.dependencyList = dependencyList || [];
+                this.affectsValue = 0;
             }
         }
 
