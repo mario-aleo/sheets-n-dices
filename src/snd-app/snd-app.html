@@ -221,8 +221,9 @@
                 // Add Custom Event Listeners
                 this.addEventListener('addNewSheet', e => this._addNewSheet(e.detail.sheetData));
                 this.addEventListener('openSheet', e => this._openSheet(e.detail.sheetKey));
-                this.addEventListener('editSheet', e => this._editSheet(e.detail));
                 this.addEventListener('updateSheet', e => this._updateSheet(e.detail.sheetKey, e.detail.sheetData));
+                this.addEventListener('editSheet', e => this._editSheet(e.detail));
+                this.addEventListener('deleteSheet', e => this._deleteSheet(e.detail.sheetKey));
             }
 
             connectedCallback() {
@@ -277,11 +278,6 @@
             /*
              *  Custom Event Fuctions
              */
-            _updateSheet(sheetKey, sheetData) {
-                let path = '/users/' + this.user.uid + '/sheetList/' + sheetKey;
-                this.$.query.setStoredValue(path, sheetData);
-                return;
-            }
 
             _addNewSheet(newSheetData) {
                 this.$.query.ref.push(newSheetData);
@@ -295,8 +291,21 @@
                 return;
             }
 
+            _updateSheet(sheetKey, sheetData) {
+                let path = '/users/' + this.user.uid + '/sheetList/' + sheetKey;
+                this.$.query.setStoredValue(path, sheetData);
+                return;
+            }
+
             _editSheet(eventDetail) {
                 window.location.hash = '/Edit-Sheet/' + this.sheetKey;
+                return;
+            }
+
+            _deleteSheet(sheetKey) {
+                let path = '/users/' + this.user.uid + '/sheetList/' + sheetKey;
+                this.$.query.setStoredValue(path, null);
+                window.history.back();
                 return;
             }
             /*

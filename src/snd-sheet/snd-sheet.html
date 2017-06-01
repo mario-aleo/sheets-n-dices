@@ -227,6 +227,16 @@
                             </span>
                         </div>
                     </div>
+                    <div class="card-actions">
+                        <paper-checkbox
+                            checked="{{ deleteSheet }}">
+                        </paper-checkbox>
+                        <paper-button class="red-paper-button"
+                            on-tap="_deleteSheet"
+                            disabled="[[ !deleteSheet ]]">
+                            Delete Sheet
+                        </paper-button>
+                    </div>
                 </paper-card>
                 <paper-card class="status-card" heading="Status" elevation="2">
                     <div class="card-content">
@@ -716,6 +726,10 @@
                     sheetData: {
                         type: Object
                     },
+                    deleteSheet: {
+                        type: Boolean,
+                        value: false
+                    },
                     itemEquippable: {
                         type: Boolean
                     },
@@ -800,6 +814,11 @@
 
             _editSheet() {
                 this.dispatchEvent(new CustomEvent('editSheet', {detail: {}, composed: true}));
+                return;
+            }
+
+            _deleteSheet() {
+                this.dispatchEvent(new CustomEvent('deleteSheet', {detail: {sheetKey: this.sheetKey}, composed: true}));
                 return;
             }
             /*
