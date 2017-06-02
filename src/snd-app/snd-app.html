@@ -8,6 +8,7 @@
 <link rel="import" href="../../bower_components/polymerfire/firebase-query.html">
 <link rel="import" href="../../bower_components/polymerfire/firebase-document.html">
 <link rel="import" href="../../bower_components/app-storage/app-indexeddb-mirror/app-indexeddb-mirror.html">
+<link rel="import" href="../../bower_components/app-storage/app-localstorage/app-localstorage-document.html">
 
 <link rel="import" href="../../bower_components/app-layout/app-header-layout/app-header-layout.html">
 <link rel="import" href="../../bower_components/app-layout/app-header/app-header.html">
@@ -119,12 +120,11 @@
             provider="google">
         </firebase-auth>
 
-        <firebase-query
-            id="query"
+        <firebase-query id="query"
             path="/users/[[ user.uid ]]/sheetList"
             data="{{ liveData }}">
         </firebase-query>
-        <app-indexeddb-mirror
+        <app-indexeddb-mirror id="mirror"
             key="sheetList"
             data="{{ liveData }}"
             persisted-data="{{ persistedData }}">
@@ -134,6 +134,10 @@
             path="/users/[[ user.uid ]]/sheetList/{{ sheetKey }}"
             data="{{ sheetData }}">
         </firebase-document>
+        <app-localstorage-document
+            key="{{ sheetKey }}"
+            data="{{ sheetData }}">
+        </app-localstorage-document>
 
         <app-header-layout has-scrolling-region fullbleed>
             <app-header id="appHeader" slot="header" fixed effects="waterfall" scroll-target="ironPages">
@@ -162,7 +166,7 @@
             <iron-pages id="ironPages" role="main" selected="[[ page ]]" attr-for-selected="name" fallback-selection="error">
                 <snd-list
                     name="Sheet-List"
-                    sheet-list="{{ liveData }}">
+                    sheet-list="{{ persistedData }}">
                 </snd-list>
                 <snd-new
                     name="New-Sheet">
@@ -225,6 +229,7 @@
                 this.addEventListener('updateSheet', e => this._updateSheet(e.detail.sheetKey, e.detail.sheetData));
                 this.addEventListener('editSheet', e => this._editSheet(e.detail));
                 this.addEventListener('deleteSheet', e => this._deleteSheet(e.detail.sheetKey));
+                window.app = this;
             }
 
             connectedCallback() {
