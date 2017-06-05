@@ -306,6 +306,7 @@
 
             _updateSheet(sheetKey, sheetData) {
                 let path = '/users/' + this.user.uid + '/sheetList/' + sheetKey;
+                sheetData.lastUpdate = new Date().getTime();
                 this.$.sheetListQuery.setStoredValue(path, sheetData);
                 return;
             }
