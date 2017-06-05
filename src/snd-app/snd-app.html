@@ -120,7 +120,7 @@
             provider="google">
         </firebase-auth>
 
-        <firebase-query id="query"
+        <firebase-query id="sheetListQuery"
             path="/users/[[ user.uid ]]/sheetList"
             data="{{ liveData }}">
         </firebase-query>
@@ -199,15 +199,24 @@
             static get is() { return 'snd-app'; }
 
             static get properties() {
-                return { 
-                    user: {
-                        type: Object
-                    },
+                return {
                     page: {
                         type: String
                     },
+                    user: {
+                        type: Object
+                    },
                     sheetKey: {
                         type: String
+                    },
+                    sheetData: {
+                        type: Object
+                    },
+                    liveData: {
+                        type: Object
+                    },
+                    persistedData: {
+                        type: Object
                     }
                 };
             }
@@ -229,7 +238,6 @@
                 this.addEventListener('updateSheet', e => this._updateSheet(e.detail.sheetKey, e.detail.sheetData));
                 this.addEventListener('editSheet', e => this._editSheet(e.detail));
                 this.addEventListener('deleteSheet', e => this._deleteSheet(e.detail.sheetKey));
-                window.app = this;
             }
 
             connectedCallback() {
@@ -284,9 +292,8 @@
             /*
              *  Custom Event Fuctions
              */
-
             _addNewSheet(newSheetData) {
-                this.$.query.ref.push(newSheetData);
+                this.$.sheetListQuery.ref.push(newSheetData);
                 window.history.back();
                 return;
             }
@@ -299,7 +306,7 @@
 
             _updateSheet(sheetKey, sheetData) {
                 let path = '/users/' + this.user.uid + '/sheetList/' + sheetKey;
-                this.$.query.setStoredValue(path, sheetData);
+                this.$.sheetListQuery.setStoredValue(path, sheetData);
                 return;
             }
 
@@ -310,7 +317,7 @@
 
             _deleteSheet(sheetKey) {
                 let path = '/users/' + this.user.uid + '/sheetList/' + sheetKey;
-                this.$.query.setStoredValue(path, null);
+                this.$.sheetListQuery.setStoredValue(path, null);
                 window.history.back();
                 return;
             }
@@ -365,6 +372,7 @@
                 this.effectsList = effectsList || [];
                 this.itemsList = itemsList || [];
                 this.notesList = notesList || [];
+                this.lastUpdate = new Date().getTime();
             }
         }
         class mapSheet extends Sheet { constructor() {} }

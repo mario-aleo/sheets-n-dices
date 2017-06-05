@@ -127,7 +127,7 @@
             </div>
         </template>
 
-        <template is="dom-if" if="[[ !sheetList ]]">
+        <template is="dom-if" if="[[ !hasSheet ]]">
             <div class="empty-text">
                 You don't have any Sheet :(
             </div>
@@ -148,12 +148,23 @@
                 return {
                     sheetList: {
                         type: Array
+                    },
+                    hasSheet: {
+                        type: Boolean,
+                        value: true
                     }
                 };
             }
 
             static get observers() {
-                return [ ];
+                return [
+                    '_sheetListChanged(sheetList.*)'
+                ];
+            }
+
+            _sheetListChanged(sheetList) {
+                if (sheetList.base.length > 0) this.set('hasSheet', true);
+                else this.set('hasSheet', false);
             }
 
             _newSheet(event) {
