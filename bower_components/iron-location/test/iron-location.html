@@ -193,21 +193,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           expect(makeTemporaryIronLocation().hash).to.be.equal(plainTextHash);
         }
       });
-      test('dealing with queries with unusual characters', function() {
-        var queryEncodingExamples = {
-          'foo': '?foo',
-          '': '',
-          'foo bar': '?foo%20bar',
-          'foo#bar': '?foo%23bar',
-          'foo?bar': '?foo?bar',
-          '/foo\'bar\'baz': ['?/foo%27bar%27baz', '?/foo\'bar\'baz'],
-          'foo/bar/baz': '?foo/bar/baz'
-        };
+      function testQuery(queryEncodingExamples, encodeSpaceAsPlusInQuery) {
+        urlElem.encodeSpaceAsPlusInQuery = encodeSpaceAsPlusInQuery;
+
         for (var plainTextQuery in queryEncodingExamples) {
           var encodedQueries = queryEncodingExamples[plainTextQuery];
-          if (typeof encodedQueries === 'string') {
-            encodedQueries = [encodedQueries];
-          }
 
           var ironLocationQuery = encodedQueries.map(function(value) {
             return value.substring(1);
@@ -226,7 +216,31 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           expect(ironLocationQuery).to.contain(urlElem.query);
           expect(ironLocationQuery).to.contain(makeTemporaryIronLocation().query);
         }
+      }
+
+      test('dealing with queries with unusual characters', function() {
+        testQuery({
+          'foo': ['?foo'],
+          '': [''],
+          'foo bar': ['?foo%20bar'],
+          'foo#bar': ['?foo%23bar'],
+          'foo?bar': ['?foo?bar'],
+          '/foo\'bar\'baz': ['?/foo%27bar%27baz', '?/foo\'bar\'baz'],
+          'foo/bar/baz': ['?foo/bar/baz']
+        }, false)
       });
+      test('dealing with queries with unusual characters - encodeSpaceAsPlusInQuery', function() {
+        testQuery({
+          '': [''],
+          'foo bar': ['?foo%20bar', '?foo+bar'],
+          'foo#bar': ['?foo%23bar'],
+          'foo+bar': ['?foo%2Bbar'],
+          'foo?bar': ['?foo?bar'],
+          '/foo\'bar\'baz': ['?/foo%27bar%27baz', '?/foo\'bar\'baz'],
+          'foo/bar/baz': ['?foo/bar/baz']
+        }, true)
+      });
+
       test('assigning to a relative path URL', function() {
         urlElem.path = '/foo/bar';
         expect(window.location.pathname).to.be.equal('/foo/bar');
@@ -290,7 +304,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
        * to ensure that no navigation occurs (as that would interrupt
        * running and reporting these tests!)
        */
-      function isClickCaptured(anchor, urlSpaceRegex) {
+      function isClickCaptured(anchor, urlSpaceRegex, location) {
         var defaultWasPrevented;
         function handler(event) {
           expect(event.target).to.be.eq(anchor);
@@ -303,6 +317,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         if (urlSpaceRegex != null) {
           ironLocation.urlSpaceRegex = urlSpaceRegex;
         }
+
+        if (location) {
+          ironLocation.__location = location;
+        }
+
         document.body.appendChild(anchor);
         anchor.click();
         document.body.removeChild(anchor);
@@ -320,6 +339,42 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
         expect(isClickCaptured(anchor)).to.be.eq(true);
           expect(pushStateCalls).to.be.equal(1);
+      });
+
+      test('test http port 80 intercepted', function() {
+        var anchor = document.createElement('a');
+        anchor.href = 'http://www.example.com/hello/world'
+
+        var location = {
+          hash: '',
+          pathname: '',
+          search: '',
+          protocol: 'http:',
+          host: 'www.example.com',
+          href: 'http://www.example.com/',
+          origin: 'http://www.example.com'
+        };
+
+        expect(isClickCaptured(anchor, null, location)).to.be.eq(true);
+        expect(pushStateCalls).to.be.equal(1);
+      });
+
+      test('test https port 443 intercepted', function() {
+        var anchor = document.createElement('a');
+        anchor.href = 'https://www.google.com/hello/world'
+
+        var location = {
+          hash: '',
+          pathname: '',
+          search: '',
+          protocol: 'https:',
+          host: 'www.google.com',
+          href: 'https://www.google.com/',
+          origin: 'https://www.google.com'
+        };
+
+        expect(isClickCaptured(anchor, null, location)).to.be.eq(true);
+        expect(pushStateCalls).to.be.equal(1);
       });
 
       test('link that matches url space is intercepted', function() {
@@ -384,8 +439,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
            window.history.pushState = originalPushState;
 
            expect(count).to.be.equal(0);
-      })
-    });
+        });
+      });
     });
     suite('when used with other iron-location elements', function() {
       var otherUrlElem;
@@ -475,23 +530,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       ironLocationTests();
 
       suiteTeardown(cooldownFunction);
-    });
-
-    suite('with a base URI', function() {
-      var baseElem;
-      setup(function() {
-        expect(document.baseURI).to.be.equal(window.location.href);
-        baseElem = document.createElement('base');
-        var href = 'https://example.com/i/dont/exist/obviously'
-        baseElem.href = href;
-        document.head.appendChild(baseElem);
-        expect(document.baseURI).to.be.equal(href);
-      });
-      teardown(function() {
-        document.head.removeChild(baseElem);
-      });
-      suiteTeardown(cooldownFunction);
-      ironLocationTests();
     });
   });
 
